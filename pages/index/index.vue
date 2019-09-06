@@ -106,7 +106,7 @@
 		}
 		
 		
-<<<<<<< .mine		.example-title {
+	.example-title {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
@@ -166,4 +166,4 @@
 		.no-border{
 			padding: 0;
 		}
-=======>>>>>>> .theirs</style>
+</style>
