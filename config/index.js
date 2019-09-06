@@ -38,7 +38,7 @@ export default {
       pro: 'http://shop.szclsoft.com'
     },
     
-	baseImgUrl:'http://192.168.168.101:8080/clerp-app-api',
+	baseImgUrl:'http://shop.szclsoft.com/clerp-app-api',
 
     /**
      * @description 默认打开的首页的路由name值，默认为home

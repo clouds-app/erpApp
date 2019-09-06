@@ -11,7 +11,7 @@
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "晨龙ERP",
     "navigationBarBackgroundColor": "#0081ff",
-    "backgroundColor": "#F8F8F8"
+    "backgroundColor": "#FFFFFF"
   },
   "tabBar": {
     "color": "#000000",
@@ -33,7 +33,7 @@
       },
       {
         "pagePath": "pages/report/report",
-        "text": "统计",
+        "text": "报表",
         "iconPath": "static/count-unChecked.png",
         "selectedIconPath": "static/count-checked.png"
       },
@@ -48,5 +48,5 @@
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"
   },
-  "sitemapLocation": "sitemap23.json"
+  "sitemapLocation": "sitemap30.json"
 }

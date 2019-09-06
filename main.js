@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import App from './App'
 import store from './store'
+import config from '@/config'
 Vue.prototype.$store = store
-
+Vue.prototype.$config = config //自定义配置文件
 import cuCustom from './colorui/components/cu-custom.vue'
 Vue.component('cu-custom',cuCustom)
 

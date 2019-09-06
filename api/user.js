@@ -49,7 +49,6 @@ export const login = ({ userId, pwd }) => {
 export const getMenuByToken = ({ token }) => {
   //参数
   let data = {
-    token,
     isLoad:'false',
    }
    

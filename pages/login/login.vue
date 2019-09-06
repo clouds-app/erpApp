@@ -15,7 +15,6 @@
 <script>
 import md5 from 'js-md5';
 import { mapActions } from 'vuex';
-import { getValidatorToken, login, getMenuByToken, getCustomerInfo } from '@/api/user';
 export default {
 	data() {
 		return {
@@ -108,9 +107,12 @@ export default {
 			this.getMenuByToken_action(params)
 				.then(res => {
 					//debugger
-					let tempMenu = _self.addNoticeInfoIntoArray(res);
-					_self.currentMenuList = tempMenu;
-					_self.getMenuListFirst();
+					//let tempMenu = _self.addNoticeInfoIntoArray(res);
+					//_self.currentMenuList = tempMenu;
+					//_self.getMenuListFirst();
+					uni.switchTab({
+						url: '../index/index'
+					});
 					this.disabledLoginBtn = false;
 					this.isLoading = false;
 				})
@@ -144,7 +146,7 @@ export default {
 		},
 		//獲取菜單第一條數據作爲跳轉頁面
 		getMenuListFirst() {
-			// debugger
+			 //debugger
 			if (this.currentMenuList.length > 0) {
 				this.redirectPage = this.currentMenuList[0].data.resLink;
 				if (this.redirectPage != '' && this.redirectPage != null) {

@@ -68,6 +68,9 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
 {
+  globalData: {
+    token: '' },
+
   // 当uni-app 初始化完成时触发（全局只触发一次）
   onLaunch: function onLaunch() {
     //plus.screen.lockOrientation('portrait-primary'); //锁定

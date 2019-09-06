@@ -4,6 +4,7 @@
  * @action .vue 中 添加mixin:[name]
  *
  */
+import config from '@/config'
 export default {
   name: 'mixin-base',
   data () {
@@ -18,6 +19,10 @@ export default {
     }
   },
   methods: {
+	 //获取图表路径
+	  getImgUrl(imgUrl){
+	  	return config.baseImgUrl+imgUrl
+	  },
     // 格式化时间日期
     formatData (strDate) {
       if (strDate == null) {
@@ -46,9 +51,10 @@ export default {
     },
     // 验证登陆是否仍旧有效
     checkLogin () {
+	 // console.warn("menuList:"+this.menuList)
       let currentLoginToken = uni.getStorageSync('TOKEN')
       console.warn('checkLogin==>currentLoginToken：' + currentLoginToken)
-      if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0 || this.menuList.constructor != Array) {
+      if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0) {
         	// 关闭当前页面，跳转到应用内的某个页面。
         	uni.redirectTo({
         	     url: './../login/login'
@@ -61,7 +67,7 @@ export default {
      this.checkLogin()
   },
   mounted () {
-	console.warn('.......mixins.......mounted')
+	//console.warn('.......mixins.......mounted')
   }
 
 }

@@ -1,7 +1,6 @@
 import config from '@/config'
 const baseUrl = config.isRunApp ? config.baseUrl.pro : config.baseUrl.dev
-
-
+let currentToken=''
 import Request from './request/request'
 
 const axios = new Request()
@@ -10,7 +9,7 @@ axios.setConfig((config) => { /* 设置全局配置 */
 	config.baseUrl = baseUrl /* 根域名不同 */
 	config.header = {
 		'Content-Type': 'application/x-www-form-urlencoded',
-		token:uni.getStorageSync("TOKEN"),
+		token:'', //uni.getStorageSync("TOKEN") 这里获取无效
 		time: Date.now().toString()
 	}
 	return config
@@ -20,6 +19,11 @@ axios.interceptor.request((config, cancel) => { /* 请求之前拦截器 */
 	config.header = {
 		...config.header,
 	}
+	
+	currentToken = uni.getStorageSync("TOKEN")
+	console.warn('1====currentToken====='+currentToken)
+	config.header.token=currentToken
+
 	uni.showLoading({
 		mask: true,
 		title: '请稍候...'

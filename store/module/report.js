@@ -1,4 +1,4 @@
-import {getFactoryKanban,getAccRAnalyzer,getColligateAnalyzer,getPaperCOQueryAnaly,getPaperDeliTotal } from '@/api/report'
+import {getReportList,getFunctionList,getFactoryKanban,getAccRAnalyzer,getColligateAnalyzer,getPaperCOQueryAnaly,getPaperDeliTotal } from '@/api/report'
 import config from '@/config'
 import {setLocalStorage,getLocalStorage } from '@/libs/util'
 const serverBusyTips="服务繁忙，请稍后再试！"
@@ -12,6 +12,60 @@ export default {
      
     },
     actions: {
+		/**
+		* @description 报表页面菜单 NEW FOR UNI-APP
+		* @params { token }
+		*/
+		 getReportList_action({commit},params){
+		  
+		    return new Promise((resolve,reject)=>{
+		      try {
+		        getReportList(params).then(res=>{
+		          const data = config.isRunApp ? res : res.data //因为web 浏览器 多封装了一层 data 包裹
+		          if(data.success)
+		          {
+		            resolve(data.data)
+		          }
+		          else
+		          {
+		            reject(data.msg)
+		          } 
+		        }).catch(err=>{
+		          console.error(JSON.stringify(err))
+		          reject(serverBusyTips)
+		        })
+		      } catch (error) {
+		        reject(serverBusyTips+error)
+		      }
+		    })
+		  },
+		  /**
+		  * @description 功能页面菜单 NEW FOR UNI-APP
+		  * @params { token}
+		  */
+		   getFunctionList_action({commit},params){
+		    
+		      return new Promise((resolve,reject)=>{
+		        try {
+		          getFunctionList(params).then(res=>{
+		            const data = config.isRunApp ? res : res.data //因为web 浏览器 多封装了一层 data 包裹
+		            if(data.success)
+		            {
+		              resolve(data.data)
+		            }
+		            else
+		            {
+		              reject(data.msg)
+		            } 
+		          }).catch(err=>{
+		            console.error(JSON.stringify(err))
+		            reject(serverBusyTips)
+		          })
+		        } catch (error) {
+		          reject(serverBusyTips+error)
+		        }
+		      })
+		    },
     /**
     * @description 客户欠款汇总表
     * @params { 根据开始日期(startDate)，结束日期(endDate)，客户(ctCode)来汇总客户欠款 }
