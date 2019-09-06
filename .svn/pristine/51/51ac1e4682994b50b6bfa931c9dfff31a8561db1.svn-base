@@ -1,0 +1,54 @@
+<script>
+	import Vue from 'vue'
+	export default {
+		// 只有 app 才会有 onLaunch 的生命周期,经测试H5 也出现
+		onLaunch: function() {
+			plus.screen.lockOrientation('portrait-primary'); //锁定
+			uni.getSystemInfo({
+				success: function(e) {
+					// #ifndef MP
+					Vue.prototype.StatusBar = e.statusBarHeight;
+					if (e.platform == 'android') {
+						Vue.prototype.CustomBar = e.statusBarHeight + 50;
+					} else {
+						Vue.prototype.CustomBar = e.statusBarHeight + 45;
+					};
+					// #endif
+			
+					// #ifdef MP-WEIXIN
+					Vue.prototype.StatusBar = e.statusBarHeight;
+					let custom = wx.getMenuButtonBoundingClientRect();
+					Vue.prototype.Custom = custom;
+					Vue.prototype.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
+					// #endif		
+			
+					// #ifdef MP-ALIPAY
+					Vue.prototype.StatusBar = e.statusBarHeight;
+					Vue.prototype.CustomBar = e.statusBarHeight + e.titleBarHeight;
+					// #endif
+				}
+			});
+		},
+		onShow: function() {
+			console.log('App Show'+process.env.NODE_ENV)
+			//console.log(Vue);
+			
+		},
+		onHide: function() {
+			console.log('App Hide')
+			//console.log(Vue);
+		},
+		//由于 onError 并不是完整意义的生命周期，所以只提供一个捕获错误的方法，在 app 的根组件上添加名为 onError 的回调函数即可
+		 onError (err) {
+		       console.error('ERP App onError...:'+err)
+		   }
+	}
+</script>
+
+<style>
+	/*每个页面公共css */
+	@import "colorui/main.css";
+	@import "colorui/icon.css";
+	@import "common/uni.css";
+	
+</style>

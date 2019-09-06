@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/function/function",
+    "pages/my/my",
+    "pages/report/report"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "晨龙ERP",
+    "navigationBarBackgroundColor": "#0081ff",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#000000",
+    "selectedColor": "#0081FF",
+    "backgroundColor": "#FFFFFF",
+    "position": "bottom",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/index-unChecked.png",
+        "selectedIconPath": "static/index-checked.png"
+      },
+      {
+        "pagePath": "pages/function/function",
+        "text": "功能",
+        "iconPath": "static/function-unChecked.png",
+        "selectedIconPath": "static/funtion-checked.png"
+      },
+      {
+        "pagePath": "pages/report/report",
+        "text": "统计",
+        "iconPath": "static/count-unChecked.png",
+        "selectedIconPath": "static/count-checked.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "static/my-unChecked.png",
+        "selectedIconPath": "static/my-checked.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
+  }
+}

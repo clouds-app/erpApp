@@ -1,0 +1,71 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+		    "path" : "pages/index/index",
+		   "app-plus": {
+		   	"bounce": "vertical",
+		   	"titleNView": {
+		   		"buttons": [{
+		   			"text": "\ue534",
+		   			"fontSrc": "/static/uni.ttf",
+		   			"fontSize": "22px",
+		   			"color": "#999999"
+		   		}]
+		   	}
+		   }
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "用户登陆",
+				"navigationStyle":"custom"
+			}
+		}
+        ,{
+            "path" : "pages/function/function",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/my/my",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/report/report",
+            "style" : {}
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "晨龙ERP",
+		"navigationBarBackgroundColor": "#0081ff",
+		"backgroundColor": "#F8F8F8"
+		//"navigationStyle":""
+	},
+	"tabBar":{
+		"color":"#000000",
+		"selectedColor":"#0081FF",
+		"backgroundColor":"#FFFFFF",
+		"position":"bottom",
+		"list":[{
+			"pagePath":"pages/index/index",
+			"text":"首页",
+			"iconPath":"static/index-unChecked.png",
+			"selectedIconPath":"static/index-checked.png"
+		},{
+			"pagePath":"pages/function/function",
+			"text":"功能",
+			"iconPath":"static/function-unChecked.png",
+			"selectedIconPath":"static/funtion-checked.png"
+		},{
+			"pagePath":"pages/report/report",
+			"text":"统计",
+			"iconPath":"static/count-unChecked.png",
+			"selectedIconPath":"static/count-checked.png"
+		},{
+			"pagePath":"pages/my/my",
+			"text":"我的",
+			"iconPath":"static/my-unChecked.png",
+			"selectedIconPath":"static/my-checked.png"
+		}]
+	}
+}

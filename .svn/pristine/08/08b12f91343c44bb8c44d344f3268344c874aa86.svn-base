@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "晨龙ERP",
+    "navigationBarBackgroundColor": "#0081ff",
+    "backgroundColor": "#F8F8F8"
+  },
+  "nvueCompiler": "weex",
+  "renderer": "auto",
+  "splashscreen": {
+    "alwaysShowBeforeRender": true,
+    "autoclose": false
+  },
+  "appname": "erpApp",
+  "compilerVersion": "2.2.0",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
+  }
+}
