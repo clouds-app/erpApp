@@ -9,10 +9,7 @@
 				<view class="content" :style="[{top:StatusBar + 'px'}]">
 					<slot name="content"></slot>
 				</view>
-				<view class="rightSlot">
-					<slot name="right"></slot>
-				</view>
-				
+				<slot name="right"></slot>
 			</view>
 		</view>
 	</view>
@@ -64,7 +61,5 @@
 </script>
 
 <style>
-.rightSlot{
-	margin-right: 10rpx;
-}
+
 </style>

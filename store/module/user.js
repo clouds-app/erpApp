@@ -11,17 +11,15 @@ export default {
     },
     getters:{
       menuList_getters:(state, getters)=>{
-		  console.warn('====menuList_getters=====')
         return state.menuList
       },
     },
     mutations: {
         setLoginToken(state, token) {
-         // debugger
+          //debugger
            state.token = token
           //setLocalStorage('TOKEN',token)
 		  uni.setStorageSync("TOKEN",token) 
-		 // console.warn('uni.getStorageSync("TOKEN"):'+uni.getStorageSync("TOKEN"))
         },
         //保存菜單
         setMenuList(state,data){

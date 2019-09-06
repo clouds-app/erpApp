@@ -144,23 +144,7 @@ export default {
 			}
 			return newDataList;
 		},
-		//獲取菜單第一條數據作爲跳轉頁面
-		getMenuListFirst() {
-			 //debugger
-			if (this.currentMenuList.length > 0) {
-				this.redirectPage = this.currentMenuList[0].data.resLink;
-				if (this.redirectPage != '' && this.redirectPage != null) {
-					// this.sendRefreshEvent() //发送刷新，修复首次登陆，无法获取通知个数
-					// this.turnToPage(this.redirectPage)
-					// uni.navigateTo({
-					//     url: '../index/index'
-					// })
-					uni.switchTab({
-						url: '../index/index'
-					});
-				}
-			}
-		}
+
 	}
 };
 </script>

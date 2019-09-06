@@ -1,9 +1,6 @@
 <script>
 	import Vue from 'vue'
 	export default {
-	   globalData: {  
-		         token: ''  
-		     },  
 		// 当uni-app 初始化完成时触发（全局只触发一次）
 		onLaunch: function() {
 			//plus.screen.lockOrientation('portrait-primary'); //锁定

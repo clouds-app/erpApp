@@ -41,6 +41,7 @@
 						<image class="image" src="https://img-cdn-qiniu.dcloud.net.cn/uni-ui/grid-8.png" mode="aspectFill" />
 						<text class="text">支付宝</text>
 					</view>
+				
  				</view>
 			</view>
 		</view>
@@ -105,4 +106,64 @@
 		}
 		
 		
-</style>
+<<<<<<< .mine		.example-title {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 32upx;
+			color: #464e52;
+			padding: 30upx;
+			margin-top: 20upx;
+			position: relative;
+			background-color: #fdfdfd
+		}
+		
+		
+		.example-title:after {
+			content: '';
+			position: absolute;
+			left: 0;
+			margin: auto;
+			top: 0;
+			bottom: 0;
+			width: 20upx;
+			height: 40upx;
+			border-top-right-radius: 20upx;
+			border-bottom-right-radius: 20upx;
+			background-color: #0081ff
+		}
+		
+		.example .example-title {
+			margin: 40upx 0
+		}
+		
+		.example-body {
+			border-top: 1px #f5f5f5 solid;
+			background: #fff
+		}
+		
+		.example-info {
+			padding: 30upx;
+			color: #3b4144;
+			background: #fff
+		}
+		
+		.image {
+			width: 50upx;
+			height: 50upx;
+		}
+		
+		.text {
+			font-size: 26upx;
+			margin-top: 10upx;
+			color: #000000 !important;
+		}
+		.cu-item{
+			display: flex;
+			align-items: center;
+			padding-bottom: 20px;
+		}
+		.no-border{
+			padding: 0;
+		}
+=======>>>>>>> .theirs</style>
