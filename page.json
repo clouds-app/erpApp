@@ -1,0 +1,93 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+		   "path" : "pages/index/index",
+			"style": {
+				"navigationStyle":"custom"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "用户登陆",
+				"navigationStyle":"custom"
+			}
+		}
+        ,{
+            "path" : "pages/function/function",
+            "style" : {
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/my/my",
+            "style" : {
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/report/report",
+            "style" : {
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/verify/originalPaper/originalPaper",
+            "style" : {
+            	"navigationStyle":"custom"
+            }
+        }
+        ,{
+            "path" : "pages/verify/bargainPrice/bargainPrice",
+            "style" : {
+            	"navigationStyle":"custom"
+            }
+        }
+        ,{
+            "path" : "pages/verify/bargainPrice/bpDetail",
+            "style" : {
+            	"navigationStyle":"custom"
+            }
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "晨龙ERP",
+		"navigationBarBackgroundColor": "#0081ff",
+		"backgroundColor": "#FFFFFF",
+		"app-plus":{
+			"scrollIndicator":"none",
+			"compatible": {  
+			    "ignoreVersion": true //true表示忽略版本检查提示框，HBuilderX1.9.0及以上版本支持  
+			}
+		}
+		//"navigationStyle":""
+	},
+	"tabBar":{
+		"color":"#000000",
+		"selectedColor":"#0081FF",
+		"backgroundColor":"#FFFFFF",
+		"position":"bottom",
+		"list":[{
+			"pagePath":"pages/index/index",
+			"text":"首页",
+			"iconPath":"static/index-unChecked.png",
+			"selectedIconPath":"static/index-checked.png"
+		},{
+			"pagePath":"pages/function/function",
+			"text":"功能",
+			"iconPath":"static/function-unChecked.png",
+			"selectedIconPath":"static/funtion-checked.png"
+		},{
+			"pagePath":"pages/report/report",
+			"text":"报表",
+			"iconPath":"static/count-unChecked.png",
+			"selectedIconPath":"static/count-checked.png"
+		},{
+			"pagePath":"pages/my/my",
+			"text":"我的",
+			"iconPath":"static/my-unChecked.png",
+			"selectedIconPath":"static/my-checked.png"
+		}]
+	}
+}

@@ -1,0 +1,1 @@
+<view><cu-custom vue-id="1" bgColor="bg-gradual-blue" isBack="{{true}}" bind:__l="__l" vue-slots="{{['content']}}"><view slot="content">原纸审批</view></cu-custom><view></view></view>

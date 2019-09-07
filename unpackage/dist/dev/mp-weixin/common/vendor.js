@@ -10,10 +10,11 @@
 /* WEBPACK VAR INJECTION */(function(createApp) {__webpack_require__(/*! uni-pages */ 4);
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
 var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ 5));
-var _store = _interopRequireDefault(__webpack_require__(/*! ./store */ 11));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
-_vue.default.prototype.$store = _store.default;var cuCustom = function cuCustom() {return __webpack_require__.e(/*! import() | colorui/components/cu-custom */ "colorui/components/cu-custom").then(__webpack_require__.bind(null, /*! ./colorui/components/cu-custom.vue */ 68));};
-
-
+var _store = _interopRequireDefault(__webpack_require__(/*! ./store */ 11));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
+_vue.default.prototype.$store = _store.default;
+_vue.default.prototype.$config = _config.default; //自定义配置文件
+var cuCustom = function cuCustom() {return __webpack_require__.e(/*! import() | colorui/components/cu-custom */ "colorui/components/cu-custom").then(__webpack_require__.bind(null, /*! ./colorui/components/cu-custom.vue */ 92));};
 _vue.default.component('cu-custom', cuCustom);
 
 _vue.default.config.productionTip = false;
@@ -9069,11 +9070,11 @@ var _default = {
     pro: 'http://shop.szclsoft.com' },
 
 
-  baseImgUrl: 'http://192.168.168.101:8080/clerp-app-api',
+  baseImgUrl: 'http://shop.szclsoft.com/clerp-app-api',
 
   /**
-                                                            * @description 默认打开的首页的路由name值，默认为home
-                                                            */
+                                                         * @description 默认打开的首页的路由name值，默认为home
+                                                         */
   homeName: 'home',
   /**
                      * @description 需要加载的插件
@@ -9672,7 +9673,6 @@ var login = function login(_ref2) {var userId = _ref2.userId,pwd = _ref2.pwd;
 var getMenuByToken = function getMenuByToken(_ref3) {var token = _ref3.token;
   //参数
   var data = {
-    token: token,
     isLoad: 'false' };
 
 
@@ -9717,8 +9717,7 @@ var getCustomerInfo = function getCustomerInfo() {
 /* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));
 
 
-
-var _request = _interopRequireDefault(__webpack_require__(/*! ./request/request */ 20));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var baseUrl = _config.default.isRunApp ? _config.default.baseUrl.pro : _config.default.baseUrl.dev;
+var _request = _interopRequireDefault(__webpack_require__(/*! ./request/request */ 20));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var baseUrl = _config.default.isRunApp ? _config.default.baseUrl.pro : _config.default.baseUrl.dev;var currentToken = '';
 
 var axios = new _request.default();
 
@@ -9726,7 +9725,7 @@ axios.setConfig(function (config) {/* 设置全局配置 */
   config.baseUrl = baseUrl; /* 根域名不同 */
   config.header = {
     'Content-Type': 'application/x-www-form-urlencoded',
-    token: uni.getStorageSync("TOKEN"),
+    token: '', //uni.getStorageSync("TOKEN") 这里获取无效
     time: Date.now().toString() };
 
   return config;
@@ -9735,6 +9734,11 @@ axios.setConfig(function (config) {/* 设置全局配置 */
 axios.interceptor.request(function (config, cancel) {/* 请求之前拦截器 */
   config.header = _objectSpread({},
   config.header);
+
+
+  currentToken = uni.getStorageSync("TOKEN");
+  console.warn('1====currentToken=====' + currentToken);
+  config.header.token = currentToken;
 
   uni.showLoading({
     mask: true,
@@ -10191,16 +10195,64 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getPaperDeliTotal = exports.getPaperCOQueryAnaly = exports.getFactoryKanban = exports.getColligateAnalyzer = exports.getAccRAnalyzer = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 19));
+Object.defineProperty(exports, "__esModule", { value: true });exports.getPaperDeliTotal = exports.getPaperCOQueryAnaly = exports.getFactoryKanban = exports.getColligateAnalyzer = exports.getAccRAnalyzer = exports.getFunctionList = exports.getReportList = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 19));
 var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 //import Qs from 'qs'
 var apiPath = '/clerp-app-api'; //正式环境
 
+
+
+
 /**
-* @description 客户欠款汇总表 SumOfCustArrears
-* @params { 根据开始日期(startDate)，结束日期(endDate)，客户(ctCode)来汇总客户欠款 }
-*/
-var getAccRAnalyzer = function getAccRAnalyzer(_ref) {var startDate = _ref.startDate,endDate = _ref.endDate,ctCode = _ref.ctCode,token = _ref.token;
+ * @description 报表页面菜单 NEW FOR UNI-APP
+ * @params {token}
+ */
+var getReportList = function getReportList(_ref)
+
+{var token = _ref.token;
+  //debugger
+  //参数
+  var data = {
+    token: token };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/report"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 功能页面菜单 NEW FOR UNI-APP
+    * @params {token}
+    */exports.getReportList = getReportList;
+var getFunctionList = function getFunctionList(_ref2)
+
+{var token = _ref2.token;
+  //debugger
+  //参数
+  var data = {
+    token: token };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/function"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 客户欠款汇总表 SumOfCustArrears
+    * @params { 根据开始日期(startDate)，结束日期(endDate)，客户(ctCode)来汇总客户欠款 }
+    */exports.getFunctionList = getFunctionList;
+var getAccRAnalyzer = function getAccRAnalyzer(_ref3)
+
+
+
+
+{var startDate = _ref3.startDate,endDate = _ref3.endDate,ctCode = _ref3.ctCode,token = _ref3.token;
   //参数
   var data = {
     startDate: startDate,
@@ -10218,10 +10270,14 @@ var getAccRAnalyzer = function getAccRAnalyzer(_ref) {var startDate = _ref.start
 };
 
 /**
-   * @description 全厂综合报表 CompFactoryReport ==>暂时注销使用，需求变更
-   * @params { 根据开始日期(startDate)，结束日期(endDate),token来获取全厂综合报表 }
-   */exports.getAccRAnalyzer = getAccRAnalyzer;
-var getColligateAnalyzer = function getColligateAnalyzer(_ref2) {var startDate = _ref2.startDate,endDate = _ref2.endDate,token = _ref2.token;
+    * @description 全厂综合报表 CompFactoryReport ==>暂时注销使用，需求变更
+    * @params { 根据开始日期(startDate)，结束日期(endDate),token来获取全厂综合报表 }
+    */exports.getAccRAnalyzer = getAccRAnalyzer;
+var getColligateAnalyzer = function getColligateAnalyzer(_ref4)
+
+
+
+{var startDate = _ref4.startDate,endDate = _ref4.endDate,token = _ref4.token;
   //debugger
   //参数
   var data = {
@@ -10239,10 +10295,12 @@ var getColligateAnalyzer = function getColligateAnalyzer(_ref2) {var startDate =
 };
 
 /**
-   * @description 全厂综合报表 New  CompFactoryReport 20190802
-   * @params {token来获取全厂综合报表 }
-   */exports.getColligateAnalyzer = getColligateAnalyzer;
-var getFactoryKanban = function getFactoryKanban(_ref3) {var token = _ref3.token;
+    * @description 全厂综合报表 New  CompFactoryReport 20190802
+    * @params {token来获取全厂综合报表 }
+    */exports.getColligateAnalyzer = getColligateAnalyzer;
+var getFactoryKanban = function getFactoryKanban(_ref5)
+
+{var token = _ref5.token;
   //debugger
   //参数
   var data = {
@@ -10266,7 +10324,14 @@ var getFactoryKanban = function getFactoryKanban(_ref3) {var token = _ref3.token
        入参：startDate,endDate,ctCode,mode,token,size(前多少条数，
        默认20条)；结果集是个map：key--orderData(订单数据)，topData(前多少条数据) }
    */exports.getFactoryKanban = getFactoryKanban;
-var getPaperCOQueryAnaly = function getPaperCOQueryAnaly(_ref4) {var startDate = _ref4.startDate,endDate = _ref4.endDate,ctCode = _ref4.ctCode,token = _ref4.token,mode = _ref4.mode,size = _ref4.size;
+var getPaperCOQueryAnaly = function getPaperCOQueryAnaly(_ref6)
+
+
+
+
+
+
+{var startDate = _ref6.startDate,endDate = _ref6.endDate,ctCode = _ref6.ctCode,token = _ref6.token,mode = _ref6.mode,size = _ref6.size;
   //参数
   var data = {
     startDate: startDate,
@@ -10293,7 +10358,12 @@ var getPaperCOQueryAnaly = function getPaperCOQueryAnaly(_ref4) {var startDate =
        入参：startDate,endDate,ctCode,token; 
            }
    */exports.getPaperCOQueryAnaly = getPaperCOQueryAnaly;
-var getPaperDeliTotal = function getPaperDeliTotal(_ref5) {var startDate = _ref5.startDate,endDate = _ref5.endDate,ctCode = _ref5.ctCode,token = _ref5.token;
+var getPaperDeliTotal = function getPaperDeliTotal(_ref7)
+
+
+
+
+{var startDate = _ref7.startDate,endDate = _ref7.endDate,ctCode = _ref7.ctCode,token = _ref7.token;
   //debugger
   //参数
   var data = {
@@ -11278,83 +11348,9 @@ createPage(_index.default);
 /* 34 */,
 /* 35 */,
 /* 36 */,
-/* 37 */
-/*!****************************************!*\
-  !*** E:/cl_vue/erpApp/mixins/index.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; /**
-                                                                                                      * @name mixin
-                                                                                                      * @description 所有.vue 公共方法
-                                                                                                      * @action .vue 中 添加mixin:[name]
-                                                                                                      *
-                                                                                                      */var _default =
-{
-  name: 'mixin-base',
-  data: function data() {
-    return {
-      pageTitle: '' };
-
-  },
-  computed: {
-    menuList: function menuList() {
-      var tempMenuList = this.$store.getters.menuList_getters;
-      return tempMenuList;
-    } },
-
-  methods: {
-    // 格式化时间日期
-    formatData: function formatData(strDate) {
-      if (strDate == null) {
-        return '';
-      } else {
-        return this.stringToDate(strDate).format('yyyy-MM-dd');
-      }
-    },
-    // 字符串转日期
-    stringToDate: function stringToDate(dateStr, separator) {
-      if (!separator) {
-        separator = '-';
-      }
-      var dateArr = dateStr.split(separator);
-      var year = parseInt(dateArr[0]);
-      var month;
-      // 处理月份为04这样的情况
-      if (dateArr[1].indexOf('0') === 0) {
-        month = parseInt(dateArr[1].substring(1));
-      } else {
-        month = parseInt(dateArr[1]);
-      }
-      var day = parseInt(dateArr[2]);
-      var date = new Date(year, month - 1, day);
-      return date;
-    },
-    // 验证登陆是否仍旧有效
-    checkLogin: function checkLogin() {
-      var currentLoginToken = uni.getStorageSync('TOKEN');
-      console.warn('checkLogin==>currentLoginToken：' + currentLoginToken);
-      if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0 || this.menuList.constructor != Array) {
-        // 关闭当前页面，跳转到应用内的某个页面。
-        uni.redirectTo({
-          url: './../login/login' });
-
-      }
-    } },
-
-
-  onLoad: function onLoad() {
-    this.checkLogin();
-  },
-  mounted: function mounted() {
-    console.warn('.......mixins.......mounted');
-  } };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-/* 38 */
+/* 37 */,
+/* 38 */,
+/* 39 */
 /*!*****************************************************************!*\
   !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Flogin%2Flogin"} ***!
   \*****************************************************************/
@@ -11365,20 +11361,20 @@ createPage(_index.default);
 /* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
 
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
-var _login = _interopRequireDefault(__webpack_require__(/*! ./pages/login/login.vue */ 39));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var _login = _interopRequireDefault(__webpack_require__(/*! ./pages/login/login.vue */ 40));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 createPage(_login.default);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
 
 /***/ }),
-/* 39 */,
 /* 40 */,
 /* 41 */,
 /* 42 */,
 /* 43 */,
-/* 44 */
-/*!*********************************************************************!*\
-  !*** E:/cl_vue/erpApp/node_modules/_js-md5@0.7.3@js-md5/src/md5.js ***!
-  \*********************************************************************/
+/* 44 */,
+/* 45 */
+/*!*******************************************************!*\
+  !*** E:/cl_vue/erpApp/node_modules/js-md5/src/md5.js ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11409,7 +11405,7 @@ createPage(_login.default);
     root = self;
   }
   var COMMON_JS = !root.JS_MD5_NO_COMMON_JS && typeof module === 'object' && module.exports;
-  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 47);
+  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 48);
   var ARRAY_BUFFER = !root.JS_MD5_NO_ARRAY_BUFFER && typeof ArrayBuffer !== 'undefined';
   var HEX_CHARS = '0123456789abcdef'.split('');
   var EXTRA = [128, 32768, 8388608, -2147483648];
@@ -12067,10 +12063,10 @@ createPage(_login.default);
     }
   }
 })();
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 45), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 46), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
 
 /***/ }),
-/* 45 */
+/* 46 */
 /*!********************************************************!*\
   !*** ./node_modules/node-libs-browser/mock/process.js ***!
   \********************************************************/
@@ -12097,7 +12093,7 @@ exports.binding = function (name) {
     var path;
     exports.cwd = function () { return cwd };
     exports.chdir = function (dir) {
-        if (!path) path = __webpack_require__(/*! path */ 46);
+        if (!path) path = __webpack_require__(/*! path */ 47);
         cwd = path.resolve(dir, cwd);
     };
 })();
@@ -12110,7 +12106,7 @@ exports.features = {};
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /*!***********************************************!*\
   !*** ./node_modules/path-browserify/index.js ***!
   \***********************************************/
@@ -12342,10 +12338,10 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 45)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 46)))
 
 /***/ }),
-/* 47 */
+/* 48 */
 /*!****************************************!*\
   !*** (webpack)/buildin/amd-options.js ***!
   \****************************************/
@@ -12358,9 +12354,9 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(this, {}))
 
 /***/ }),
-/* 48 */,
 /* 49 */,
-/* 50 */
+/* 50 */,
+/* 51 */
 /*!***********************************************************************!*\
   !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Ffunction%2Ffunction"} ***!
   \***********************************************************************/
@@ -12371,17 +12367,99 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
 
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
-var _function = _interopRequireDefault(__webpack_require__(/*! ./pages/function/function.vue */ 51));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var _function = _interopRequireDefault(__webpack_require__(/*! ./pages/function/function.vue */ 52));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 createPage(_function.default);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
 
 /***/ }),
-/* 51 */,
 /* 52 */,
 /* 53 */,
 /* 54 */,
 /* 55 */,
-/* 56 */
+/* 56 */,
+/* 57 */
+/*!****************************************!*\
+  !*** E:/cl_vue/erpApp/mixins/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+
+
+
+
+
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
+                                                                                                                                                         * @name mixin
+                                                                                                                                                         * @description 所有.vue 公共方法
+                                                                                                                                                         * @action .vue 中 添加mixin:[name]
+                                                                                                                                                         *
+                                                                                                                                                         */var _default = { name: 'mixin-base', data: function data() {return { pageTitle: '' };
+
+  },
+  computed: {
+    menuList: function menuList() {
+      var tempMenuList = this.$store.getters.menuList_getters;
+      return tempMenuList;
+    } },
+
+  methods: {
+    //获取图表路径
+    getImgUrl: function getImgUrl(imgUrl) {
+      return _config.default.baseImgUrl + imgUrl;
+    },
+    // 格式化时间日期
+    formatData: function formatData(strDate) {
+      if (strDate == null) {
+        return '';
+      } else {
+        return this.stringToDate(strDate).format('yyyy-MM-dd');
+      }
+    },
+    // 字符串转日期
+    stringToDate: function stringToDate(dateStr, separator) {
+      if (!separator) {
+        separator = '-';
+      }
+      var dateArr = dateStr.split(separator);
+      var year = parseInt(dateArr[0]);
+      var month;
+      // 处理月份为04这样的情况
+      if (dateArr[1].indexOf('0') === 0) {
+        month = parseInt(dateArr[1].substring(1));
+      } else {
+        month = parseInt(dateArr[1]);
+      }
+      var day = parseInt(dateArr[2]);
+      var date = new Date(year, month - 1, day);
+      return date;
+    },
+    // 验证登陆是否仍旧有效
+    checkLogin: function checkLogin() {
+      // console.warn("menuList:"+this.menuList)
+      var currentLoginToken = uni.getStorageSync('TOKEN');
+      console.warn('checkLogin==>currentLoginToken：' + currentLoginToken);
+      if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0) {
+        // 关闭当前页面，跳转到应用内的某个页面。
+        uni.redirectTo({
+          url: './../login/login' });
+
+      }
+    } },
+
+
+  onLoad: function onLoad() {
+    this.checkLogin();
+  },
+  mounted: function mounted() {
+    //console.warn('.......mixins.......mounted')
+  } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 58 */
 /*!***********************************************************!*\
   !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Fmy%2Fmy"} ***!
   \***********************************************************/
@@ -12392,17 +12470,17 @@ createPage(_function.default);
 /* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
 
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
-var _my = _interopRequireDefault(__webpack_require__(/*! ./pages/my/my.vue */ 57));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var _my = _interopRequireDefault(__webpack_require__(/*! ./pages/my/my.vue */ 59));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 createPage(_my.default);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
 
 /***/ }),
-/* 57 */,
-/* 58 */,
 /* 59 */,
 /* 60 */,
 /* 61 */,
-/* 62 */
+/* 62 */,
+/* 63 */,
+/* 64 */
 /*!*******************************************************************!*\
   !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Freport%2Freport"} ***!
   \*******************************************************************/
@@ -12413,8 +12491,75 @@ createPage(_my.default);
 /* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
 
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
-var _report = _interopRequireDefault(__webpack_require__(/*! ./pages/report/report.vue */ 63));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var _report = _interopRequireDefault(__webpack_require__(/*! ./pages/report/report.vue */ 65));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 createPage(_report.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
+
+/***/ }),
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */
+/*!****************************************************************************************!*\
+  !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Fverify%2FbargainPrice%2FbargainPrice"} ***!
+  \****************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
+var _bargainPrice = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/bargainPrice/bargainPrice.vue */ 71));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_bargainPrice.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
+
+/***/ }),
+/* 71 */,
+/* 72 */,
+/* 73 */,
+/* 74 */,
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */
+/*!************************************************************************************!*\
+  !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Fverify%2FbargainPrice%2FbpDetail"} ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
+var _bpDetail = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/bargainPrice/bpDetail.vue */ 79));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_bpDetail.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
+
+/***/ }),
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */,
+/* 84 */,
+/* 85 */,
+/* 86 */
+/*!******************************************************************************************!*\
+  !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Fverify%2ForiginalPaper%2ForiginalPaper"} ***!
+  \******************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
+var _originalPaper = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/originalPaper/originalPaper.vue */ 87));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_originalPaper.default);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
 
 /***/ })

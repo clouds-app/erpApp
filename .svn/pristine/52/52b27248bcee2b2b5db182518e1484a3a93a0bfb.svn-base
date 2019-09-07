@@ -1,0 +1,73 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="false">
+				<block slot="content">功能</block>
+		</cu-custom>
+		<view class="grid-warp">
+			<view class="grid-title">审批</view>
+			<view class="grid-body">
+				<view class="cu-list grid col-3 no-border">
+					<view class="cu-item" @click="openFunctionPage('/pages/verify/bargainPrice/bargainPrice')">
+						<image class="image" src="../../static/tejiashenpi.png" mode="aspectFill" />
+						<text class="text">特价审批</text>
+					</view>
+					
+					<view class="cu-item">
+						<image class="image" src="../../static/yuanzhishenpi.png" mode="aspectFill" />
+						<text class="text">原纸审批</text>
+					</view>
+					
+					<view class="cu-item">
+						<image class="image" src="../../static/fuliao.png" mode="aspectFill" />
+						<text class="text">辅料审批</text>
+					</view>
+				</view>
+			</view>
+		</view>
+		
+		<view style="margin-top: 40rpx;" class="grid-warp">
+			<view class="grid-title">仓库管理</view>
+			<view class="grid-body">
+				<view class="cu-list grid col-3 no-border">
+					<view class="cu-item">
+						<image class="image" src="../../static/zhiban.png" mode="aspectFill" />
+						<text class="text">纸板出入库</text>
+					</view>
+					
+					<view class="cu-item">
+						<image class="image" src="../../static/yuanzhi.png" mode="aspectFill" />
+						<text class="text">原纸出入库</text>
+					</view>
+					
+					<view class="cu-item">
+						<image class="image" src="../../static/zhixiang.png" mode="aspectFill" />
+						<text class="text">纸箱出入库</text>
+					</view>
+					
+				</view>
+			</view>
+		</view>
+		
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				
+			}
+		},
+		methods: {
+			openFunctionPage(url){
+				uni.navigateTo({
+				    url: url
+				});
+			}
+		}
+	}
+</script>
+
+<style>
+
+</style>

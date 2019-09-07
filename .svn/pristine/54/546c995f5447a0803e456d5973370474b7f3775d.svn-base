@@ -1,0 +1,50 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="false">
+				<block slot="content">报表</block>
+		</cu-custom>
+		<view class="grid-warp">
+			<view class="grid-title">统计</view>
+			<view class="grid-body">
+				<view class="cu-list grid col-3 no-border">
+					<view class="cu-item">
+						<image class="image" src="../../static/zonghe.png" mode="aspectFill" />
+						<text class="text">综合查询</text>
+					</view>
+					
+					<view class="cu-item">
+						<image class="image" src="../../static/songhuo.png" mode="aspectFill" />
+						<text class="text">送货查询</text>
+					</view>
+					
+					<view class="cu-item">
+						<image class="image" src="../../static/dingdan.png" mode="aspectFill" />
+						<text class="text">订单查询</text>
+					</view>
+					
+					<view class="cu-item">
+						<image class="image" src="../../static/qiankuan.png" mode="aspectFill" />
+						<text class="text">客户欠款</text>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				
+			}
+		},
+		methods: {
+			
+		}
+	}
+</script>
+
+<style>
+
+</style>
