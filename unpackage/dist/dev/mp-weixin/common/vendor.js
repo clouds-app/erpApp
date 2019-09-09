@@ -16,9 +16,25 @@ _vue.default.prototype.$store = _store.default;
 _vue.default.prototype.$config = _config.default; //自定义配置文件
 var cuCustom = function cuCustom() {return __webpack_require__.e(/*! import() | colorui/components/cu-custom */ "colorui/components/cu-custom").then(__webpack_require__.bind(null, /*! ./colorui/components/cu-custom.vue */ 92));};
 _vue.default.component('cu-custom', cuCustom);
-
 _vue.default.config.productionTip = false;
-
+Date.prototype.format = function (fmt) {
+  if (fmt == '') {
+    return '';
+  }
+  var o = {
+    "M+": this.getMonth() + 1, //月份
+    "d+": this.getDate(), //日
+    "h+": this.getHours(), //小时
+    "m+": this.getMinutes(), //分
+    "s+": this.getSeconds(), //秒
+    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+    "S": this.getMilliseconds() //毫秒
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o) {
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));}
+  return fmt;
+};
 _App.default.mpType = 'app';
 
 var app = new _vue.default(_objectSpread({
@@ -9474,8 +9490,8 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
 
 {
   state: {
-    token: uni.getStorageSync("TOKEN") || '',
-    menuList: uni.getStorageSync("menuList") },
+    token: uni.getStorageSync("TOKEN") == '' ? '' : JSON.parse(uni.getStorageSync("TOKEN")),
+    menuList: uni.getStorageSync("menuList") == '' ? '' : JSON.parse(uni.getStorageSync("menuList")) },
 
   getters: {
     menuList_getters: function menuList_getters(state, getters) {
@@ -9487,13 +9503,13 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
       //debugger
       state.token = token;
       //setLocalStorage('TOKEN',token)
-      uni.setStorageSync("TOKEN", token);
+      uni.setStorageSync("TOKEN", JSON.stringify(token));
     },
     //保存菜單
     setMenuList: function setMenuList(state, data) {
       state.menuList = data;
       //setLocalStorage('menuList',data)
-      uni.setStorageSync("menuList", data);
+      uni.setStorageSync("menuList", JSON.stringify(data));
     } },
 
   actions: {
@@ -9517,7 +9533,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            //console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -9546,7 +9562,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            //console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -9576,7 +9592,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            //console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -9603,7 +9619,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            //console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -9678,7 +9694,7 @@ var getMenuByToken = function getMenuByToken(_ref3) {var token = _ref3.token;
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/user/resourceInfo"),
+    url: "".concat(apiPath, "/user/resourceInfoV2"),
     data: data,
     method: 'POST' });
 
@@ -9736,7 +9752,7 @@ axios.interceptor.request(function (config, cancel) {/* 请求之前拦截器 */
   config.header);
 
 
-  currentToken = uni.getStorageSync("TOKEN");
+  currentToken = uni.getStorageSync("TOKEN") == '' ? '' : JSON.parse(uni.getStorageSync("TOKEN")) || '';
   console.warn('1====currentToken=====' + currentToken);
   config.header.token = currentToken;
 
@@ -9754,8 +9770,9 @@ axios.interceptor.request(function (config, cancel) {/* 请求之前拦截器 */
 
 axios.interceptor.response(function (res) {/* 请求之后拦截器 */
   uni.hideLoading();
+  // debugger
   // console.log(JSON.stringify(res))
-  if (res.data.status === 10000) {
+  if (res.status === 10000 || res.data.status === 10000) {
     uni.showToast({
       title: '登陆超时，请重新登陆！',
       duration: 2000 });
@@ -9763,14 +9780,23 @@ axios.interceptor.response(function (res) {/* 请求之后拦截器 */
     try {
       uni.removeStorageSync('TOKEN');
     } catch (e) {
-      // error
-    }
-    uni.navigateTo({
-      url: '../login/login' });
 
+    } // error
+    // uni.navigateTo({
+    //     url: '../login/login'
+    // })
+    // debugger
+    // let pages =getCurrentPages()
+    // var page = pages[pages.length - 1]
+    // uni.reLaunch({
+    //     url: '../login/login'
+    // });
+    // return
+  } else {
+    return res;
   }
 
-  return res;
+
 }, function (error) {// 请求错误做点什么
   uni.hideLoading();
   return Promise.reject(error);
@@ -10390,13 +10416,27 @@ var getPaperDeliTotal = function getPaperDeliTotal(_ref7)
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _verify = __webpack_require__(/*! @/api/verify */ 24);
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _verify = __webpack_require__(/*! @/api/verify */ 24);
 var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));
 var _util = __webpack_require__(/*! @/libs/util */ 14);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
 
 
 {
+  state: {
+    barginPriceList: uni.getStorageSync("barginPriceList") == '' ? '' : JSON.parse(uni.getStorageSync("barginPriceList")) },
+
+  getters: {
+    barginPriceList_getter: function barginPriceList_getter(state) {
+      return state.barginPriceList;
+    } },
+
+  mutations: {
+    setBarginPriceList: function setBarginPriceList(state, data) {
+      state.barginPriceList = data;
+      uni.setStorageSync("barginPriceList", JSON.stringify(data));
+    } },
+
   actions: {
     /**
              * @description 獲取通知信息個數
@@ -10416,7 +10456,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            // console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -10438,7 +10478,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            //console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -10552,13 +10592,16 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
         }
       });
 
-    }, searchSpecPriceAction: function searchSpecPriceAction(_ref8) {var commit = _ref8.commit;
+    },
+    //查询特价审批 数据列表
+    searchSpecPriceAction: function searchSpecPriceAction(_ref8) {var commit = _ref8.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _verify.searchSpecPrice)().then(function (res) {
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
             if (data.success)
             {
+              commit('setBarginPriceList', data.data);
               resolve(data);
             } else
 
@@ -10566,7 +10609,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            //console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -10588,7 +10631,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            // console.error(JSON.stringify(err))
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -10597,6 +10640,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
       });
 
     } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 /* 24 */
@@ -12443,14 +12487,27 @@ var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));fu
       console.warn('checkLogin==>currentLoginToken：' + currentLoginToken);
       if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0) {
         // 关闭当前页面，跳转到应用内的某个页面。
-        uni.redirectTo({
-          url: './../login/login' });
+        //debugger
+        try {
+          uni.reLaunch({
+            url: './../login/login',
+            fail: function fail(err) {
+              uni.reLaunch({
+                url: './../../login/login' });
+
+            } });
+
+        } catch (e) {
+          //TODO handle the exception
+
+        }
 
       }
     } },
 
 
   onLoad: function onLoad() {
+    console.warn('====onLoad mixins====');
     this.checkLogin();
   },
   mounted: function mounted() {

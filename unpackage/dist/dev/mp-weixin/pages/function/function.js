@@ -162,6 +162,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
 var _vuex = __webpack_require__(/*! vuex */ 12);
 var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 57));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
 //
@@ -198,8 +201,12 @@ var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 57));fu
 //
 //
 //
+//
+//
+//
 var _default = { name: 'functionMenu', mixins: [_mixins.default], data: function data() {return { allMenuList: [] //功能菜单列表
-    };}, onReady: function onReady() {this.allMenuList = this.menuList;}, methods: { turnToPage: function turnToPage() {uni.navigateTo({ url: '../verify/bargainPrice/bargainPrice' });} } };exports.default = _default;
+    };}, onReady: function onReady() {this.allMenuList = this.menuList;}, methods: { //跳转到指定页面
+    turnToPage: function turnToPage(_url) {uni.navigateTo({ url: _url });} } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ })
