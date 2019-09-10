@@ -1,4 +1,9 @@
 
+.marginTop50{
+	margin-top: 50px;
+	height: 1px;
+	width: 100%;
+}
 .card {
 	width: 90%;
 	margin-left: 5%;
@@ -30,4 +35,6 @@
 	bottom: 0;
 	width: 100%;
 }
+
+
 

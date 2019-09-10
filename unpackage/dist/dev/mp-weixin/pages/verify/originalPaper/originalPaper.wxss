@@ -21,13 +21,4 @@
 	color: #4aecdb;
 	font-size: 50rpx;
 }
-.button-group {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
-	display: flex;
-	position: fixed;
-	bottom: 0;
-	width: 100%;
-}
 

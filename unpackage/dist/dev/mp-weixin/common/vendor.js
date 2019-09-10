@@ -14,7 +14,7 @@ var _store = _interopRequireDefault(__webpack_require__(/*! ./store */ 11));
 var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 _vue.default.prototype.$store = _store.default;
 _vue.default.prototype.$config = _config.default; //自定义配置文件
-var cuCustom = function cuCustom() {return __webpack_require__.e(/*! import() | colorui/components/cu-custom */ "colorui/components/cu-custom").then(__webpack_require__.bind(null, /*! ./colorui/components/cu-custom.vue */ 92));};
+var cuCustom = function cuCustom() {return __webpack_require__.e(/*! import() | colorui/components/cu-custom */ "colorui/components/cu-custom").then(__webpack_require__.bind(null, /*! ./colorui/components/cu-custom.vue */ 103));};
 _vue.default.component('cu-custom', cuCustom);
 _vue.default.config.productionTip = false;
 Date.prototype.format = function (fmt) {
@@ -10424,24 +10424,46 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
 
 {
   state: {
+    //辅料
+    materialList: uni.getStorageSync("materialList") == '' ? '' : JSON.parse(uni.getStorageSync("materialList")),
+    //原纸
+    originalPapersList: uni.getStorageSync("originalPapersList") == '' ? '' : JSON.parse(uni.getStorageSync("originalPapersList")),
+    //特价
     barginPriceList: uni.getStorageSync("barginPriceList") == '' ? '' : JSON.parse(uni.getStorageSync("barginPriceList")) },
 
   getters: {
+    //特价审批
     barginPriceList_getter: function barginPriceList_getter(state) {
       return state.barginPriceList;
+    },
+    //原纸审批
+    originalPapersList_getter: function originalPapersList_getter(state) {
+      return state.originalPapersList;
+    },
+    //辅料审批
+    materialList_getter: function materialList_getter(state) {
+      return state.materialList;
     } },
 
   mutations: {
+    //特价审批-存储
     setBarginPriceList: function setBarginPriceList(state, data) {
       state.barginPriceList = data;
       uni.setStorageSync("barginPriceList", JSON.stringify(data));
+    },
+    //原纸审批-存储
+    setOriginalPapersList: function setOriginalPapersList(state, data) {
+      state.originalPapersList = data;
+      uni.setStorageSync("originalPapersList", JSON.stringify(data));
+    },
+    //辅料审批-存储
+    setMaterialList: function setMaterialList(state, data) {
+      state.materialList = data;
+      uni.setStorageSync("materialList", JSON.stringify(data));
     } },
 
   actions: {
-    /**
-             * @description 獲取通知信息個數
-             * @params {url} 動態地址查詢
-             */
+    //獲取通知信息個數
     getNoticeInfoAction: function getNoticeInfoAction(_ref, params) {var commit = _ref.commit;
       return new Promise(function (resolve, reject) {
         try {
@@ -10464,6 +10486,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
         }
       });
     },
+    // 原纸审批-数据列表查询-OK
     searchPODataAction: function searchPODataAction(_ref2) {var commit = _ref2.commit;
       return new Promise(function (resolve, reject) {
         try {
@@ -10471,6 +10494,7 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
             if (data.success)
             {
+              commit('setOriginalPapersList', data.data);
               resolve(data);
             } else
 
@@ -10485,7 +10509,9 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
           reject(serverBusyTips + error);
         }
       });
-    }, searchPODetailAction: function searchPODetailAction(_ref3, params) {var commit = _ref3.commit;
+    },
+    //查询原纸详细信息
+    searchPODetailAction: function searchPODetailAction(_ref3, params) {var commit = _ref3.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _verify.searchPODetail)(params).then(function (res) {
@@ -10506,7 +10532,8 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
           reject(serverBusyTips + error);
         }
       });
-    }, approvePOAction: function approvePOAction(_ref4, params) {var commit = _ref4.commit;
+    },
+    approvePOAction: function approvePOAction(_ref4, params) {var commit = _ref4.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _verify.approvePO)(params).then(function (res) {
@@ -10528,13 +10555,16 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
         }
       });
 
-    }, searchProdPOAction: function searchProdPOAction(_ref5) {var commit = _ref5.commit;
+    },
+    //查询==辅料审批== 数据列表
+    searchProdPOAction: function searchProdPOAction(_ref5) {var commit = _ref5.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _verify.searchProdPO)().then(function (res) {
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
             if (data.success)
             {
+              commit('setMaterialList', data.data);
               resolve(data);
             } else
 
@@ -10549,7 +10579,9 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
           reject(serverBusyTips + error);
         }
       });
-    }, searchProdPODetailAction: function searchProdPODetailAction(_ref6, params) {var commit = _ref6.commit;
+    },
+    //辅料过滤查询 
+    searchProdPODetailAction: function searchProdPODetailAction(_ref6, params) {var commit = _ref6.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _verify.searchProdPODetail)(params).then(function (res) {
@@ -10570,7 +10602,9 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
           reject(serverBusyTips + error);
         }
       });
-    }, approveProdPoAction: function approveProdPoAction(_ref7, params) {var commit = _ref7.commit;
+    },
+    //辅料--》审批 说明--》提交
+    approveProdPoAction: function approveProdPoAction(_ref7, params) {var commit = _ref7.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _verify.approveProdPo)(params).then(function (res) {
@@ -10617,7 +10651,9 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
         }
       });
 
-    }, approvePaperSpecPriceAction: function approvePaperSpecPriceAction(_ref9, params) {var commit = _ref9.commit;
+    },
+    //特价--》审批说明--提交
+    approvePaperSpecPriceAction: function approvePaperSpecPriceAction(_ref9, params) {var commit = _ref9.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _verify.approvePaperSpecPrice)(params).then(function (res) {
@@ -10678,7 +10714,7 @@ var apiPath = '/clerp-app-api'; //正式环境
 
 
 /**
-    * @description 采购单审批列表
+    * @description 原纸审批列表查询
     * @params {}
     */exports.getNoticeInfo = getNoticeInfo;
 var searchPOData = function searchPOData() {
@@ -10691,9 +10727,9 @@ var searchPOData = function searchPOData() {
     data: data,
     method: 'POST' });
 
-};exports.searchPOData = searchPOData;
-
-var searchPODetail = function searchPODetail(_ref2)
+};
+//查询原纸详细信息
+exports.searchPOData = searchPOData;var searchPODetail = function searchPODetail(_ref2)
 
 {var poId = _ref2.poId;
   //参数
@@ -10707,8 +10743,9 @@ var searchPODetail = function searchPODetail(_ref2)
     data: data,
     method: 'POST' });
 
-};exports.searchPODetail = searchPODetail;
-var approvePO = function approvePO(_ref3)
+};
+//原纸审批说明--》提交
+exports.searchPODetail = searchPODetail;var approvePO = function approvePO(_ref3)
 
 
 
@@ -10727,8 +10764,8 @@ var approvePO = function approvePO(_ref3)
     method: 'POST' });
 
 };
-/*  辅料  */exports.approvePO = approvePO;
-var searchProdPO = function searchProdPO() {
+//查询辅料审批-数据列表
+exports.approvePO = approvePO;var searchProdPO = function searchProdPO() {
   //参数
   var data = {};
 
@@ -10737,9 +10774,10 @@ var searchProdPO = function searchProdPO() {
     data: data,
     method: 'POST' });
 
-};exports.searchProdPO = searchProdPO;
+};
 
-var searchProdPODetail = function searchProdPODetail(_ref4)
+////查询辅料详细信息
+exports.searchProdPO = searchProdPO;var searchProdPODetail = function searchProdPODetail(_ref4)
 
 {var poId = _ref4.poId;
   //参数
@@ -10753,9 +10791,9 @@ var searchProdPODetail = function searchProdPODetail(_ref4)
     data: data,
     method: 'POST' });
 
-};exports.searchProdPODetail = searchProdPODetail;
-
-var approveProdPo = function approveProdPo(_ref5)
+};
+//辅料审批说明--》提交
+exports.searchProdPODetail = searchProdPODetail;var approveProdPo = function approveProdPo(_ref5)
 
 
 
@@ -10776,7 +10814,7 @@ var approveProdPo = function approveProdPo(_ref5)
 };
 
 //POST /confirm/paperspecprice/
-/*特价*/exports.approveProdPo = approveProdPo;
+/*特价列表查询*/exports.approveProdPo = approveProdPo;
 var searchSpecPrice = function searchSpecPrice() {
   //参数
   var data = {};
@@ -10789,6 +10827,7 @@ var searchSpecPrice = function searchSpecPrice() {
 
 };
 //POST /confirm/paperspecprice/
+//审批特价说明-提交
 exports.searchSpecPrice = searchSpecPrice;var approvePaperSpecPrice = function approvePaperSpecPrice(_ref6) {var coId = _ref6.coId,approveState = _ref6.approveState,approvalExplain = _ref6.approvalExplain;
   //参数
   var data = {
@@ -12435,6 +12474,7 @@ createPage(_function.default);
 
 
 
+
 var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 15));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
                                                                                                                                                          * @name mixin
                                                                                                                                                          * @description 所有.vue 公共方法
@@ -12579,9 +12619,21 @@ createPage(_bargainPrice.default);
 /* 73 */,
 /* 74 */,
 /* 75 */,
-/* 76 */,
+/* 76 */
+/*!*********************************************!*\
+  !*** E:/cl_vue/erpApp/libs/eventBusType.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.BackToPage_Refresh = void 0; //页面数据重新加载 刷新
+var BackToPage_Refresh = 'BACKTOPAGE_REFRESH';exports.BackToPage_Refresh = BackToPage_Refresh;
+
+/***/ }),
 /* 77 */,
-/* 78 */
+/* 78 */,
+/* 79 */
 /*!************************************************************************************!*\
   !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Fverify%2FbargainPrice%2FbpDetail"} ***!
   \************************************************************************************/
@@ -12592,19 +12644,19 @@ createPage(_bargainPrice.default);
 /* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
 
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
-var _bpDetail = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/bargainPrice/bpDetail.vue */ 79));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var _bpDetail = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/bargainPrice/bpDetail.vue */ 80));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 createPage(_bpDetail.default);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
 
 /***/ }),
-/* 79 */,
 /* 80 */,
 /* 81 */,
 /* 82 */,
 /* 83 */,
 /* 84 */,
 /* 85 */,
-/* 86 */
+/* 86 */,
+/* 87 */
 /*!******************************************************************************************!*\
   !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Fverify%2ForiginalPaper%2ForiginalPaper"} ***!
   \******************************************************************************************/
@@ -12615,8 +12667,31 @@ createPage(_bpDetail.default);
 /* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
 
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
-var _originalPaper = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/originalPaper/originalPaper.vue */ 87));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var _originalPaper = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/originalPaper/originalPaper.vue */ 88));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 createPage(_originalPaper.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
+
+/***/ }),
+/* 88 */,
+/* 89 */,
+/* 90 */,
+/* 91 */,
+/* 92 */,
+/* 93 */,
+/* 94 */,
+/* 95 */
+/*!*************************************************************************************!*\
+  !*** E:/cl_vue/erpApp/main.js?{"page":"pages%2Fverify%2ForiginalPaper%2FopDetail"} ***!
+  \*************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
+var _opDetail = _interopRequireDefault(__webpack_require__(/*! ./pages/verify/originalPaper/opDetail.vue */ 96));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_opDetail.default);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
 
 /***/ })

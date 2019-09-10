@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-gradual-blue" :isBack="true"><block slot="content">原纸审批</block></cu-custom>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true"><block slot="content">辅料审批</block></cu-custom>
 		<view>
 			<block v-for="(item, index) in dataList" :key="index">
 				<view class="grid-warp" @click="openDeatil(index)">
@@ -11,21 +11,26 @@
 					<view class="grid-body">
 						<view class="grid-flex padding-10">
 							<view>
-								<span>单号:{{ item.sp_No }}</span>
+								<text>单号:{{ item.po_No }}</text>
 							</view>
 							<view>
-								<span>供应商:{{ item.vendName }}</span>
+								<text>供应商:{{ item.vendName }}</text>
 							</view>
 						</view>
 						<view class="grid-flex padding-10">
 							<view>
-								<span>总卷数:{{item.sp_SumCoil}}</span>
+								<text>金额(含税):￥{{ item.po_SumTax }}</text>
 							</view>
 							<view>
-								<span>日期:{{ formatData(item.sp_PODate)}}</span>
+								<text>总数:{{item.po_Qty}}</text>
 							</view>
 						</view>
-						
+						<view class="grid-flex padding-10">
+							<view>
+								<text>日期:{{ formatData(item.po_PODate) }}</text>
+							</view>
+							
+						</view>
 					</view>
 				</view>
 			</block>
@@ -38,7 +43,7 @@ import * as eventType from '@/libs/eventBusType';
 import baseMixin from '@/mixins';
 import { mapActions } from 'vuex';
 export default {
-	name: 'originalPaper', //原纸审批
+	name: 'material', //辅料审批
 	mixins: [baseMixin],
 	data() {
 		return {
@@ -56,7 +61,6 @@ export default {
 		});
 	},
 	destroyed() {
-		//销毁 数据监听
 		uni.$off(eventType.BackToPage_Refresh, function(data) {
 			// console.log('destroyed 移除 eventType.BackToPage_Refresh 自定义事件');
 		});
@@ -75,11 +79,11 @@ export default {
 	},
 	// #endif
 	methods: {
-		...mapActions(['searchPODataAction']),
+		...mapActions(['searchProdPOAction']),
 		//查询原纸审批 数据列表
 		loadData() {
 			let params = {};
-			this.searchPODataAction(params)
+			this.searchProdPOAction(params)
 				.then(res => {
 					//console.log(JSON.stringify(res))
 					this.dataList = res.data;
@@ -95,7 +99,7 @@ export default {
 		//打开详细页面
 		openDeatil(_id) {
 			uni.navigateTo({
-				url: './opDetail?id=' + _id
+				url: './mtDetail?id=' + _id
 			});
 		}
 	}
