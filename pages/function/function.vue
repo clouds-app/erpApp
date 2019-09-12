@@ -30,6 +30,9 @@
 						<view @click="turnToPage('../verify/originalPaper/originalPaper')" class="cu-item">
 							<text class="text">原纸审批</text>
 						</view>
+						<view @click="turnToPage('../verify/material/material')" class="cu-item">
+							<text class="text">辅料审批</text>
+						</view>
 					</view>
 				</view>
 			</view>

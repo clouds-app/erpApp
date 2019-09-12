@@ -6,7 +6,7 @@ Vue.mixin({
 			row,
 			col
 		}) {
-			console.log(row)
+			//console.log(row)
 			return h('view', row.name)
 		}
 	}

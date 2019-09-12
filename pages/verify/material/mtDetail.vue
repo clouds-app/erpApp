@@ -1,82 +1,86 @@
 <template>
 	<view>
-		<cu-custom @BackPageEvent="BackPageEvent" bgColor="bg-gradual-blue" :isBack="true"><block slot="content">采购单详情</block></cu-custom>
+		<cu-custom @BackPageEvent="BackPageEvent" bgColor="bg-gradual-blue" :isBack="true"><block slot="content">采购单详情</block>
+		</cu-custom>
 		<view>
 			<view class="grid-warp">
 				<view class="grid-title">
-						{{detailItems.poerName}}-{{detailItems.vendName}}
+						<text v-text="`${detailItems.poerName}-${detailItems.vendName}`"></text>
+						
 				</view>
 				<view class="grid-body">
 					
 					<view class="grid-flex padding-10">
 						<view>
-							<span>单号:{{ detailItems.po_No }}</span>
+							<text v-text="`单号:${detailItems.po_No}`"></text>
+						
 						</view>
 						<view>
-							<span>供应商:{{ detailItems.vendName }}</span>
-						</view>
-					</view>
-					<view class="grid-flex padding-10">
-						<view>
-							<span>金额(含税):{{detailItems.po_SumTax}}</span>
-						</view>
-						<view>
-							<span>总数:{{detailItems.po_Qty}}</span>
+							<text v-text="`供应商:${detailItems.vendName}`"></text>
+							
 						</view>
 					</view>
 					<view class="grid-flex padding-10">
 						<view>
-							<span>日期:{{ formatData(detailItems.po_PODate) }}</span>
+							<text v-text="`金额(含税):${detailItems.po_SumTax}`"></text>
+							
+						</view>
+						<view>
+							<text v-text="`总数:${detailItems.po_Qty}`"></text>
+							
+						</view>
+					</view>
+					<view class="grid-flex padding-10">
+						<view>
+							<text v-text="`日期:${formatData(detailItems.po_PODate) }`"></text>
 						</view>
 					</view>
 					
 				</view>
-				<!-- <view class="grid-body">
-				<z-table :columns="columns" :tableData="dataTableList"></z-table>
-				</view> -->
-				<block v-for="(item,index) in currentItemDetailList" :key="index">
-					<view class="cu-list menu sm-border">
-						<view class="grid-title">
-							
-						</view>
-						<view class="cu-item">
-							<view class="content">
-								<text class="text-grey">名　　称:　　{{item.ProdName}}</text>
-							</view>
-						</view>
-						<view class="cu-item">
-							<view class="content">
-							<!-- 	<text class="cuIcon-circlefill text-grey"></text> -->
-								<text class="text-grey">规　　格:　　{{item.model}}</text>
-							</view>
-						</view>
-						<view class="cu-item">
-							<view class="content">
-								<text class="text-grey">单　　位:　　{{item.unitName}}</text>
-							</view>
-						</view>
-						<view class="cu-item">
-							<view class="content">
-								<text class="text-grey">数　　量:　　{{item.poi_PoQty}}</text>
-							</view>
-						</view>
-						<view class="cu-item">
-							<view class="content">
-								<text class="text-grey">单　　价:　　{{item.poi_TaxPrice}}</text>
-							</view>
-						</view>
-						<view class="cu-item">
-							<view class="content">
-								<text class="text-grey">价格(含税):　	￥{{item.TaxAmt}}</text>
-							</view>
-						</view>
-					</view>
-				</block>
-			
 			</view>
+			
+			<view class="grid-warp">
+					<view class="grid-title">
+						采购单详情
+					</view>
+					   <block v-for="(item,index) in currentItemDetailList" :key="index">
+							<view class="grid-body">
+								<view class="grid-flex padding-10">
+									<view>
+										<text v-text="`名称:${item.ProdName}`"></text>
+									</view>
+									<view>
+										<text v-text="`规格:${item.model}`"></text>
+										
+									</view>
+								</view>
+								<view class="grid-flex padding-10">
+									<view>
+										<text v-text="`单位:${item.unitName}`"></text>
+										
+									</view>
+									<view>
+										<text v-text="`数量:${item.poi_PoQty}`"></text>
+										
+									</view>
+								</view>
+								<view class="grid-flex padding-10">
+									<view>
+										<text v-text="`单价:￥${item.poi_TaxPrice}`"></text>
+										
+									</view>
+									<view>
+										<text v-text="`价格(含税):￥${item.TaxAmt}`"></text>
+										
+									</view>
+								</view>
+							</view>
+							<!-- <view class="marginBottom10"></view> -->
+						</block>
+				</view>
+			
 		</view>
 
-		
 <!-- =====对话框-弹出=====  -->	
 		<view class="cu-modal" :class="idShowModal ? 'show' : ''">
 			<view class="cu-dialog">
@@ -94,6 +98,7 @@
 			</view>
 		</view>
 <!-- =====对话框-弹出===== end -->
+		<view class="marginTop50"></view>
 		<view class="button-group cu-bar bg-white tabbar border shop">
 			<view class="btn-group">
 				<button :disabled="btn_disabled" @click="openDialog('resolve')" class="cu-btn bg-blue round shadow-blur lg">同意</button>
@@ -107,7 +112,7 @@
 import * as eventType from '@/libs/eventBusType'
 import baseMixin from '@/mixins';
 import { mapActions } from 'vuex';
-//import zTable from "@/components/z-table/z-table.vue"
+
 export default {
 	name: 'originalPaperDetail', //原纸采购详情
 	mixins: [baseMixin],
@@ -127,81 +132,7 @@ export default {
 				approvalExplain: '',
 				approveState: 0
 			},
-			dataTableList: [{
-					name: 'John Brown',
-					age: 18,
-					address: 'New York No. 1 Lake Park',
-					id: "1",
-					
-				},
-				{
-					name: 'Jim Green',
-					age: 25,
-					address: 'London No. 1 Lake Park',
-					id: "2"
-				},
-				{
-					name: 'Joe Black',
-					age: 30,
-					address: 'Sydney No. 1 Lake Park',
-					id: "3"
-				},
-				{
-					name: 'Jon Snow',
-					age: 26,
-					address: 'Ottawa No. 2 Lake Park',
-					id: "4"
-				},
-				{
-					name: 'Jon Snow',
-					age: 26,
-					address: 'Ottawa No. 2 Lake Park',
-					id: "5"
-				},
-			
-				{
-					name: 'Jon Snow',
-					age: 26,
-					address: 'Ottawa No. 2 Lake Park',
-					id: "6"
-				},
-				{
-					name: 'Jon Snow',
-					age: 26,
-					address: 'Ottawa No. 2 Lake Park',
-					id: "7"
-				},
-				{
-					name: 'Jon Snow',
-					age: 26,
-					address: 'Ottawa No. 2 Lake Park',
-					id: "8"
-				},
-				{
-					name: 'Jon Snow',
-					age: 26,
-					address: 'Ottawa No. 2 Lake Park',
-					id: "9"
-				}
-			],
-			columns: [{
-					title: "ID",
-					key: "id"
-				},
-				{
-					title: 'Name',
-					key: 'name'
-				},
-				{
-					title: 'Age',
-					key: 'age'
-				},
-				{
-					title: 'Address',
-					key: 'address'
-				}
-			],
-		};
+			};
 	},
 	// #ifdef H5
 	mounted() {
@@ -320,8 +251,15 @@ export default {
 </script>
 
 <style>
-	t-th{
-		width: 200rpx;
+.marginBottom10{
+		margin-bottom: 10px;
+		height: 1px;
+		width: 100%;
+	}
+.marginTop50{
+		margin-top: 50px;
+		height: 1px;
+		width: 100%;
 	}
 .card {
 	width: 90%;

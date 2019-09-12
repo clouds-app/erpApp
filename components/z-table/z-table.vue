@@ -12,7 +12,7 @@
 							<view v-if="showSelect && !singleSelect && index === 0" class="select-box" @click="doSelect(true)">
 								<view :class="['select-tip', {'selected': selectAll}]"></view>
 							</view>
-							<view :class="['z-table-col-text', {'text-left': titleTextAlign === 'left', 'text-center': titleTextAlign === 'center', 'text-right': titleTextAlign === 'right'}]">
+							<view :class="['z-table-col-text', {'text-left': item.titleAlign === 'left', 'text-center': item.titleAlign === 'center', 'text-right': item.titleAlign === 'right'}]">
 								<view v-html="getTitleText(item.title)"></view>
 								<view v-if="item.hasOwnProperty('key') && item.hasOwnProperty('sort') && tableData.length" class="sort">
 									<view class="up-arrow" :class="{ action: nowSortKey == item.key && sortType == 'asc' }"></view>
@@ -29,7 +29,7 @@
 								<view v-if="showSelect && jIndex === 0" class="select-box" @click="doSelect(false, iIndex)">
 									<view :class="['select-tip', {'selected': selectArr.includes(iIndex)}]"></view>
 								</view>
-								<view :class="['z-table-col-text', {'text-left': textAlign === 'left', 'text-center': textAlign === 'center', 'text-right': textAlign === 'right'}]">
+								<view :class="['z-table-col-text', {'text-left': col.columnAlign === 'left', 'text-center': col.columnAlign === 'center', 'text-right': col.columnAlign === 'right'}]">
 									<view v-if="!col.isLink">
 										<view v-if="!col.render" v-html="getRowContent(row, col)"></view>
 										<!-- <renderComponents v-else :row="row" :col="col" /> -->

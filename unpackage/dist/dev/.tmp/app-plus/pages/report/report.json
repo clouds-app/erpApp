@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "报表",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
+  }
+}

@@ -5,29 +5,31 @@
 			<block v-for="(item, index) in dataList" :key="index">
 				<view class="grid-warp" @click="openDeatil(index)">
 					<view class="grid-title">
-						{{item.poerName}}-{{item.vendName}}
+						<text v-text="`${item.poerName}-${item.vendName}`"></text>
+						
 						<view class="cu-tag bg-red radius">未审核</view>
 					</view>
 					<view class="grid-body">
 						<view class="grid-flex padding-10">
 							<view>
-								<text>单号:{{ item.po_No }}</text>
+								<text v-text="`单号:${item.po_No}`"></text>
 							</view>
 							<view>
-								<text>供应商:{{ item.vendName }}</text>
-							</view>
-						</view>
-						<view class="grid-flex padding-10">
-							<view>
-								<text>金额(含税):￥{{ item.po_SumTax }}</text>
-							</view>
-							<view>
-								<text>总数:{{item.po_Qty}}</text>
+								<text v-text="`供应商:${item.vendName}`"></text>
 							</view>
 						</view>
 						<view class="grid-flex padding-10">
 							<view>
-								<text>日期:{{ formatData(item.po_PODate) }}</text>
+								<text v-text="`金额(含税):${item.po_SumTax}`"></text>	
+							</view>
+							<view>
+								<text v-text="`总数:${item.po_Qty}`"></text>
+								
+							</view>
+						</view>
+						<view class="grid-flex padding-10">
+							<view>
+								<text v-text="`日期:${formatData(item.po_PODate)}`"></text>
 							</view>
 							
 						</view>

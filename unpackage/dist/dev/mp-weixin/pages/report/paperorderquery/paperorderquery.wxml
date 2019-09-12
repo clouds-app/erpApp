@@ -1,0 +1,1 @@
+<view><cu-custom vue-id="1" bgColor="bg-gradual-blue" isBack="{{true}}" bind:__l="__l" vue-slots="{{['content']}}"><view slot="content">订单查询</view></cu-custom>paperorderquery</view>

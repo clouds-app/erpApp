@@ -72,7 +72,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   var l1 = _vm.__map(_vm.allMenuList.report, function(item, index) {
-    var l0 = _vm.__map(item.children, function(subItem, index) {
+    var l0 = _vm.__map(item.children, function(subItem, __i0__) {
       var m0 = _vm.getImgUrl(subItem.data.resIcon)
       return {
         $orig: _vm.__get_orig(subItem),
@@ -126,7 +126,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 
 
 
@@ -153,7 +153,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
 var _vuex = __webpack_require__(/*! vuex */ 12);
-var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 57));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
+var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 37));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
 //
 //
 //
@@ -179,7 +179,35 @@ var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 57));fu
 //
 //
 var _default = { name: 'reportMenu', mixins: [_mixins.default], data: function data() {return { allMenuList: [] //功能菜单列表
-    };}, onReady: function onReady() {this.allMenuList = this.menuList;}, methods: {} };exports.default = _default;
+    };}, onReady: function onReady() {this.allMenuList = this.menuList;}, methods: { //跳转到指定页面
+    turnToPage: function turnToPage(_url) {//debugger
+      switch (_url) {case 'compfactorykanban':uni.navigateTo({ url: './compfactorykanban/compfactorykanban' });
+          break;
+        case 'deliveryQuery':
+          uni.navigateTo({
+            url: './deliveryquery/deliveryquery' });
+
+          break;
+        case 'PaperOrderQuery':
+          uni.navigateTo({
+            url: './paperorderquery/paperorderquery' });
+
+          break;
+        case 'SumOfCustArrears':
+          uni.navigateTo({
+            url: './sumofcustarrears/sumofcustarrears' });
+
+          break;
+        default:
+          uni.showToast({
+            title: '找不到指定路径，请确认！',
+            icon: 'none',
+            duration: 2000 });
+
+          break;}
+
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ })
 

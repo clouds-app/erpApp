@@ -1,0 +1,26 @@
+<template>
+	<view>
+		sumofcustarrears
+	</view>
+</template>
+
+<script>
+	/**
+	 * @description  //客户欠款汇总表 SumOfCustArrears
+	 */
+	export default {
+		name:'SumOfCustArrears',
+		data() {
+			return {
+				
+			}
+		},
+		methods: {
+			
+		}
+	}
+</script>
+
+<style>
+
+</style>

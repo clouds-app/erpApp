@@ -9,7 +9,9 @@
 				<view class="content" :style="[{top:StatusBar + 'px'}]">
 					<slot name="content"></slot>
 				</view>
-				<slot name="right"></slot>
+				<view @tap="searchEvent" class="rightSlot">
+					<slot name="right"></slot>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -56,11 +58,18 @@
 					delta: 1
 				});
 			  this.$emit('BackPageEvent','')
+			},
+			//点击查询-回调事件
+			searchEvent(){
+				 this.$emit('searchEvent','')
 			}
 		}
 	}
 </script>
 
 <style>
-
+.rightSlot{
+	margin-right: 30rpx;
+	cursor: hand;
+}
 </style>

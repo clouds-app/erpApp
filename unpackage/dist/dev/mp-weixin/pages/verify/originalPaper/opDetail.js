@@ -102,13 +102,8 @@
 
 
 
-
-
-
-
-
 var eventType = _interopRequireWildcard(__webpack_require__(/*! @/libs/eventBusType */ 76));
-var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 57));
+var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 37));
 var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 //import zTable from "@/components/z-table/z-table.vue"
 var _default = {
@@ -160,7 +155,7 @@ var _default = {
 
     },
     //查询当前原纸详细列表
-    searchOriginalPaperDetailList: function searchOriginalPaperDetailList() {var _this = this;
+    searchCurrentItemDetailList: function searchCurrentItemDetailList() {var _this = this;
       var params = {
         poId: this.formItems.poId };
 
@@ -243,7 +238,7 @@ var _default = {
         this.formItems.poId = this.detailItems.ID1;
         this.formItems.approvalExplain = '';
 
-        this.searchOriginalPaperDetailList();
+        this.searchCurrentItemDetailList();
       }
     } }) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
