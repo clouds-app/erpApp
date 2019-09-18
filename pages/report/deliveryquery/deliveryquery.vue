@@ -1,32 +1,301 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
-				<block slot="content">送货查询</block>
+		<cu-custom @searchEvent="openSearchEventForm" bgColor="bg-gradual-blue" :isBack="true"><block slot="content">送货查询</block>
+		<block slot="right">查询</block>
 		</cu-custom>
-		deliveryquery
+		<!-- 数据图表 -->
+		<view class="qiun-columns">
+			<view class="qiun-charts">
+				<!--#ifdef MP-ALIPAY -->
+				<canvas
+					canvas-id="canvasColumn"
+					id="canvasColumn"
+					class="charts"
+					:width="cWidth * pixelRatio"
+					:height="cHeight * pixelRatio"
+					:style="{ width: cWidth + 'px', height: cHeight + 'px' }"
+					disable-scroll="true"
+					@touchstart="touchColumn"
+					@touchmove="moveColumn"
+					@touchend="touchEndColumn"
+				></canvas>
+				<!--#endif-->
+				<!--#ifndef MP-ALIPAY -->
+				<canvas
+					canvas-id="canvasColumn"
+					id="canvasColumn"
+					class="charts"
+					disable-scroll="true"
+					@touchstart="touchColumn"
+					@touchmove="moveColumn"
+					@touchend="touchEndColumn"
+				></canvas>
+				<!--#endif-->
+			</view>
+		</view>
+		<!-- 表格数据 -->
+		<zTable :tableHeight="tableHeight" :showLoading="false" :emptyText="errorContent" :tableData="dataTableList" :columns="dataColumns"></zTable>
+		<searchForm @comfirmEvent="searchComfirmEvent" ref='searchForm'></searchForm>
 	</view>
 </template>
 
 <script>
-	// /**
-	//  * @description  //送货查询 deliveryquery
-	//  */
-	import { mapActions } from 'vuex';
-	import baseMixin from '@/mixins'
-	export default {
-		name:'deliveryquery',
-		mixins:[baseMixin],
-		data() {
-			return {
-				
+// /**
+//  * @description  //送货查询 deliveryquery
+//  */
+import searchForm from '@/components/searchForm/searchForm.vue'
+import dayjs from 'dayjs'
+import uCharts from '@/components/u-charts/u-charts.js';
+import { isJSON } from '@/common/checker.js';
+import zTable from '@/components/z-table/z-table.vue';
+import mockData from '@/mock';
+import { mapActions } from 'vuex';
+import baseMixin from '@/mixins';
+var _self;
+var canvaColumn = null;
+export default {
+	name: 'deliveryquery',
+	mixins: [baseMixin],
+	components:{searchForm,zTable},
+	data() {
+		return {
+			errorContent: '数据加载中...',
+			tableHeight: 0, //表格高度
+			cWidth: '',
+			cHeight: '',
+			pixelRatio: 1,
+			categories: [], //类别 X 轴 下标数据
+			series: [], //实体数据，series:[{data:{客户名称}}，{data:{数量}}]
+			searchParams:{  //初始化查询参数
+			     startDate:dayjs(Date.now()).subtract(1, 'month').format('YYYY-MM-DD'),//开始时间,
+			     endDate:dayjs(Date.now()).format('YYYY-MM-DD'),//结束时间
+			     ctCode:'',
+			},
+			dataTableList: [],
+			//数据列描述，格式化
+			dataColumns: [
+				{ key: 'ct_ID', title: '客户编号', width: 186, titleAlign: 'center', columnAlign: 'left' },
+				{ key: 'ct_Name', title: '客户名称', width: 186, titleAlign: 'center', columnAlign: 'left' },
+				{ key: 'ai_Name', title: '地区', width: 186, titleAlign: 'center', columnAlign: 'left' },
+				{ key: 'w_Name', title: '业务员', width: 186, titleAlign: 'center', columnAlign: 'left' },
+				{ key: 'Cube', title: '面积', width: 186, titleAlign: 'center', columnAlign: 'right' },
+				{ key: 'Area', title: '体积', width: 186, titleAlign: 'center', columnAlign: 'right' },
+				{ key: 'Weight', title: '重量', width: 186, titleAlign: 'center', columnAlign: 'right' },
+				{ key: 'pdi_Qty', title: '送货数量', width: 186, titleAlign: 'center', columnAlign: 'right' },
+				{ key: 'pdi_Money', title: '送货金额', width: 186, titleAlign: 'center', columnAlign: 'right' },
+				{ key: 'OwnerMoney', title: '本币金额', width: 186, titleAlign: 'center', columnAlign: 'right' },
+				{ key: 'MoneyRate', title: '金额%', width: 186, titleAlign: 'center', columnAlign: 'right' },
+				{ key: 'recordMoney', title: '元/款', width: 186, titleAlign: 'center', columnAlign: 'right' }
+			]
+		};
+	},
+	// #ifdef H5
+	mounted() {
+		this.getDataSource();
+	},
+	// #endif
+	// #ifndef H5
+	onReady() {
+		this.getDataSource();
+	},
+	// #endif
+	onLoad: function(option) {
+		//图表配置
+		_self = this;
+		//#ifdef MP-ALIPAY
+			uni.getSystemInfo({
+				success: function(res) {
+					if (res.pixelRatio > 1) {
+						//正常这里给2就行，如果pixelRatio=3性能会降低一点
+						//_self.pixelRatio =res.pixelRatio;
+						_self.pixelRatio = 2;
+					}
+				}
+			})
+		//#endif
+		//需要和样式的设置保存一致，不然就会变形了
+		this.cWidth = uni.upx2px(750); 
+		this.cHeight = uni.upx2px(500);
+		
+	},
+	methods: {
+		searchComfirmEvent(params){
+			//debugger
+			this.searchParams = params
+			if(this.searchParams.ctCode==null){
+				this.searchParams.ctCode=''
 			}
+			this.getDataSource()
 		},
-		methods: {
+		//打开客户信息搜索框
+		openSearchEventForm(){
+			this.$refs.searchForm.isShowSearchForm =true
+		},
+		//获取图表所需数据
+		getEchartData(itemList){
+			this.series = [{ name: '送货数量', type: 'column', data: [] }];
+			let  deliveryQty = this.formatDataIntoEchart(this.itemList);
+			this.series[0].data = deliveryQty;
+		},
+		//格式化数据成功图表所需数据
+		formatDataIntoEchart(itemList){
+			let tempList = []
+			for(let item in itemList){
+			  let params = {
+			            ct_Name:itemList[item].ct_Name,
+			            pdi_Qty:Number.parseFloat(itemList[item].pdi_Qty),
+			            } 
+			        
+			   let seriesData = Object.values(params)
+			   //debugger
+			   tempList.push(...seriesData)
+			 }
+			 return tempList
+		},
+		 ...mapActions(['getPaperDeliTotal_action']),
+		 //获取送货数据
+		 getDataSource(){
+		   //根据开始日期(startDate)， 结束日期(endDate) ，客户编号(ctCode)查询送货信息。
+		   //入参：startDate,endDate,ctCode,token;
+		     let params= this.searchParams
+		     let _self =this
+		     this.getPaperDeliTotal_action(params).then(res=>{
+		        //console.log('getPaperDeliTotal_action:'+JSON.stringify(res))
+		         _self.dataTableList =res
+				 _self.getEchartData(res)
+		           if(_self.dataTableList.length==0){
+		            _self.errorContent='暂无数据'
+		         }
+				 
+		     }).catch(err=>{
+		        _self.errorContent='暂无数据'
+				uni.showToast({
+					title:'获取数据失败:'+err,
+					icon:'none',
+					duration:2000
+				})
+		       
+		     })
+			 this.setChartDataConfig();
+		 },
+		//设置图表配置
+		setChartDataConfig() {
+			let Column = { categories: [], series: [] }
+			//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
+			Column.categories = mockData.LineA.categories;//_self.categories; //
+			Column.series = mockData.LineA.series;//_self.series; //
 			
-		}
+			_self.showColumn('canvasColumn', Column);
+		},
+		showColumn(canvasId, chartData) {
+			canvaColumn = new uCharts({
+				$this: _self,
+				canvasId: canvasId,
+				type: 'mix',
+				fontSize: 11,
+				padding: [5, 15, 15, 15],
+				legend: {
+					show: true,
+					position: 'top',
+					float: 'center',
+					lineHeight: 11,
+					itemGap: 30,
+					padding: 10,
+					margin: 5,
+					//backgroundColor:'rgba(41,198,90,0.2)',
+					//borderColor :'rgba(41,198,90,0.5)',
+					borderWidth: 1
+				},
+
+				dataLabel: true,
+				dataPointShape: true,
+				background: '#FFFFFF',
+				pixelRatio: _self.pixelRatio,
+				categories: chartData.categories,
+				series: chartData.series,
+				animation: true,
+				enableScroll: true,
+				xAxis: {
+					disableGrid: false,
+					type: 'grid',
+					gridType: 'dash',
+					itemCount: 4,
+					scrollShow: true,
+					scrollAlign: 'left'
+				},
+				// yAxis: {
+				// 	disabled:true,
+				// 	gridType:'dash',
+				// 	splitNumber:4,
+				// 	 min:10,
+				// 	 max:180,
+				// },
+				yAxis: {
+					data: [
+						{
+							calibration: true,
+							position: 'left',
+							//   title:'面积',//柱状图
+							titleFontSize: 12
+						}
+						// {
+						//   calibration:true,
+						//   position:'right',
+						//   min:0,
+						//   max:200,
+						//   title:'金额',//折线
+						//   titleFontSize:12,
+						//
+						// }
+					],
+					//showTitle:true,
+					gridType: 'dash',
+					dashLength: 4,
+					splitNumber: 5
+				},
+				width: _self.cWidth * _self.pixelRatio,
+				height: _self.cHeight * _self.pixelRatio,
+				extra: {
+					column: {
+						type: 'group',
+						width: (_self.cWidth * _self.pixelRatio * 0.45) / chartData.categories.length
+					}
+				}
+			});
+		},
+		touchColumn(e) {
+			canvaColumn.scrollStart(e);
+		},
+		moveColumn(e) {
+			canvaColumn.scroll(e);
+		},
+		touchEndColumn(e) {
+			canvaColumn.scrollEnd(e);
+			canvaColumn.touchLegend(e, {
+				animation: true
+			});
+			canvaColumn.showToolTip(e, {
+				format: function(item, category) {
+					return category + ' ' + item.name + ':' + item.data;
+				}
+			});
+		},
+		
 	}
+};
 </script>
 
 <style>
-
+	/*样式的width和height一定要与定义的cWidth和cHeight相对应*/
+	.qiun-charts {
+		width: 750upx;
+		height: 500upx;
+		background-color: #ffffff;
+	}
+	
+	.charts {
+		width: 750upx;
+		height: 500upx;
+		background-color: #ffffff;
+	}
 </style>

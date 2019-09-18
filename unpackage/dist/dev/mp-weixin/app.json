@@ -13,6 +13,7 @@
     "pages/verify/material/mtDetail",
     "pages/report/deliveryquery/deliveryquery",
     "pages/report/compfactorykanban/compfactorykanban",
+    "pages/report/compfactorykanban/comFactoryCharts",
     "pages/report/paperorderquery/paperorderquery",
     "pages/report/sumofcustarrears/sumofcustarrears"
   ],
@@ -57,6 +58,5 @@
   },
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"
-  },
-  "sitemapLocation": "sitemap70.json"
+  }
 }

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "全厂综合-图表展示",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "z-table": "/components/z-table/z-table"
+  }
+}
