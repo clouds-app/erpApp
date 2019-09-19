@@ -72,7 +72,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   var l1 = _vm.__map(_vm.allMenuList.function, function(item, index) {
-    var l0 = _vm.__map(item.children, function(subItem, index) {
+    var l0 = _vm.__map(item.children, function(subItem, __i0__) {
       var m0 = _vm.getImgUrl(subItem.data.resIcon)
       return {
         $orig: _vm.__get_orig(subItem),
@@ -168,6 +168,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var _vuex = __webpack_require__(/*! vuex */ 12);
 var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 37));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
 //
@@ -210,9 +211,28 @@ var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 37));fu
 //
 //
 //
+//
 var _default = { name: 'functionMenu', mixins: [_mixins.default], data: function data() {return { allMenuList: [] //功能菜单列表
     };}, onReady: function onReady() {this.allMenuList = this.menuList;}, methods: { //跳转到指定页面
-    turnToPage: function turnToPage(_url) {uni.navigateTo({ url: _url });} } };exports.default = _default;
+    turnToPage: function turnToPage(_url) {console.log('currentUrl:' + _url);switch (_url) {case 'tax':uni.navigateTo({ url: '/pages/verify/bargainPrice/bargainPrice' });break;case 'material':uni.navigateTo({ url: '../verify/material/material' });break;case 'purchases':uni.navigateTo({ url: '../verify/originalPaper/originalPaper' });break;case 'paperIn':uni.navigateTo({ url: '../warehouse/paperIn/paperIn' });break;case 'boxIn':
+          uni.navigateTo({
+            url: '../warehouse/boxIn/boxIn' });
+
+          break;
+        case 'paperOB':
+          uni.navigateTo({
+            url: '../warehouse/paperOB/paperOB' });
+
+          break;
+        default:
+          uni.showToast({
+            title: '找不到指定路径，请确认！' + _url,
+            icon: 'none',
+            duration: 2000 });
+
+          break;}
+
+    } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ })

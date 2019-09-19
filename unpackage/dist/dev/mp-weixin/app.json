@@ -15,7 +15,10 @@
     "pages/report/compfactorykanban/compfactorykanban",
     "pages/report/compfactorykanban/comFactoryCharts",
     "pages/report/paperorderquery/paperorderquery",
-    "pages/report/sumofcustarrears/sumofcustarrears"
+    "pages/report/sumofcustarrears/sumofcustarrears",
+    "pages/warehouse/boxIn/boxIn",
+    "pages/warehouse/paperIn/paperIn",
+    "pages/warehouse/paperOB/paperOB"
   ],
   "subPackages": [],
   "window": {

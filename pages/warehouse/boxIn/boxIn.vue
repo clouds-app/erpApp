@@ -1,0 +1,259 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">纸箱出入库</block>
+		</cu-custom>
+		<scroll-view scroll-x class="bg-white nav">
+			<view class="flex text-center">
+				<view class="cu-item flex-sub" :class="0==TabCur?'text-orange cur':''"  @tap="tabSelect" data-id="0">
+					成品入库
+				</view>
+				<view class="cu-item flex-sub" :class="1==TabCur?'text-orange cur':''"  @tap="tabSelect" data-id="1">
+					成品出库
+				</view>
+				<view class="cu-item flex-sub" :class="2==TabCur?'text-orange cur':''"  @tap="tabSelect" data-id="2">
+					半成品入库
+				</view>
+			</view>
+		</scroll-view>
+		<!-- ===成品入库=== -->
+		<form v-show="0==TabCur">
+			<view class="cu-form-group">
+				<view class="title">工单号:</view>
+				<input placeholder="请输入工单号" name="input"></input>
+				<button class='cu-btn bg-green shadow'>扫描</button>
+			</view>
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">班ㅤ别:</view>
+						<input placeholder="请输入班别" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">数ㅤ量:</view>
+						<input placeholder="请输入数量" name="input"></input>
+					</view>
+				</view>
+			</view>
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">客户名:</view>
+						<input placeholder="请输客户名" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">产品名:</view>
+						<input placeholder="请输产品名" name="input"></input>
+					</view>
+				</view>
+			</view>
+			<view class="cu-form-group border-top">
+				<view class="title">规ㅤ格:</view>
+				<input placeholder="请输入规格" name="input"></input>
+			</view>
+			
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">箱ㅤ型:</view>
+						<input placeholder="请输入箱型" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">纸ㅤ质:</view>
+						<input placeholder="请输入纸质" name="input"></input>
+					</view>
+				</view>
+			</view>
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">楞ㅤ别:</view>
+						<input placeholder="请输入楞别" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">工单数:</view>
+						<input placeholder="请输工单数" name="input"></input>
+					</view>
+				</view>
+			</view>
+			
+		</form>
+		<!-- ===成品出库=== -->
+		<form v-show="1==TabCur">
+			
+			<view class="cu-form-group border-top">
+				<view class="title">车ㅤ牌:</view>
+				<input placeholder="请输入车牌" name="input"></input>
+				<button class='cu-btn bg-green shadow'>选择</button>
+			</view>
+			<view class="cu-form-group">
+				<view class="title">跟车员:</view>
+				<input placeholder="请输入跟车员" name="input"></input>
+				<button class='cu-btn bg-green shadow'>选择</button>
+			</view>
+			<view class="cu-form-group">
+				<view class="title">装车员:</view>
+				<input placeholder="请输入装车员" name="input"></input>
+				<button class='cu-btn bg-green shadow'>选择</button>
+			</view>
+			<view class="cu-form-group">
+				<view class="title">发货员:</view>
+				<input placeholder="请输入发货员" name="input"></input>
+				<button class='cu-btn bg-green shadow'>选择</button>
+			</view>
+			<view class="cu-form-group">
+				<view class="title">订单号:</view>
+				<input placeholder="请输入订单号" name="input"></input>
+				<button class='cu-btn bg-green shadow'>扫描</button>
+			</view>
+			<view class="cu-form-group">
+				<view class="title">数量:</view>
+				<input placeholder="请输入数量" name="input"></input>
+				<!-- <button class='cu-btn bg-green shadow'>选择</button> -->
+			</view>
+			
+			<zTable :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="dataTableList" :columns="tableColumns"></zTable>
+		</form>
+		<!--=== 半成品入库 ===-->
+		<form v-show="2==TabCur">
+			<view class="cu-form-group border-top">
+				<view class="title">工单号:</view>
+				<input placeholder="请输入工单号" name="input"></input>
+				<button class='cu-btn bg-green shadow'>扫描</button>
+			</view>
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">工ㅤ序:</view>
+						<input placeholder="请输入工序" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">机ㅤ台:</view>
+						<input placeholder="请输入机台" name="input"></input>
+					</view>
+				</view>
+			</view>
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">班ㅤ别:</view>
+						<input placeholder="请输入班别" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">数ㅤ量:</view>
+						<input placeholder="请输入数量" name="input"></input>
+					</view>
+				</view>
+			</view>
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">客户名:</view>
+						<input placeholder="请输客户名" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">产品名:</view>
+						<input placeholder="请输产品名" name="input"></input>
+					</view>
+				</view>
+			</view>
+			<view class="flex border-top">
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">规ㅤ格:</view>
+						<input placeholder="请输入规格" name="input"></input>
+					</view>
+				</view>
+				<view class="flex-sub">
+					<view class="cu-form-group">
+						<view class="title">工单数:</view>
+						<input placeholder="请输工单数" name="input"></input>
+					</view>
+				</view>
+			</view>
+			<view class="cu-form-group border-top">
+				<textarea maxlength="-1" @input="textareaAInput" placeholder="请输入备注"></textarea>
+			</view>
+		</form>
+
+	</view>
+</template>
+
+<script>
+	//纸箱出入库
+	import zTable from "@/components/z-table/z-table.vue"
+	export default {
+		name:'boxIn',//纸箱出入库
+		components:{zTable},
+		data() {
+			return {
+				TabCur: 0,
+				scrollLeft: 0,
+				dataTableList:[],
+				errorContent:'数据加载中...',
+				tableHeight:0,//表格高度
+				tableColumns:[
+					{
+						key: 'bc_No',
+						title: '订单号',
+						width: 180,
+						isResize:true
+					},{
+						key: 'ct_Desc',
+						title: '客户名称',
+						width: 200,
+						isResize:true
+					},{
+						key: 'bi_ProdName',
+						title: '产品名称',
+						width: 200,
+						isResize:true
+					},{
+						key: 'bi_OrderQty',
+						title: '数量',
+						width: 180,
+						isResize:true
+					},{
+						key: 'Specs',
+						title: '规格',
+						width: 180,
+						isResize:true
+					}
+				]
+			}
+		},
+		methods: {
+			tabSelect(e) {
+				this.TabCur = e.currentTarget.dataset.id;
+				this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+			}
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

@@ -1,5 +1,8 @@
 {
   "navigationBarTitleText": "订单查询",
   "navigationStyle": "custom",
-  "usingComponents": {}
+  "usingComponents": {
+    "search-form": "/components/searchForm/searchForm",
+    "z-table": "/components/z-table/z-table"
+  }
 }
