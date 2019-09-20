@@ -8938,6 +8938,7 @@ axios.setConfig(function (config) {/* 设置全局配置 */
   config.baseUrl = baseUrl; /* 根域名不同 */
   config.header = {
     'Content-Type': 'application/x-www-form-urlencoded',
+    //'Content-Type': 'application/json;charset=UTF-8',
     token: '', //uni.getStorageSync("TOKEN") 这里获取无效
     time: Date.now().toString() };
 
@@ -9044,7 +9045,7 @@ var _default = {
    */
   cookieExpires: 1,
   /**
-                     * @description api请求基础路径 
+                     * @description api请求基础路径 http://120.78.91.203:8082/clerp-app-api/swagger-ui.html
                      */
   baseUrl: {
     dev: 'http://120.78.91.203:8082',
@@ -9089,7 +9090,8 @@ Request = /*#__PURE__*/function () {function Request() {var _this = this;_classC
     {
       baseUrl: '',
       header: {
-        'Content-Type': 'application/json;charset=UTF-8' },
+        // 'Content-Type': 'application/json;charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded' },
 
       method: 'GET',
       dataType: 'json',
@@ -11410,7 +11412,6 @@ var findUser = function findUser(_ref5)
 var findCar = function findCar() {
   //参数
   var data = {};
-
 
   return _api.default.request({
     url: "".concat(apiPath, "/warehouse/warehouse/execute/findCar"),

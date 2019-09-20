@@ -6510,5 +6510,22 @@ radio-group label, checkbox-group label{
 .padding-10{
 	padding: 10rpx 20rpx;
 }
-
+/* //重置样式 */
+.cu-form-group {
+	min-height: 39px;
+}
+.cu-form-group uni-input {
+	    font-size: 12px;
+}
+.cu-form-group .title{
+	font-size: 12px;
+	height: 24px;
+    line-height: 24px; 
+	    /* text-align: justify;
+	    padding-right: 12px;
+	    font-size: 12px;
+	    position: relative;
+	    height: 24px;
+	    line-height: 24px; */
+}
 

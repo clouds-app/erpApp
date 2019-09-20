@@ -105,7 +105,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var zTable = function zTable() {return Promise.all(/*! import() | components/z-table/z-table */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/z-table/z-table")]).then(__webpack_require__.bind(null, /*! @/components/z-table/z-table.vue */ 198));};var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 
 
 
@@ -228,29 +228,65 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
 
+
+var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 37));
+var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var zTable = function zTable() {return Promise.all(/*! import() | components/z-table/z-table */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/z-table/z-table")]).then(__webpack_require__.bind(null, /*! @/components/z-table/z-table.vue */ 198));};var _default =
 
 {
   name: 'paperIn',
+  mixins: [_mixins.default],
   components: { zTable: zTable },
   data: function data() {
     return {
       TabCur: 0,
       scrollLeft: 0,
       dataTableList: [],
-      errorContent: '数据加载中...',
-      tableHeight: 0, //表格高度
+      errorContent: '暂无数据', //数据加载中...
+      tableHeight: 650, //表格高度
+      findGoodsTableDataItems: [],
+      paperOutTableDataItems: [],
+      paperInFormItems: {
+        instruct: '', //指令
+        station: '', //仓位
+        fOrderNo: '', //工单号
+        line: '', //线别
+        group: '', //班别
+        fQty: '', //数量
+        fDNum: '', //板号,
+        desc: '' //备注
+      },
+      paperInFormInit: {
+        instruct: '', //指令
+        station: '', //仓位
+        fOrderNo: '', //工单号
+        line: '', //线别
+        group: '', //班别
+        fQty: '', //数量
+        fDNum: '', //板号,
+        desc: '' //备注
+      },
+      findGoodsItem: {
+        fOrderNo: '' //工单号
+      },
+      paperOutItem: {
+        fOrderNo: '', //工单号
+        batch: '' },
+
       findGoodsColumns: [{
         key: 'OrderNo',
         title: '工单号',
         width: 200 },
+
       {
         key: 'Station',
         title: '仓位',
         width: 200 },
+
       {
         key: 'FNum',
         title: '板号',
         width: 200 },
+
       {
         key: 'State',
         title: '状态',
@@ -258,11 +294,220 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
   },
-  methods: {
+
+
+
+
+
+
+
+  onReady: function onReady() {
+
+  },
+
+  methods: _objectSpread({
     tabSelect: function tabSelect(e) {
       this.TabCur = e.currentTarget.dataset.id;
       this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60;
-    } } };exports.default = _default;
+    },
+    //打开扫描
+    turnOnScanCode: function turnOnScanCode(type) {
+      var _self = this;
+      // 调起条码扫描
+      uni.scanCode({
+        scanType: 'barCode',
+        success: function success(res) {
+          // console.log('条码类型：' + res.scanType);
+          console.log('条码内容：' + res.result);
+          switch (type) {
+            case 'in': //入库
+              _self.paperInFormItems.instruct = res.result;
+              _self.getParamsFromScanCode();
+              break;
+            case 'out': //出仓
+              this.paperOutItem.fOrderNo = res.result;
+              break;
+            case 'search': //寻货
+              this.findGoodsItem.fOrderNo = res.result;
+              break;
+
+            default:
+              break;}
+
+
+        } });
+
+    } },
+  (0, _vuex.mapActions)(['spScanOrderAction']), {
+    barCodeBlur: function barCodeBlur() {
+      if (this.paperInFormItems.instruct == '') {
+
+        uni.showToast({
+          title: '请输入或扫描条码',
+          icon: 'none' });
+
+        return;
+      }
+      this.getParamsFromScanCode();
+    },
+    //====入库====获取所需参数 从扫描中...
+    getParamsFromScanCode: function getParamsFromScanCode() {
+      var instruct = this.paperInFormItems.instruct.split('*');
+      if (instruct.length < 5) {
+        uni.showToast({
+          title: '数据解析失败，参数个数不够',
+          icon: 'none' });
+
+        return;
+      }
+      var data = {
+        fOrderNo: instruct[0],
+        fDNum: instruct[1],
+        fQty: instruct[2],
+        line: instruct[3],
+        group: instruct[4] };
+
+
+      Object.assign(this.paperInFormItems, data);
+    },
+    //查询数据
+    paperInRequest: function paperInRequest(data) {var _this = this;
+      this.errorContent = '数据加载中...';
+      return new Promise(function (resolve, reject) {
+        _this.spScanOrderAction(data).then(function (res) {
+          resolve(res.list);
+        }).catch(function (err) {
+          _this.errorContent = '暂无数据';
+          uni.showToast({
+            title: '获取数据失败:' + err,
+            icon: 'none' });
+
+
+          reject(err);
+        });
+      });
+    },
+    //确认提交===入仓===
+    paprtIn: function paprtIn() {
+      if (this.paperInFormItems.station == '') {
+
+        uni.showToast({
+          title: '请输入仓位',
+          icon: 'none' });
+
+        return;
+      }
+      if (
+      this.paperInFormItems.fOrderNo == '' ||
+      this.paperInFormItems.fQty == '' ||
+      this.paperInFormItems.fDNum == '' ||
+      this.paperInFormItems.line == '' ||
+      this.paperInFormItems.group == '')
+      {
+
+        uni.showToast({
+          title: '请先扫描完整的指令',
+          icon: 'none' });
+
+        return;
+      }
+      var data = {
+        BarCodeStr: this.paperInFormItems.instruct,
+        Station: this.paperInFormItems.station,
+        Flag: 0,
+        FOrderNo: this.paperInFormItems.fOrderNo,
+        FQty: this.paperInFormItems.fQty,
+        FDNum: this.paperInFormItems.fDNum,
+        FLine: this.paperInFormItems.line,
+        FClass: this.paperInFormItems.group,
+        Remark: this.paperInFormItems.desc
+
+        //debugger
+      };this.paperInRequest(data).then(function (res) {
+        if (res && res[0].res == 1) {
+          uni.showToast({
+            title: '入仓成功' });
+
+        } else {
+          uni.showToast({
+            title: '入仓失败',
+            icon: 'none',
+            duration: 2000 });
+
+        }
+      }).catch(function (err) {
+        uni.showToast({
+          title: '入仓失败' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //====查询====
+    findGoods: function findGoods() {var _this2 = this;
+      //寻货
+      if (this.findGoodsItem.fOrderNo == '') {
+        uni.showToast({
+          title: '请输入或扫描工单号',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      var data = {
+        FOrderNo: this.findGoodsItem.fOrderNo, //this.instruct,//????
+        BarCodeStr: this.findGoodsItem.fOrderNo,
+        Flag: 2 };
+
+      this.paperInRequest(data).then(function (res) {
+        if (res && res.length > 0) {
+          _this2.findGoodsTableDataItems = res[0].resultList;
+        }
+      }).catch(function (err) {
+        uni.showToast({
+          title: '暂无数据',
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //====出仓====
+    paperOut: function paperOut() {var _this3 = this;
+      if (this.paperOutItem.fOrderNo == '') {
+        uni.showToast({
+          title: '请输入或扫描工单号',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      if (this.paperOutItem.batch == '') {
+        uni.showToast({
+          title: '请输入车次',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      var data = {
+        FOrderNo: this.paperOutItem.fOrderNo,
+        BarCodeStr: '',
+        Batch: this.paperOutItem.batch,
+        Flag: 1 };
+
+      this.paperInRequest(data).then(function (res) {
+        if (res && res.length > 0) {
+          _this3.paperOutTableDataItems = res.resultList[0];
+        }
+      }).catch(function (err) {
+        uni.showToast({
+          title: '暂无数据',
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    } }) };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
