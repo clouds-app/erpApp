@@ -18,7 +18,8 @@
     "pages/report/sumofcustarrears/sumofcustarrears",
     "pages/warehouse/boxIn/boxIn",
     "pages/warehouse/paperIn/paperIn",
-    "pages/warehouse/paperOB/paperOB"
+    "pages/warehouse/paperOB/paperOB",
+    "components/list-select/list-select"
   ],
   "subPackages": [],
   "window": {

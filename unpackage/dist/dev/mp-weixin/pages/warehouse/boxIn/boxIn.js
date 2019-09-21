@@ -105,7 +105,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var zTable = function zTable() {return Promise.all(/*! import() | components/z-table/z-table */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/z-table/z-table")]).then(__webpack_require__.bind(null, /*! @/components/z-table/z-table.vue */ 198));};var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 
 
 
@@ -301,18 +301,131 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 37));
+var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var uniPopup = function uniPopup() {return __webpack_require__.e(/*! import() | components/uni-popup/uni-popup */ "components/uni-popup/uni-popup").then(__webpack_require__.bind(null, /*! @/components/uni-popup/uni-popup.vue */ 235));};var zTable = function zTable() {return Promise.all(/*! import() | components/z-table/z-table */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/z-table/z-table")]).then(__webpack_require__.bind(null, /*! @/components/z-table/z-table.vue */ 204));};var _default =
 
 
 {
   name: 'boxIn', //纸箱出入库
-  components: { zTable: zTable },
+  mixins: [_mixins.default],
+  components: { zTable: zTable, uniPopup: uniPopup },
   data: function data() {
     return {
+      currentSelected: '-1',
       TabCur: 0,
+      scanType: '', //当前扫描类型
       scrollLeft: 0,
       dataTableList: [],
-      errorContent: '数据加载中...',
-      tableHeight: 0, //表格高度
+      errorContent: '暂无数据', //'数据加载中...',
+      tableHeight: 400, //表格高度
+      boxIn: {
+        formItem: { //成品入库
+          bi_WorkNo: '', //工单号
+          bi_Group: '', //班ㅤ别
+          bi_InQty: '', //数 量
+          ct_Desc: '', //客户名
+          bi_ProdName: '', //产品名
+          Specs: '', //规ㅤ格
+          bp_CBoxID: '', //箱ㅤ型
+          bp_PArtID: '', //纸ㅤ质
+          bp_ArtLB: '', //楞ㅤ别
+          bp_ProQty: '' //工单数
+        },
+        formItemInit: {
+          bi_WorkNo: '', //工单号
+          bi_Group: '', //班ㅤ别
+          bi_InQty: '', //数 量
+          ct_Desc: '', //客户名
+          bi_ProdName: '', //产品名
+          Specs: '', //规ㅤ格
+          bp_CBoxID: '', //箱ㅤ型
+          bp_PArtID: '', //纸ㅤ质
+          bp_ArtLB: '', //楞ㅤ别
+          bp_ProQty: '' //工单数
+        },
+        dataIsLoadding: false },
+
+      boxOut: {
+        formItem: { //成品出库
+          bd_CarNo: '', //车ㅤ牌
+          bd_Follower: '', //跟车员
+          bd_Loador: '', //发货员
+          bd_SenderID: '', //发货员
+          bi_OrderNo: '', //订单号
+          bi_OrderQty: '' //数量
+        },
+        formItemText: {
+          bd_CarNo: '', //车ㅤ牌
+          bd_Follower: '', //跟车员
+          bd_Loador: '', //发货员
+          bd_SenderID: '' //发货员
+        },
+        formItemInit: {
+          bd_CarNo: '', //车ㅤ牌
+          bd_Follower: '', //跟车员
+          bd_Loador: '', //发货员
+          bd_SenderID: '', //发货员
+          bi_OrderNo: '', //订单号
+          bi_OrderQty: '' //数量
+        },
+        car: { //车牌列表 
+          items: [],
+          show: false },
+
+        follower: { //跟车员
+          items: [],
+          show: false },
+
+        loader: { //装车员
+          items: [],
+          show: false },
+
+        sender: { //发货员
+          items: [],
+          show: false },
+
+        tableData: [] },
+
+      boxInc: { //半成品入库 对象
+        formItem: {
+          hp_wpl_Id: '', //工ㅤ序
+          hp_mo_ID: '', //机ㅤ台
+          hp_tt_Code: '', //班ㅤ别
+          hp_bi_WorkNo: '', //工单号
+          Qty: '', //数量
+          Remark: '', //备注
+          ct_Desc: '', //客户名
+          bi_ProdName: '', //产品名
+          Specs: '', //规ㅤ格
+          bp_ProQty: '' //工单数
+        },
+        formItemInit: {
+          hp_wpl_Id: '', //工ㅤ序
+          hp_mo_ID: '', //机ㅤ台
+          hp_tt_Code: '', // 班ㅤ别
+          hp_bi_WorkNo: '', //工单号
+          Qty: '', //数量
+          Remark: '', //备注
+          ct_Desc: '', //客户名
+          bi_ProdName: '', //产品名
+          Specs: '', //规ㅤ格
+          bp_ProQty: '' //工单数
+        },
+        dataIsLoadding: false },
+
       tableColumns: [
       {
         key: 'bc_No',
@@ -343,11 +456,524 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
   },
-  methods: {
+
+
+
+
+
+
+
+  onReady: function onReady() {
+    this.messageRegister();
+  },
+
+  methods: _objectSpread({},
+
+  (0, _vuex.mapActions)(['boxScanOrderAction', 'aspSaveBoxInAction', 'findUserAction', 'findCarAction', 'aspSaveBoxOutTempAction', 'aspSaveBoxHalfProdInAction']), {
+    //页面通讯,事件注册
+    messageRegister: function messageRegister() {
+      var _self = this;
+      //选中 回调 事件
+      uni.$on('getSelectData', function (data) {
+        switch (_self.currentSelected) {
+          case '车牌号':
+            _self.carConfirm(data.msg);
+            break;
+          case '跟车员':
+            _self.followerConfirm(data.msg);
+            break;
+          case '装车员':
+            _self.loaderConfirm(data.msg);
+            break;
+          case '发货员':
+            _self.senderConfirm(data.msg);
+            break;
+          default:
+            break;}
+
+
+      });
+    },
+    //标签切换 事件
     tabSelect: function tabSelect(e) {
       this.TabCur = e.currentTarget.dataset.id;
       this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60;
-    } } };exports.default = _default;
+    },
+    //跳转到数据选择页面
+    turnToPageDataSelect: function turnToPageDataSelect(dataSouce, title) {
+      this.currentSelected = title;
+      this.$store.commit('setDataSelectedPageTitle', title);
+      this.$store.commit('setDataSelectedList', dataSouce);
+      uni.navigateTo({
+        url: '/components/list-select/list-select' });
+
+    },
+    //成品入库===工单号===验证是否存在
+    boxInGetOrderInfo: function boxInGetOrderInfo() {var _this = this;
+      if (this.boxIn.formItem.bi_WorkNo == '') {
+        uni.showToast({
+          title: '请输入或扫描工单号',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      var data = {
+        bi_WorkNo: this.boxIn.formItem.bi_WorkNo,
+        Flag: 0 };
+
+      this.boxIn.dataIsLoadding = false;
+      this.boxScanOrderAction(data).then(function (res) {
+        if (res.list && res.list.length > 0) {
+          Object.assign(_this.boxIn.formItem, res.list[0]);
+          _this.boxIn.dataIsLoadding = true;
+          return;
+        } else {
+          uni.showToast({
+            title: '没有该工单对应的数据',
+            icon: 'none',
+            duration: 2000 });
+
+        }
+
+      }).catch(function (err) {
+        _this.errorContent = '暂无数据';
+        uni.showToast({
+          title: '获取数据失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //成品===确认===入库
+    boxInAspSaveBoxIn: function boxInAspSaveBoxIn() {var _this2 = this;
+      if (this.boxIn.formItem.bi_WorkNo == '') {
+        uni.showToast({
+          title: '请输入或扫描工单号',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      if (this.boxIn.formItem.bi_Group == '') {
+        uni.showToast({
+          title: '请输入班别',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      if (this.boxIn.formItem.bi_InQty == '') {
+        uni.showToast({
+          title: '请输入数量',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      var data = {
+        bi_WorkNo: this.boxIn.formItem.bi_WorkNo,
+        bi_Group: this.boxIn.formItem.bi_Group,
+        bi_InQty: this.boxIn.formItem.bi_InQty };
+
+      this.aspSaveBoxInAction(data).then(function (res) {
+        if (res.list.length > 0) {
+          if (res.list[0].ErrorStr && res.list[0].ErrorStr != '') {
+
+            uni.showModal({
+              title: '提示',
+              content: res.list[0].ErrorStr,
+              showCancel: false });
+
+            return;
+          } else {
+            uni.showModal({
+              title: '提示',
+              content: '入库成功',
+              showCancel: false });
+
+          }
+          //重置数据
+          _this2.boxIn.formItem = JSON.parse(JSON.stringify(_this2.boxIn.formItemInit));
+          return;
+        } else {
+          uni.showModal({
+            title: '提示',
+            content: '入库失败',
+            showCancel: false });
+
+        }
+      }).catch(function (err) {
+        //this.errorContent = '暂无数据';
+        uni.showToast({
+          title: '入库失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //纸箱出入库--数据请求
+    boxOutGetBaseInfo: function boxOutGetBaseInfo(params) {var _this3 = this;
+      return new Promise(function (resolve, reject) {
+        _this3.findUserAction(params).then(function (res) {
+          resolve(res);
+        }).catch(function (err) {
+          uni.showToast({
+            title: '获取数据失败:' + err,
+            icon: 'none',
+            duration: 2000 });
+
+          reject(err);
+        });
+      });
+    },
+    //获取===车ㅤ牌===列表
+    getCarInfo: function getCarInfo() {var _this4 = this;
+      //如果当前页面有缓存,就无需重新加载
+      if (this.currentSelected === '车牌号' && this.boxOut.car.items.length > 0) {
+        uni.navigateTo({
+          url: '/components/list-select/list-select' });
+
+        return;
+      }
+      this.findCarAction().then(function (res) {
+        _this4.boxOut.car.items = res.list;
+        _this4.boxOut.car.show = true;
+        _this4.turnToPageDataSelect(res.list, '车牌号');
+      }).catch(function (err) {
+        uni.showToast({
+          title: '获取数据失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //选择车牌 回调事件
+    carConfirm: function carConfirm(item) {
+      this.boxOut.formItem.bd_CarNo = item.value;
+      this.boxOut.formItemText.bd_CarNo = item.text;
+      this.boxOut.car.show = false;
+    },
+    //获取跟车员列表数据
+    getFollowerInfo: function getFollowerInfo() {var _this5 = this;
+      if (this.currentSelected === '跟车员' && this.boxOut.follower.items.length > 0) {
+        uni.navigateTo({
+          url: '/components/list-select/list-select' });
+
+        this.boxOut.follower.show = true;
+        return;
+      }
+      this.boxOutGetBaseInfo({
+        workType: '5,18' }).
+      then(function (res) {
+        _this5.boxOut.follower.items = res.list;
+        _this5.boxOut.follower.show = true;
+        _this5.turnToPageDataSelect(res.list, '跟车员');
+      });
+    },
+    //选中跟车员 回调事件
+    followerConfirm: function followerConfirm(item) {
+      this.boxOut.formItem.bd_Follower = item.value;
+      this.boxOut.formItemText.bd_Follower = item.text;
+      this.boxOut.follower.show = false;
+    },
+    //获取装车员列表
+    getLoaderInfo: function getLoaderInfo() {var _this6 = this;
+      if (this.currentSelected === '装车员' && this.boxOut.loader.items.length > 0) {
+        uni.navigateTo({
+          url: '/components/list-select/list-select' });
+
+        this.boxOut.loader.show = true;
+        return;
+      }
+      this.boxOutGetBaseInfo({
+        workType: '6,18' }).
+      then(function (res) {
+        _this6.boxOut.loader.items = res.list;
+        _this6.boxOut.loader.show = true;
+        _this6.turnToPageDataSelect(res.list, '装车员');
+      });
+    },
+    //选中 装车员 回调事件
+    loaderConfirm: function loaderConfirm(item) {
+      this.boxOut.formItem.bd_Loador = item.value;
+      this.boxOut.formItemText.bd_Loador = item.text;
+      this.boxOut.loader.show = false;
+    },
+    //获取发货员列表
+    getSenderInfo: function getSenderInfo() {var _this7 = this;
+      if (this.currentSelected === '发货员' && this.boxOut.sender.items.length > 0) {
+        uni.navigateTo({
+          url: '/components/list-select/list-select' });
+
+        this.boxOut.sender.show = true;
+        return;
+      }
+      this.boxOutGetBaseInfo({
+        workType: '2,18' }).
+      then(function (res) {
+        _this7.boxOut.sender.items = res.list;
+        _this7.boxOut.sender.show = true;
+        _this7.turnToPageDataSelect(res.list, '发货员');
+      });
+    },
+    //选中发车员 回调事件
+    senderConfirm: function senderConfirm(item) {
+      this.boxOut.formItem.bd_SenderID = item.value;
+      this.boxOut.formItemText.bd_SenderID = item.text;
+      this.boxOut.sender.show = false;
+    },
+    //成品出库=== 查ㅤ找===对应订单号
+    boxOutGetOrderInfo: function boxOutGetOrderInfo() {var _this8 = this;
+      if (this.boxOut.formItem.bi_OrderNo == '') {
+        uni.showToast({
+          title: '请输入订单号',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      if (this.boxOut.formItem.bi_OrderQty == '') {
+        uni.showToast({
+          title: '请输入数量',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      for (var i = 0; i < this.boxOut.tableData.length; i++) {
+        var item = this.boxOut.tableData[i];
+        if (item.bc_No == this.boxOut.formItem.bi_OrderNo) {
+          this.boxOut.formItem.bi_OrderNo = '';
+          uni.showToast({
+            title: '订单已存在',
+            icon: 'none',
+            duration: 2000 });
+
+          return;
+        }
+      }
+      var data = {
+        bc_No: this.boxOut.formItem.bi_OrderNo,
+        Flag: 1
+
+        //查询对应订单号 数据列表
+      };this.errorContent = '数据加载中...';
+      this.boxScanOrderAction(data).then(function (res) {
+        if (res.list && res.list.length > 0) {
+          var temp = res.list[0];
+          temp.bi_OrderQty = _this8.boxOut.formItem.bi_OrderQty;
+          _this8.boxOut.tableData = [].concat(_toConsumableArray(_this8.boxOut.tableData), [temp]);
+          return;
+        } else {
+          _this8.errorContent = '暂无数据';
+          uni.showToast({
+            title: '没有该订单号对应的数据',
+            icon: 'none',
+            duration: 2000 });
+
+        }
+
+      }).catch(function (err) {
+        _this8.errorContent = '暂无数据';
+        uni.showToast({
+          title: '获取数据失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //成品出库==确认出库
+    aspSaveBoxOutTemp: function aspSaveBoxOutTemp() {var _this9 = this;
+      var noAry = [];
+      var numAry = [];
+      this.boxOut.tableData.forEach(function (item, index) {
+        noAry.push(item.bc_No);
+        numAry.push(item.bi_OrderQty);
+      });
+      if (noAry.length == 0 || numAry == 0 || noAry.length != numAry.length) {
+        uni.showToast({
+          title: '数据不能为空,提交数据不完整',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      var data = {
+        bd_CarNo: this.boxOut.formItem.bd_CarNo,
+        bd_Follower: this.boxOut.formItem.bd_Follower,
+        bd_Loador: this.boxOut.formItem.bd_Loador,
+        bd_SenderID: this.boxOut.formItem.bd_SenderID,
+        OrderQtyStr: numAry.toString(),
+        NoStr: noAry.toString() };
+
+      this.aspSaveBoxOutTempAction(data).then(function (res) {
+        if (res.list.length > 0) {
+          if (res.list[0].ErrorStr && res.list[0].ErrorStr != '') {
+            uni.showModal({
+              title: '提示',
+              content: res.list[0].ErrorStr,
+              showCancel: false });
+
+            return;
+          }
+
+          uni.showModal({
+            title: '提示',
+            content: '出仓成功',
+            showCancel: false });
+
+          _this9.boxOut.formItem = JSON.parse(JSON.stringify(_this9.boxOut.formItemInit));
+          _this9.boxOut.tableData = [];
+          return;
+        }
+
+        uni.showModal({
+          title: '提示',
+          content: '出仓失败',
+          showCancel: false });
+
+      }).catch(function (err) {
+        _this9.errorContent = '暂无数据';
+        uni.showToast({
+          title: '获取数据失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+
+    },
+    //半成品入库===工单号===验证是否存在
+    boxIncGetOrderInfo: function boxIncGetOrderInfo() {var _this10 = this;
+      if (this.boxInc.formItem.hp_bi_WorkNo == '') {
+        uni.showToast({
+          title: '请输入或扫描工单号',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      var data = {
+        bi_WorkNo: this.boxInc.formItem.hp_bi_WorkNo,
+        Flag: 0 };
+
+      this.boxInc.dataIsLoadding = false;
+      this.boxScanOrderAction(data).then(function (res) {
+        if (res.list && res.list.length > 0) {
+          Object.assign(_this10.boxInc.formItem, res.list[0]);
+          _this10.boxInc.dataIsLoadding = true;
+          return;
+        } else {
+          uni.showToast({
+            title: '没有该工单对应的数据',
+            icon: 'none',
+            duration: 2000 });
+
+        }
+      }).catch(function (err) {
+        //this.errorContent = '暂无数据';
+        uni.showToast({
+          title: '验证工单号是否存在失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //===半成品==确认===入库====
+    aspSaveBoxHalfProdIn: function aspSaveBoxHalfProdIn() {var _this11 = this;
+      if (this.boxInc.formItem.hp_bi_WorkNo == '') {
+        uni.showToast({
+          title: '请输入或扫描工单号',
+          icon: 'none',
+          duration: 2000 });
+
+        return;
+      }
+      if (this.boxInc.formItem.Qty == '') {
+        uni.showToast({
+          title: '请输入数量',
+          icon: 'none',
+          duration: 2000 });
+
+        this.$refs.boxInc_qty.focus();
+        return;
+      }
+      var data = {
+        hp_bi_WorkNo: this.boxInc.formItem.hp_bi_WorkNo,
+        hp_wpl_Id: this.boxInc.formItem.hp_wpl_Id,
+        hp_mo_ID: this.boxInc.formItem.hp_mo_ID,
+        hp_tt_Code: this.boxInc.formItem.hp_tt_Code,
+        Qty: this.boxInc.formItem.Qty,
+        Remark: this.boxInc.formItem.Remark };
+
+
+      this.aspSaveBoxHalfProdInAction(data).then(function (res) {
+        if (res.list.length > 0) {
+          if (res.list[0].ErrorStr && res.list[0].ErrorStr != '') {
+            uni.showModal({
+              title: '提示',
+              content: res.list[0].ErrorStr,
+              showCancel: false });
+
+            return;
+          } else {
+            uni.showModal({
+              title: '提示',
+              content: '入仓成功',
+              showCancel: false });
+
+            _this11.boxInc.formItem = JSON.parse(JSON.stringify(_this11.boxInc.formItemInit));
+            return;
+          }
+
+        } else {
+          uni.showModal({
+            title: '提示',
+            content: '入仓失败',
+            showCancel: false });
+
+        }
+      }).catch(function (err) {
+        _this11.errorContent = '暂无数据';
+        uni.showToast({
+          title: '获取数据失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+    },
+    //===打开扫描===
+    turnOnScanCode: function turnOnScanCode(type) {
+      this.scanType = type;
+      var _self = this;
+      // 调起条码扫描
+      uni.scanCode({
+        scanType: 'barCode',
+        success: function success(res) {
+          // console.log('条码类型：' + res.scanType);
+          console.log('条码内容：' + res.result);
+          switch (_self.TabCur) {
+            case 0: //成品入库
+              //工单号
+              _self.boxIn.formItem.bi_WorkNo = res.result;
+              _self.boxInGetOrderInfo(); //工单号验证查询
+              break;
+            case 1: //成品出库
+              _self.boxOut.formItem.bi_OrderNo = res.result;
+              break;
+            case 2: //半成品入库
+              _self.boxInc.formItem.hp_bi_WorkNo = res.result;
+              _self.boxIncGetOrderInfo(); //工单号验证查询
+              break;
+
+            default:
+              break;}
+
+
+        } });
+
+    } }) };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 

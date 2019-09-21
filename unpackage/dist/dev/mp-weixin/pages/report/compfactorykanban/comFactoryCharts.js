@@ -151,7 +151,7 @@ var _uCharts = _interopRequireDefault(__webpack_require__(/*! @/components/u-cha
 var _tableW = _interopRequireDefault(__webpack_require__(/*! @/mock/tableW.js */ 145));
 var _checker = __webpack_require__(/*! @/common/checker.js */ 127);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}
 var _self;
-var canvaColumn = null;var zTable = function zTable() {return Promise.all(/*! import() | components/z-table/z-table */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/z-table/z-table")]).then(__webpack_require__.bind(null, /*! @/components/z-table/z-table.vue */ 198));};var _default =
+var canvaColumn = null;var zTable = function zTable() {return Promise.all(/*! import() | components/z-table/z-table */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/z-table/z-table")]).then(__webpack_require__.bind(null, /*! @/components/z-table/z-table.vue */ 204));};var _default =
 
 {
   name: 'comFactoryCharts',

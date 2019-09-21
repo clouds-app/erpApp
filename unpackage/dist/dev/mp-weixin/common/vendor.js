@@ -14,7 +14,7 @@ var _store = _interopRequireDefault(__webpack_require__(/*! ./store */ 11));
 var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 17));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 _vue.default.prototype.$store = _store.default;
 _vue.default.prototype.$config = _config.default; //自定义配置文件
-var cuCustom = function cuCustom() {return __webpack_require__.e(/*! import() | colorui/components/cu-custom */ "colorui/components/cu-custom").then(__webpack_require__.bind(null, /*! ./colorui/components/cu-custom.vue */ 186));};
+var cuCustom = function cuCustom() {return __webpack_require__.e(/*! import() | colorui/components/cu-custom */ "colorui/components/cu-custom").then(__webpack_require__.bind(null, /*! ./colorui/components/cu-custom.vue */ 192));};
 _vue.default.component('cu-custom', cuCustom);
 _vue.default.config.productionTip = false;
 Date.prototype.format = function (fmt) {
@@ -8620,19 +8620,25 @@ var index_esm = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; // import { login, logout, getUserInfo, } from '@/api/app'
-//import {setLocalStorage,getLocalStorage } from '@/libs/util'
-// import { GetGuid } from '@/libs/tools'
-// const serverBusyTips="服务繁忙，请稍后再试！";
-var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
 {
   state: {
+    dataSelectedPageTitle: uni.getStorageSync("dataSelectedPageTitle") == '' ? '' : JSON.parse(uni.getStorageSync("dataSelectedPageTitle")),
+    dataSelectedList: uni.getStorageSync("dataSelectedList") == '' ? '' : JSON.parse(uni.getStorageSync("dataSelectedList")),
     currentComFactoryChartData: uni.getStorageSync("currentComFactoryChartData") == '' ? '' : JSON.parse(uni.getStorageSync("currentComFactoryChartData")),
     currentSelectedMenuIndex: '',
     currentSelectedFooterMenu: '' },
 
   //获取：this.$store.getters.currentSelectedMenu_getter
   getters: {
+    //数据选择列表 缓存数据==>页面标题
+    dataSelectedPageTitle_getter: function dataSelectedPageTitle_getter(state) {
+      return state.dataSelectedPageTitle;
+    },
+    //数据选择列表 缓存数据
+    dataSelectedList_getter: function dataSelectedList_getter(state) {
+      return state.dataSelectedList;
+    },
     currentComFactoryChartData_getter: function currentComFactoryChartData_getter(state) {
       return state.currentComFactoryChartData;
     },
@@ -8651,6 +8657,16 @@ var _default =
 
   //设置：this.$store.commit('setCurrentSelectdMenu',data)
   mutations: {
+    //数据选择列表 ==>页面标题
+    setDataSelectedPageTitle: function setDataSelectedPageTitle(state, data) {
+      state.dataSelectedPageTitle = data;
+      uni.setStorageSync("dataSelectedPageTitle", JSON.stringify(data));
+    },
+    //保存数据列表选择数据
+    setDataSelectedList: function setDataSelectedList(state, data) {
+      state.dataSelectedList = data;
+      uni.setStorageSync("dataSelectedList", JSON.stringify(data));
+    },
     setCurrentComFactoryChartData: function setCurrentComFactoryChartData(state, data) {
       state.currentComFactoryChartData = data;
       uni.setStorageSync("currentComFactoryChartData", JSON.stringify(data));
@@ -18583,7 +18599,22 @@ createPage(_paperOB.default);
 /* 183 */,
 /* 184 */,
 /* 185 */,
-/* 186 */,
+/* 186 */
+/*!**********************************************************************************!*\
+  !*** E:/cl_vue/erpApp/main.js?{"page":"components%2Flist-select%2Flist-select"} ***!
+  \**********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ 4);
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
+var _listSelect = _interopRequireDefault(__webpack_require__(/*! ./components/list-select/list-select.vue */ 187));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_listSelect.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createPage"]))
+
+/***/ }),
 /* 187 */,
 /* 188 */,
 /* 189 */,
@@ -18600,18 +18631,24 @@ createPage(_paperOB.default);
 /* 200 */,
 /* 201 */,
 /* 202 */,
-/* 203 */
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */
 /*!**********************************************************!*\
   !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
   \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! regenerator-runtime */ 204);
+module.exports = __webpack_require__(/*! regenerator-runtime */ 210);
 
 
 /***/ }),
-/* 204 */
+/* 210 */
 /*!************************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime-module.js ***!
   \************************************************************/
@@ -18642,7 +18679,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(/*! ./runtime */ 205);
+module.exports = __webpack_require__(/*! ./runtime */ 211);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -18658,7 +18695,7 @@ if (hadRuntime) {
 
 
 /***/ }),
-/* 205 */
+/* 211 */
 /*!*****************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime.js ***!
   \*****************************************************/
@@ -19389,12 +19426,6 @@ if (hadRuntime) {
 
 
 /***/ }),
-/* 206 */,
-/* 207 */,
-/* 208 */,
-/* 209 */,
-/* 210 */,
-/* 211 */,
 /* 212 */,
 /* 213 */,
 /* 214 */,
@@ -19417,7 +19448,20 @@ if (hadRuntime) {
 /* 231 */,
 /* 232 */,
 /* 233 */,
-/* 234 */
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */
 /*!******************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/province.js ***!
   \******************************************************************/
@@ -19566,7 +19610,7 @@ var provinceData = [{
 provinceData;exports.default = _default;
 
 /***/ }),
-/* 235 */
+/* 248 */
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/city.js ***!
   \**************************************************************/
@@ -21079,7 +21123,7 @@ var cityData = [
 cityData;exports.default = _default;
 
 /***/ }),
-/* 236 */
+/* 249 */
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/area.js ***!
   \**************************************************************/
@@ -33631,7 +33675,7 @@ var areaData = [
 areaData;exports.default = _default;
 
 /***/ }),
-/* 237 */
+/* 250 */
 /*!********************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/w-picker.js ***!
   \********************************************************/
