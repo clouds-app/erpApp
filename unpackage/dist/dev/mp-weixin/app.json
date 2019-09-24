@@ -11,6 +11,8 @@
     "pages/verify/originalPaper/opDetail",
     "pages/verify/material/material",
     "pages/verify/material/mtDetail",
+    "pages/verify/boxApproval/boxApproval",
+    "pages/verify/boxApproval/boxDetail",
     "pages/report/deliveryquery/deliveryquery",
     "pages/report/compfactorykanban/compfactorykanban",
     "pages/report/compfactorykanban/comFactoryCharts",
