@@ -89,11 +89,15 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   var l1 = _vm.__map(_vm.allMenuList.function, function(item, index) {
-    var l0 = _vm.__map(item.children, function(subItem, __i0__) {
+    var l0 = _vm.__map(item.children, function(subItem, subIndex) {
       var m0 = _vm.getImgUrl(subItem.data.resIcon)
+      var m1 = _vm.getNotice(subIndex, subItem.data.resNotice)
+      var m2 = Number(subItem.data.resAuthMark)
       return {
         $orig: _vm.__get_orig(subItem),
-        m0: m0
+        m0: m0,
+        m1: m1,
+        m2: m2
       }
     })
 
@@ -186,8 +190,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+var eventType = _interopRequireWildcard(__webpack_require__(/*! @/libs/eventBusType */ 62));
 var _vuex = __webpack_require__(/*! vuex */ 16);
-var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 41));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
+var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 41));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}} //
 //
 //
 //
@@ -229,9 +240,58 @@ var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 41));fu
 //
 //
 //
-var _default = { name: 'functionMenu', mixins: [_mixins.default], data: function data() {return { allMenuList: [] //功能菜单列表
-    };}, onReady: function onReady() {this.allMenuList = this.menuList;}, methods: { //跳转到指定页面
-    turnToPage: function turnToPage(_url) {console.log('currentUrl:' + _url);switch (_url) {case 'zx':uni.navigateTo({ url: '/pages/verify/boxApproval/boxApproval' });break;case 'tax':uni.navigateTo({ url: '/pages/verify/bargainPrice/bargainPrice' });break;case 'material':uni.navigateTo({ url: '../verify/material/material' });break;case 'purchases':uni.navigateTo({ url: '../verify/originalPaper/originalPaper' });break;case 'paperIn':
+//
+//
+//
+//
+//
+//
+var _default = { name: 'functionMenu', mixins: [_mixins.default], data: function data() {return { hasUpdate: false, //是否已經更新字段，
+      notify_num: 88, allMenuList: [] //功能菜单列表
+    };}, onReady: function onReady() {this.allMenuList = this.menuList;var _self = this;uni.$on(eventType.ReLoadData, function (data) {if (data.needToUpdate) {_self.updateNotifyNum();}});}, methods: { //獲取通知信息
+    getNotice: function getNotice(index, _url) {if (_url.length < 10 || this.hasUpdate) {return;} //console.log('==getNotice==:'+_url)
+      var params = { url: _url };var _self = this;this.$store.dispatch('getNoticeInfoAction', params).then(function (res) {console.log('getNoticeInfoAction:' + res.data);_self.hasUpdate = true; //已經更新
+        if (Number(res.data) > 0) {var updateParams = { resAuthMark: res.data };_self.allMenuList.function[0].children[index].data = Object.assign({}, _self.allMenuList.function[0].children[index].data, updateParams); // console.log('==getNotice==json:'+JSON.stringify(_self.allMenuList))
+          // _self.allMenuList.function= _self.allMenuList.function.sort() //觸發更新
+
+        }
+      }).catch(function (err) {
+        _self.hasUpdate = true;
+        uni.showToast({
+          title: '获取NoticeInfo失败:' + err,
+          icon: 'none',
+          duration: 2000 });
+
+      });
+      // return '1'
+    },
+
+    //跳转到指定页面
+    turnToPage: function turnToPage(_url, subIndex) {
+      //console.log('currentUrl:'+_url)
+      this.remarkIndex(subIndex);
+      switch (_url) {
+        case 'zx':
+          uni.navigateTo({
+            url: '/pages/verify/boxApproval/boxApproval' });
+
+          break;
+        case 'tax':
+          uni.navigateTo({
+            url: '/pages/verify/bargainPrice/bargainPrice' });
+
+          break;
+        case 'material':
+          uni.navigateTo({
+            url: '../verify/material/material' });
+
+          break;
+        case 'purchases':
+          uni.navigateTo({
+            url: '../verify/originalPaper/originalPaper' });
+
+          break;
+        case 'paperIn':
           uni.navigateTo({
             url: '../warehouse/paperIn/paperIn' });
 
@@ -254,6 +314,23 @@ var _default = { name: 'functionMenu', mixins: [_mixins.default], data: function
 
           break;}
 
+    },
+    //存储选择功能下表
+    remarkIndex: function remarkIndex(subIndex) {
+      //debugger
+      this.$store.commit('setSubIndex', subIndex);
+    },
+    //更新通知个数
+    updateNotifyNum: function updateNotifyNum() {var _this = this;
+
+      this.allMenuList.function.forEach(function (item) {
+        item.children.forEach(function (subItem, subIndex) {
+          // debugger
+          _this.hasUpdate = false;
+          console.log('===' + subItem.data.resNotice);
+          _this.getNotice(subIndex, subItem.data.resNotice);
+        });
+      });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

@@ -184,7 +184,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var eventType = _interopRequireWildcard(__webpack_require__(/*! @/libs/eventBusType */ 82));
+var eventType = _interopRequireWildcard(__webpack_require__(/*! @/libs/eventBusType */ 62));
 var _mixins = _interopRequireDefault(__webpack_require__(/*! @/mixins */ 41));
 var _vuex = __webpack_require__(/*! vuex */ 16);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var _default =
 {
@@ -192,9 +192,11 @@ var _vuex = __webpack_require__(/*! vuex */ 16);function _interopRequireDefault(
   mixins: [_mixins.default],
   data: function data() {
     return {
+      needToUpdate: false, //是否需要重新刷新
       dataList: [] //数据列表
     };
   },
+
 
 
 
@@ -215,6 +217,7 @@ var _vuex = __webpack_require__(/*! vuex */ 16);function _interopRequireDefault(
     this.loadData();
     uni.$on(eventType.BackToPage_Refresh, function (data) {
       _this.loadData();
+      _this.needToUpdate = true;
 
     });
   },
@@ -228,6 +231,15 @@ var _vuex = __webpack_require__(/*! vuex */ 16);function _interopRequireDefault(
 
   methods: _objectSpread({},
   (0, _vuex.mapActions)(['searchBoxApprovalListAction']), {
+    //点击返回时-回调事件
+    BackPageEvent: function BackPageEvent() {
+
+      if (this.needToUpdate) {
+        //触发全局的自定事件。附加参数都会传给监听器回调。
+        uni.$emit(eventType.ReLoadData, { needToUpdate: this.needToUpdate });
+      }
+
+    },
     //查询纸箱特价审批 数据列表
     loadData: function loadData() {var _this2 = this;
       var params = {};
