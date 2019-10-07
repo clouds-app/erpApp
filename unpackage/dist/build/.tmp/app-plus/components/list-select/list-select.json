@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "数据列表选择",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
+  }
+}

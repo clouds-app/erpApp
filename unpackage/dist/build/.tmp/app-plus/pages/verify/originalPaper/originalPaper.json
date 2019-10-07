@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "原纸审批",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
+  }
+}

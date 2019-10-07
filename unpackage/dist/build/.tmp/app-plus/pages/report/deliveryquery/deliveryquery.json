@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "送货查询",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom",
+    "search-form": "/components/searchForm/searchForm",
+    "z-table": "/components/z-table/z-table"
+  }
+}
