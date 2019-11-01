@@ -72,7 +72,7 @@
     "autoclose": false
   },
   "appname": "erpApp",
-  "compilerVersion": "2.3.3",
+  "compilerVersion": "2.3.7",
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"
   }

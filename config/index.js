@@ -25,7 +25,7 @@ export default {
     /**
      * @description 是否app 运行环境
      */
-    isRunApp:process.env.NODE_ENV === 'production',//is_mobi,//true,// 
+    isRunApp: false,//process.env.NODE_ENV === 'production',//is_mobi,//true,// 
     /**
      * @description token在Cookie中存储的天数，默认1天
      */
@@ -34,11 +34,11 @@ export default {
      * @description api请求基础路径 http://120.78.91.203:8082/clerp-app-api/swagger-ui.html
      */
     baseUrl: {
-      dev: 'http://120.78.91.203:8082',
-      pro: 'http://120.78.91.203:8082'
+      dev: 'http://120.78.91.203:8083',
+      pro: 'http://120.78.91.203:8083'
     },
     
-	baseImgUrl:'http://120.78.91.203:8082/clerp-app-api',
+	baseImgUrl:'http://120.78.91.203:8083/clerp-app-api',
 
     /**
      * @description 默认打开的首页的路由name值，默认为home

@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<scroll-view :scroll-y="modalName==null" class="page" :class="modalName!=null?'show':''">
+		<scroll-view  class="page">
 			<cu-custom bgColor="bg-gradual-blue" :isBack="false">
 				<block slot="content">我的</block>
 			</cu-custom>
@@ -11,7 +11,7 @@
 					<!-- <uni-icon class="cu-avatar radius lg margin-top5" type="contact" size="50" color="#0081ff"></uni-icon> -->
 					<text  class="cuIcon-peoplefill  cu-avatar radius lg margin-top5 color-main-cl"></text>
 					<view class="content">
-						<view class="text-black text-sm"><view class="text-cut">晨龙ERP</view></view>
+						<view class="text-black text-sm"><view class="text-cut">{{currenUserName}}</view></view>
 						<view class="text-gray text-sm flex"> <view class="text-cut">深圳市晨龙包装自动化有限公司</view></view>
 					</view>
 					<!-- <view class="action">
@@ -33,37 +33,66 @@
 			
 			<!-- card-menu -->
 			<view class="cu-list menu sm-border margin-top ">
-				<view class="cu-item arrow" >
+				<view class="cu-item " >
 					<view class="content">
-						<text class="cuIcon-circlefill color-main-cl"></text>
-						<text class="text-black">偏好设置</text>
+						<text class="cuIcon-circlefill text-grey"></text>
+						<text class="text-grey">偏好设置</text>
 					</view>
 				</view>
 			</view>
 			<view class="cu-list menu sm-border margin-top ">
-				<view class="cu-item arrow" >
+				<!-- 可用状态 -->
+				<!-- <view class="cu-item arrow" >
 					<view class="content">
 						<text class="cuIcon-circlefill color-main-cl"></text>
 						<text class="text-black">新手指南</text>
 					</view>
-				</view>
-				<view class="cu-item arrow" >
+				</view> -->
+				<view class="cu-item " >
 					<view class="content">
-						<text class="cuIcon-circlefill color-main-cl"></text>
-						<text class="text-black">帮助与反馈</text>
+						<text class="cuIcon-circlefill text-grey"></text>
+						<text class="text-grey">新手指南</text>
+					</view>
+				</view>
+				<view class="cu-item " >
+					<view class="content">
+						<text class="cuIcon-circlefill text-grey"></text>
+						<text class="text-grey">帮助与反馈</text>
 					</view>
 				</view>
 			</view>
 			<view class="cu-list menu sm-border margin-top ">
-				<view class="cu-item arrow" >
+				<view class="cu-item " >
 					<view class="content">
-						<text class="cuIcon-circlefill color-main-cl"></text>
-						<text class="text-black">关于晨龙ERP</text>
+						<text class="cuIcon-circlefill text-grey"></text>
+						<text class="text-grey">关于晨龙ERP</text>
 					</view>
 				</view>
 			</view>
 
-			
+			<view class="padding flex flex-direction">
+				<button @click="showComfirmModal=true" class="cu-btn bg-red margin-tb-sm lg">退出</button>
+			</view>
+		<view class="cu-modal" :class="showComfirmModal==true?'show':''">
+			<view class="cu-dialog">
+				<view class="cu-bar bg-white justify-end">
+					<view class="content">提 示</view>
+					<view class="action" @tap="showComfirmModal=false">
+						<text class="cuIcon-close text-red"></text>
+					</view>
+				</view>
+				<view class="padding-xl">
+					确定退出当前登陆吗?
+				</view>
+				<view class="cu-bar bg-white justify-end">
+					<view class="action">
+						<button class="cu-btn line-green text-green" @tap="showComfirmModal=false">取消</button>
+						<button class="cu-btn bg-green margin-left" @tap="logout()">确定</button>
+		
+					</view>
+				</view>
+			</view>
+		</view>
 			
 			
 		</scroll-view>
@@ -79,11 +108,30 @@
 		components: {uniIcon},
 		data() {
 			return {
-				
+				showComfirmModal:false,
+				currenUserName:''
 			}
 		},
+		// #ifdef H5
+		mounted () {
+			this.currenUserName = this.$store.getters.userInfo_getters
+		},
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.currenUserName = this.$store.getters.userInfo_getters
+		},
+		// #endif
 		methods: {
-		
+			logout(){
+				this.showComfirmModal =false
+				uni.removeStorageSync('TOKEN')
+				uni.removeStorageSync('menuList')
+				//uni.clearStorage()
+				uni.reLaunch({
+				    url: '/pages/login/login'
+				});
+			}
 		}
 	}
 </script>

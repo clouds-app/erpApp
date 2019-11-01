@@ -3,29 +3,61 @@ import config from '@/config'
 import { forEach, hasOneOf, objEqual } from '@/libs/tools'
 const isApp = config.isRunApp ? true : false 
 export const TOKEN_KEY = 'token'
-
-
+let currentPage = 0
+//JSON.parse
+export const JSONParseLocalStorage = (key) => {
+	try{
+		//debugger
+		let valueStr =JSON.parse(uni.getStorageSync(key))
+	    return valueStr
+	}catch(e){
+		currentPage ++
+	
+		console.error('====JSONParseLocalStorage====:'+key)
+		//TODO handle the exception
+		if(key==='TOKEN' || key==='menuList' || key==='userInfo'){
+			let valueStr = uni.getStorageSync('userInfo')
+			uni.clearStorageSync();
+			if(valueStr){
+				setLocalStorage('userInfo',valueStr)
+			}
+			
+			
+		}
+	}
+	
+}
 // 设置数据存储
 export const setLocalStorage = (key,value) => {
-  uni.setStorage({
-      key: key,
-      data: value,
-      success: function () {
-         // console.log('success');
-      }
-  });
+  try {
+      uni.setStorageSync(key, value);
+  } catch (e) {
+      // error
+	  console.error('====setLocalStorage======:'+key)
+	  uni.clearStorageSync();
+	  uni.reLaunch({
+	      url: '/pages/login/login'
+	  });
+  }
   
 }
 
 // 获取数据存储
 export const getLocalStorage  = (key) => {
-  //debugger
- uni.getStorage({
-     key: key,
-     success: function (res) {
-        // console.log(res.data);
-     }
- });
+ try {
+    const value = uni.getStorageSync('storage_key');
+    if (value) {
+        //console.log(value);
+		return value
+    }
+} catch (e) {
+    // error
+	console.error('====getLocalStorage======:'+key)
+	uni.clearStorageSync();
+	uni.reLaunch({
+	    url: '/pages/login/login'
+	});
+}
 }
 
 // 移除指定数据存储

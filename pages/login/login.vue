@@ -21,8 +21,8 @@ export default {
 			isLoading: false,
 			disabledLoginBtn: false,
 			loginForm: {
-				username: 'admin',
-				password: '123456'
+				username: '',
+				password: ''
 			},
 			currentUUId: '',
 			currentMenuList: [],
@@ -30,6 +30,16 @@ export default {
 		};
 	},
 	onLoad() {},
+	// #ifdef H5
+	mounted () {
+		this.loginForm.username = this.$store.getters.userInfo_getters
+	},
+	// #endif
+	// #ifndef H5
+	onReady () {
+		this.loginForm.username = this.$store.getters.userInfo_getters
+	},
+	// #endif
 	methods: {
 		//导入合并方法，然后可以直接使用，和methods中方法类似，但参数需要查看原始定义方法 = this.$store.dispatch('handleLogin',params)
 		...mapActions(['getValidatorToken_action', 'Login_action', 'getMenuByToken_action']),
@@ -75,6 +85,7 @@ export default {
 						// debugger
 						let token = res.data.token;
 						this.$store.commit('setLoginToken', token);
+						this.$store.commit('setUserInfo', this.loginForm.username);
 						_self.getMenuList(token);
 					})
 					.catch(err => {

@@ -42,6 +42,7 @@
 		},
 		//由于 onError 并不是完整意义的生命周期，所以只提供一个捕获错误的方法，在 app 的根组件上添加名为 onError 的回调函数即可
 		 onError (err) {
+			   //debugger
 		       console.error('ERP App onError...:'+err)
 		   }
 	}

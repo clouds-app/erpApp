@@ -1,0 +1,14 @@
+
+.cu-avatar.lg {
+    width: 48px;
+    height: 48px;
+    font-size: 3em;
+    color: #0081ff;
+}
+.cu-avatar{
+	background-color: #FFFFFF;
+}
+.margin-top5{
+	margin-top: 10px;
+}
+

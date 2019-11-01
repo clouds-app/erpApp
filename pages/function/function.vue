@@ -24,25 +24,32 @@
 			</view>
 		</block>
 	
-		<!-- 	<view class="grid-warp">
-				<view class="grid-title">测试</view>
+			<view class="grid-warp">
+				<view class="grid-title">其它</view>
 				<view class="grid-body">
 					<view class="cu-list grid col-3 no-border">
-						<view @click="turnToPage('../verify/bargainPrice/bargainPrice')" class="cu-item">
-							<view class="cu-tag badge" >
-								<block >112</block>
-							</view>
-							<text class="text">特价审批</text>
+						
+						<view @click="navigateTo('/pages/quotation/boxArea')" class="cu-item">
+							<text class="text">纸箱面积报价</text>
 						</view>
-						<view @click="turnToPage('../verify/originalPaper/originalPaper')" class="cu-item">
-							<text class="text">原纸审批</text>
+						<view @click="navigateTo('/pages/quotation/boxProduct')" class="cu-item">
+							<text class="text">纸箱产品报价</text>
 						</view>
-						<view @click="turnToPage('../verify/material/material')" class="cu-item">
-							<text class="text">辅料审批</text>
+						<view @click="navigateTo('/pages/paperboard/progress/progress')" class="cu-item">
+							<text class="text">纸板进度查询</text>
+						</view>
+						<view @click="navigateTo('/pages/paperBox/progress/progress')" class="cu-item">
+							<text class="text">纸箱进度查询</text>
+						</view>
+						<view @click="navigateTo('/pages/paperBox/paperorderquery/paperorderquery')" class="cu-item">
+							<text class="text">纸箱订单汇总</text>
+						</view>
+						<view @click="navigateTo('/pages/paperBox/deliveryquery/deliveryquery')" class="cu-item">
+							<text class="text">纸箱送货汇总</text>
 						</view>
 					</view>
 				</view>
-			</view> -->
+			</view>
 	</view>
 </template>
 
@@ -84,6 +91,9 @@
 		},
 		// #endif
 		methods: {
+			navigateTo(_url){
+				uni.navigateTo({url: _url})
+			},
 			//獲取通知信息
 			getNotice(index,_url){
 			       if(_url.length<10 || this.hasUpdate){

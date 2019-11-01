@@ -5,7 +5,7 @@
 				<block slot="right">查询</block>
 		</cu-custom>
 		<view class="bodyContent">
-			<zTable :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="dataTableList" :columns="dataColumns"></zTable>
+			<zTable @onClick='onClickRowEvent' :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="dataTableList" :columns="dataColumns"></zTable>
 			<searchForm @comfirmEvent="searchComfirmEvent" ref='searchForm'></searchForm>
 		</view>
 		
@@ -42,6 +42,10 @@
 					           {key: 'de_amt', title:'送货金额', width: 200,titleAlign: 'right',columnAlign:'right'},
 					           {key: 'am_amt', title:'收款金额', width: 200,titleAlign: 'right',columnAlign:'right'},
 					           {key: 'amt', title:'期末额', width: 200,titleAlign:'right',columnAlign:'right'},
+						// 	  {title:'操作',listenerClick:true, width: 200,titleAlign:'center',columnAlign:'center',format: {
+						// 	template: "<button class='cu-btn round line-green sm'>详细</uni-button>",
+						// 	names: []
+						// },},
 					         ]
 				
 			}
@@ -66,6 +70,10 @@
 		},
 		// #endif
 		methods: {
+			onClickRowEvent(item){
+				debugger
+				console.log('onClickRowEvent'+JSON.stringify(item))
+			},
 			...mapActions(['getAccRAnalyzer_action']),
 			//确认查询回调事件
 			searchComfirmEvent(params){

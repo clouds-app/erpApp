@@ -11,10 +11,26 @@
     "pages/verify/originalPaper/opDetail",
     "pages/verify/material/material",
     "pages/verify/material/mtDetail",
+    "pages/verify/boxApproval/boxApproval",
+    "pages/verify/boxApproval/boxDetail",
     "pages/report/deliveryquery/deliveryquery",
     "pages/report/compfactorykanban/compfactorykanban",
+    "pages/report/compfactorykanban/comFactoryCharts",
     "pages/report/paperorderquery/paperorderquery",
-    "pages/report/sumofcustarrears/sumofcustarrears"
+    "pages/report/sumofcustarrears/sumofcustarrears",
+    "pages/warehouse/boxIn/boxIn",
+    "pages/warehouse/paperIn/paperIn",
+    "pages/warehouse/paperOB/paperOB",
+    "components/list-select/list-select",
+    "pages/quotation/area",
+    "pages/quotation/boxProduct",
+    "pages/quotation/boxArea",
+    "pages/paperboard/progress/progress",
+    "pages/paperboard/progress/progressDetail",
+    "pages/paperBox/progress/progress",
+    "pages/paperBox/progress/progressDetail",
+    "pages/paperBox/deliveryquery/deliveryquery",
+    "pages/paperBox/paperorderquery/paperorderquery"
   ],
   "window": {
     "navigationBarTextStyle": "white",
@@ -65,7 +81,7 @@
     "autoclose": false
   },
   "appname": "erpApp",
-  "compilerVersion": "2.2.2",
+  "compilerVersion": "2.3.7",
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"
   }

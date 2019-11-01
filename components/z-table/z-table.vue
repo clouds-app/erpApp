@@ -89,7 +89,10 @@
 	 * 		  onClick | 单元格点击事件 返回点击单元格所属行的数据
 	 *
 	 * function: resetSort | 调用后重置排序 *注意:不会触发sort事件
-	 *
+	 * format: {template: "<span>测试</span>",names: [] }
+	 * format: {template: "<span><img src='https://i0.hdslb.com/bfs/face/f81c108b4e7ced4b8e16c9a0d4ee3370e17e12bf.jpg' style='width: 20px;height: 20px; margin-right: 5px; border-radius: 50%;vertical-align: middle;'/><span style='vertical-align: middle;'>我叫 #name#</span>",
+							names: ["name"]
+						},
 	 * */
 	import Vue from 'vue'
 	// import tableRender from './table-render'
@@ -373,7 +376,9 @@
 				return tempUrl
 			},
 			itemClick(row, col) {
+				//debugger
 				if (col.listenerClick) {
+					//debugger
 					this.$emit('onClick', row)
 				}
 			},

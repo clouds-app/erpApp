@@ -1,0 +1,31 @@
+
+.itemArrow{
+	padding-right: 20rpx;
+}
+.card{
+	width:90%;
+	margin-left: 5%;
+	border-radius: 10rpx;
+	padding: 30rpx;
+}
+.status{
+}
+.grid-title{
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: justify;
+	-webkit-justify-content: space-between;
+	    -ms-flex-pack: justify;
+	        justify-content: space-between;
+}
+.text-price{
+	color:#0081ff;
+	font-size: 40rpx;
+}
+.text-area{
+	color:#0081ff;
+	font-size: 40rpx;
+}
+

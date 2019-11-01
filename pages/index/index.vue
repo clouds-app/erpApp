@@ -4,11 +4,11 @@
 			<view class="banner">
 				<image src="../../static/index-banner3.jpg" style="width:100%;height: 400rpx;"></image>
 			</view>
-			<view class="radius solid-bottom bg-white notice">
+			<!-- <view class="radius solid-bottom bg-white notice">
 				<view class="notice-content">
 					通告栏组件多用于系统通知，广告通知等场景，可自定义图标，颜色，展现方式等。
 				</view>
-			</view>
+			</view> -->
 		</view>
 		<block v-for="(item,index) in allMenuList.report" :key="index">
 			<view style="margin-top: 40rpx;" class="grid-warp">

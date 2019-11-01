@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "纸箱出入库",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom",
+    "z-table": "/components/z-table/z-table",
+    "uni-popup": "/components/uni-popup/uni-popup"
+  }
+}

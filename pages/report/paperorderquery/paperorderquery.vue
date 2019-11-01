@@ -5,110 +5,56 @@
 			<block slot="right">查询</block>
 		</cu-custom>
 		<view class="bodyContentHeight">
-			 <view class="button-sp-area">
+			<!-- <view class="button-sp-area">
 							<button @click="handleFilterData('week')" class="mini-btn" :type="currentFilterType==='week'? 'primary': 'default'" size="mini">周</button>
 							<button @click="handleFilterData('month')" class="mini-btn" :type="currentFilterType==='month'? 'primary': 'default'" size="mini">月</button>
 							<button @click="handleFilterData('season')" class="mini-btn" :type="currentFilterType==='season'? 'primary': 'default'" size="mini">季</button>
-			</view>
-			
-			<swiper class="qiun-charts" @change="onChangeSwipe" :vertical="true" :circular="true"  :indicator-dots="true">
-					                        <swiper-item>
-												<!-- 数据图表 -->
-												<view class="qiun-columns">
-													<view class="qiun-charts">
-														<!--#ifdef MP-ALIPAY -->
-														<canvas
-															:canvas-id="canvasColumnId"
-															:id="canvasColumnId"
-															class="charts"
-															:width="cWidth * pixelRatio"
-															:height="cHeight * pixelRatio"
-															:style="{ width: cWidth + 'px', height: cHeight + 'px' }"
-															disable-scroll="true"
-															@touchstart="touchColumn"
-															@touchmove="moveColumn"
-															@touchend="touchEndColumn"
-														></canvas>
-														<!--#endif-->
-														<!--#ifndef MP-ALIPAY -->
-														<canvas
-															:canvas-id="canvasColumnId"
-															:id="canvasColumnId"
-															class="charts"
-															disable-scroll="true"
-															@touchstart="touchColumn"
-															@touchmove="moveColumn"
-															@touchend="touchEndColumn"
-														></canvas>
-														<!--#endif-->
-													</view>
-												</view>
-					                        </swiper-item>
-					                        <swiper-item>
-												<!-- 数据图表 -->
-												<view class="qiun-columns">
-													<view class="qiun-charts">
-														<!--#ifdef MP-ALIPAY -->
-														<canvas
-															:canvas-id="canvasColumnId"
-															:id="canvasColumnId"
-															class="charts"
-															:width="cWidth * pixelRatio"
-															:height="cHeight * pixelRatio"
-															:style="{ width: cWidth + 'px', height: cHeight + 'px' }"
-															disable-scroll="true"
-															@touchstart="touchColumn"
-															@touchmove="moveColumn"
-															@touchend="touchEndColumn"
-														></canvas>
-														<!--#endif-->
-														<!--#ifndef MP-ALIPAY -->
-														<canvas
-															:canvas-id="canvasColumnId"
-															:id="canvasColumnId"
-															class="charts"
-															disable-scroll="true"
-															@touchstart="touchColumn"
-															@touchmove="moveColumn"
-															@touchend="touchEndColumn"
-														></canvas>
-														<!--#endif-->
-													</view>
-												</view>
-					                        </swiper-item>
-					                        <swiper-item>
-												<!-- 数据图表 -->
-												<view class="qiun-columns">
-													<view class="qiun-charts">
-														<!--#ifdef MP-ALIPAY -->
-														<canvas
-															:canvas-id="canvasColumnId"
-															:id="canvasColumnId"
-															class="charts"
-															:width="cWidth * pixelRatio"
-															:height="cHeight * pixelRatio"
-															:style="{ width: cWidth + 'px', height: cHeight + 'px' }"
-															disable-scroll="true"
-															@touchstart="touchColumn"
-															@touchmove="moveColumn"
-															@touchend="touchEndColumn"
-														></canvas>
-														<!--#endif-->
-														<!--#ifndef MP-ALIPAY -->
-														<canvas
-															:canvas-id="canvasColumnId"
-															:id="canvasColumnId"
-															class="charts"
-															disable-scroll="true"
-															@touchstart="touchColumn"
-															@touchmove="moveColumn"
-															@touchend="touchEndColumn"
-														></canvas>
-														<!--#endif-->
-													</view>
-												</view>
-					                        </swiper-item>
-		 </swiper>
+			</view> -->
+			<scroll-view scroll-x class="bg-white nav">
+				<view class="flex text-center" style="border-bottom: 1px solid #ccc;">
+					<view class="cu-item flex-sub" :class="0==TabCur?'text-orange cur':''"  @tap="tabSelect" data-id="0">
+						按日期汇总
+					</view>
+					<view class="cu-item flex-sub" :class="1==TabCur?'text-orange cur':''"  @tap="tabSelect" data-id="1">
+						按客户汇总
+					</view>
+					<view class="cu-item flex-sub" :class="2==TabCur?'text-orange cur':''"  @tap="tabSelect" data-id="2">
+						按业务员汇总
+					</view>
+				</view>
+			</scroll-view>
+			<form>
+				<!-- 数据图表 -->
+				<view class="qiun-columns">
+					<view class="qiun-charts">
+						<!--#ifdef MP-ALIPAY -->
+						<canvas
+							:canvas-id="canvasColumnId"
+							:id="canvasColumnId"
+							class="charts"
+							:width="cWidth * pixelRatio"
+							:height="cHeight * pixelRatio"
+							:style="{ width: cWidth + 'px', height: cHeight + 'px' }"
+							disable-scroll="true"
+							@touchstart="touchColumn"
+							@touchmove="moveColumn"
+							@touchend="touchEndColumn"
+						></canvas>
+						<!--#endif-->
+						<!--#ifndef MP-ALIPAY -->
+						<canvas
+							:canvas-id="canvasColumnId"
+							:id="canvasColumnId"
+							class="charts"
+							disable-scroll="true"
+							@touchstart="touchColumn"
+							@touchmove="moveColumn"
+							@touchend="touchEndColumn"
+						></canvas>
+						<!--#endif-->
+					</view>
+				</view>
+			</form>
 		
 	
 		<!-- 表格数据 -->
@@ -138,6 +84,8 @@ export default {
 	components:{searchForm,zTable},
 	data() {
 		return {
+			TabCur: '0',
+			scrollLeft: 0,
 			canvasColumnId:'canvasColumn',
 			currentFilterType:'',//当前查询类型：周 week 月 month 季 season 是否选择，选中为 primary
 			errorContent: '数据加载中...',
@@ -231,25 +179,36 @@ export default {
 
 	},
 	methods: {
-	
+			//切换TAB查询数据
+			tabSelect(e) {
+				this.TabCur = e.currentTarget.dataset.id;
+				this.onChangeSwipe(this.TabCur)
+				this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+				this.$nextTick(()=>{
+					// setTimeout(()=>{
+					// 	//验证执行,方便个别小程序兼容
+					// 	let tempHeight =  this.setTableHeight()
+					// 	this.tableHeight =tempHeight-50 //特别处理
+					// },200)
+				})
+			},
 		//切换图层事件
 		onChangeSwipe(value){
-			// console.log('onChangeSwipe:'+JSON.stringify(value.detail.current))
 		       //汇总方式:默认方式 日期汇总5  客户汇总0  业务员汇总 1
-		      let currentMode =Number(value.detail.current)
+		      let currentMode =Number(value)//Number(value.detail.current)
 		        switch(currentMode){
 		          case 0:
-				   this.canvasColumnId ='canvasColumn'
+				   //this.canvasColumnId ='canvasColumn'
 				   this.currentTitle='日期汇总',
 		           this.searchParams.mode = 5 //日期汇总5
 		           break;
 		          case 1:
-				   this.canvasColumnId ='canvasColumn1'
+				   //this.canvasColumnId ='canvasColumn1'
 					this.currentTitle='客户下单TOP20',
 		             this.searchParams.mode = 0 //客户汇总0
 		           break;
 		          case 2:
-					this.canvasColumnId ='canvasColumn2'
+					//this.canvasColumnId ='canvasColumn2'
 					this.currentTitle='业务员TOP20',
 		            this.searchParams.mode = 1  //业务员汇总
 		           break;

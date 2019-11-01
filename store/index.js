@@ -7,7 +7,9 @@ import verify from './module/verify'
 import paperIn from './module/paperIn'
 import paperOB from './module/paperOB'
 import boxIn from './module/boxIn'
-
+import qutation from './module/qutation'
+import paperboard from './module/paperboard'
+import paperBox from './module/paperBox'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -27,6 +29,9 @@ export default new Vuex.Store({
 		verify,
 		paperIn,
 		paperOB,
-		boxIn
+		boxIn,
+		qutation,
+		paperBox,
+		paperboard,
 	}
 })

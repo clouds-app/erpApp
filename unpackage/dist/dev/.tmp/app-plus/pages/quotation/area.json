@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "纸箱纸质面积报价",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom",
+    "search-form": "/components/searchForm/quotationSF",
+    "z-table": "/components/z-table/z-table"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "纸箱纸质产品报价",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "search-form": "/components/searchForm/quotationSF",
+    "z-table": "/components/z-table/z-table"
+  }
+}

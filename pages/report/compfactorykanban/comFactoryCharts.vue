@@ -284,35 +284,35 @@ export default {
 				if (typeValue == 'area') {
 					//====测试数据====
 					if (isNaN(modeArea) || modeArea == 0) {
-						modeArea = this.getRamdon(10, 1100);
+						modeArea = 0//this.getRamdon(10, 1100);
 					}
 					params.area = modeArea;
 				}
 				if (typeValue == 'amt') {
 					//====测试数据====
 					if (isNaN(modeAmt) || modeAmt == 0) {
-						modeAmt = this.getRamdon(10, 1100);
+						modeAmt = 0//this.getRamdon(10, 1100);
 					}
 					params.amt = modeAmt;
 				}
 				if (typeValue == 'outamt') {
 					//====测试数据====
 					if (isNaN(modeOutAmt) || modeOutAmt == 0) {
-						modeOutAmt = this.getRamdon(10, 1100);
+						modeOutAmt = 0//this.getRamdon(10, 1100);
 					}
 					params.outAmt = modeOutAmt;
 				}
 				if (typeValue == 'outwt') {
 					//====测试数据====
 					if (isNaN(modeOutwt) || modeOutwt == 0) {
-						modeOutwt = this.getRamdon(10, 1100);
+						modeOutwt = 0//this.getRamdon(10, 1100);
 					}
 					params.outAmt = modeOutwt;
 				}
 				if (typeValue == 'inwt') {
 					//====测试数据====
 					if (isNaN(modeInwt) || modeInwt == 0) {
-						modeInwt = this.getRamdon(10, 1100);
+						modeInwt =0// this.getRamdon(10, 1100);
 					}
 					params.outAmt = modeInwt;
 				}

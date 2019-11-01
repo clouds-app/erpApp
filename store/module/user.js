@@ -1,18 +1,23 @@
-import { getValidatorToken,login,getMenuByToken,getCustomerInfo } from '@/api/user'
+import { getValidatorToken,login,getMenuByToken,getCustomerInfo,getQutationCustomerList,getSalesmanList } from '@/api/user'
 import config from '@/config'
-import { setLocalStorage,getLocalStorage } from '@/libs/util'
-const serverBusyTips="服务繁忙，请稍后再试！"
+import { setLocalStorage,getLocalStorage,JSONParseLocalStorage} from '@/libs/util'
+const serverBusyTips="执行失败，请稍后再试！"
 
 
 export default {
     state:{
-      token: uni.getStorageSync("TOKEN")=='' ? '' :JSON.parse(uni.getStorageSync("TOKEN")),
-      menuList: uni.getStorageSync("menuList")==''?'':JSON.parse(uni.getStorageSync("menuList")),
+      token: getLocalStorage("TOKEN")==''?'':JSONParseLocalStorage("TOKEN"),
+	 // token: uni.getStorageSync("TOKEN")==''?'':JSON.parse(uni.getStorageSync("TOKEN")),
+      menuList:getLocalStorage("menuList")==''?'':JSONParseLocalStorage("menuList"),
+	  userInfo:getLocalStorage("userInfo")=='' ? '' :JSONParseLocalStorage("userInfo"),
     },
     getters:{
       menuList_getters:(state, getters)=>{
         return state.menuList
       },
+	  userInfo_getters:(state, getters)=>{
+	    return state.userInfo
+	  },
     },
     mutations: {
         setLoginToken(state, token) {
@@ -26,7 +31,12 @@ export default {
           state.menuList = data
           //setLocalStorage('menuList',data)
 		  uni.setStorageSync("menuList",JSON.stringify(data)) 
-        }
+        },
+		//保存用户信息
+		setUserInfo(state,data){
+		  state.userInfo = data
+		  uni.setStorageSync("userInfo",JSON.stringify(data)) 
+		}
     },
     actions: {
       /**
@@ -143,6 +153,62 @@ export default {
         }
       })
     },
+	
+	/**
+	  * @description 获取过滤选择用户列表
+	  * @params { token } 
+	  */
+	 getQutationCustomerList_action({commit},params){
+	  return new Promise((resolve,reject)=>{
+	    try {
+	      getQutationCustomerList(params).then(res=>{
+	       // debugger
+	        const data = config.isRunApp ? res : res.data //因为web 浏览器 多封装了一层 data 包裹
+	        if(data.success)
+	        {
+	          resolve(data.data)
+	        }
+	        else
+	        {
+	          reject(data.msg)
+	        }
+	      }).catch(err=>{
+	        //console.error(JSON.stringify(err))
+	        reject(serverBusyTips)
+	      })
+	    } catch (error) {
+	      reject(serverBusyTips+error)
+	    }
+	  })
+	},
+	
+	/**
+	  * @description 业务员列表
+	  * @params { w_OptType } w_OptType(类型)0:业务员
+	  */
+	 getSalesmanList_action({commit},params){
+	  return new Promise((resolve,reject)=>{
+	    try {
+	      getSalesmanList(params).then(res=>{
+	       // debugger
+	        const data = config.isRunApp ? res : res.data //因为web 浏览器 多封装了一层 data 包裹
+	        if(data.success)
+	        {
+	          resolve(data.data)
+	        }
+	        else
+	        {
+	          reject(data.msg)
+	        }
+	      }).catch(err=>{
+	        //console.error(JSON.stringify(err))
+	        reject(serverBusyTips)
+	      })
+	    } catch (error) {
+	      reject(serverBusyTips+error)
+	    }
+	  })
+	},
 
     }
   }

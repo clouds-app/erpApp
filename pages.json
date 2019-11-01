@@ -152,6 +152,69 @@
           }
         }
 
+        ,{
+            "path" : "pages/quotation/area",
+            "style" : {
+            	"navigationBarTitleText": "纸箱纸质面积报价",
+            	"navigationStyle":"custom"
+            }
+        },
+		{
+		    "path" : "pages/quotation/boxProduct",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱纸质产品报价",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/quotation/boxArea",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱报价",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperboard/progress/progress",
+		   "style" : {
+		   	"navigationBarTitleText": "纸板进度查询",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperboard/progress/progressDetail",
+		   "style" : {
+		   	"navigationBarTitleText": "纸板进度详细",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperBox/progress/progress",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱进度查询",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperBox/progress/progressDetail",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱进度详细",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperBox/deliveryquery/deliveryquery",
+		    "style" : {
+				"navigationBarTitleText": "纸箱送货汇总",
+				"navigationStyle":"custom"
+			}
+		},
+		{
+		    "path" : "pages/paperBox/paperorderquery/paperorderquery",
+		    "style" : {
+				"navigationBarTitleText": "纸箱订单汇总",
+				"navigationStyle":"custom"
+			}
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",

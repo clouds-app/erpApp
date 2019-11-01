@@ -1,11 +1,11 @@
-
+import { setLocalStorage,getLocalStorage,JSONParseLocalStorage} from '@/libs/util'
 export default {
     state: {
 		//当前选择功能下标
-		subIndex:uni.getStorageSync("subIndex")=='' ? '' :JSON.parse(uni.getStorageSync("subIndex")),
-	  dataSelectedPageTitle:uni.getStorageSync("dataSelectedPageTitle")=='' ? '' :JSON.parse(uni.getStorageSync("dataSelectedPageTitle")),
-	  dataSelectedList:uni.getStorageSync("dataSelectedList")=='' ? '' :JSON.parse(uni.getStorageSync("dataSelectedList")),
-	  currentComFactoryChartData:uni.getStorageSync("currentComFactoryChartData")=='' ? '' :JSON.parse(uni.getStorageSync("currentComFactoryChartData")),
+		subIndex:getLocalStorage("subIndex")=='' ? '' :JSONParseLocalStorage("subIndex"),
+	  dataSelectedPageTitle:getLocalStorage("dataSelectedPageTitle")=='' ? '' :JSONParseLocalStorage("dataSelectedPageTitle"),
+	  dataSelectedList:getLocalStorage("dataSelectedList")=='' ? '' :JSONParseLocalStorage("dataSelectedList"),
+	  currentComFactoryChartData:getLocalStorage("currentComFactoryChartData")=='' ? '' :JSONParseLocalStorage("currentComFactoryChartData"),
       currentSelectedMenuIndex: '',
       currentSelectedFooterMenu: '',
     },

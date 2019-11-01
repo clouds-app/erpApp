@@ -48,6 +48,7 @@
 
 
 
+
 /*每个页面公共css */
 /*
   ColorUi for uniApp  v2.1.6 | by 文晓港 2019-05-31 10:44:24
@@ -6527,5 +6528,9 @@ radio-group label, checkbox-group label{
 	    position: relative;
 	    height: 24px;
 	    line-height: 24px; */
+}
+/*界面===主色*/
+.color-main-cl{
+	color:#2fb3ff !important;
 }
 

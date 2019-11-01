@@ -484,6 +484,7 @@ function wrapper(methodName, method) {
 var todoApis = Object.create(null);
 
 var TODOS = [
+'onTabBarMidButtonTap',
 'subscribePush',
 'unsubscribePush',
 'onPush',
@@ -1176,6 +1177,8 @@ function parseBaseApp(vm, _ref3)
 
 
       this.$vm.$scope = this;
+      // vm 上也挂载 globalData
+      this.$vm.globalData = this.globalData;
 
       this.$vm._isMounted = true;
       this.$vm.__call_hook('mounted', args);
@@ -1604,7 +1607,53 @@ function normalizeComponent (
 
 /***/ }),
 
-/***/ 147:
+/***/ 15:
+/*!***************************************!*\
+  !*** E:/cl_vue/erpApp/store/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
+var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ 16));
+var _app = _interopRequireDefault(__webpack_require__(/*! ./module/app */ 17));
+var _user = _interopRequireDefault(__webpack_require__(/*! ./module/user */ 21));
+var _report = _interopRequireDefault(__webpack_require__(/*! ./module/report */ 25));
+var _verify = _interopRequireDefault(__webpack_require__(/*! ./module/verify */ 27));
+var _paperIn = _interopRequireDefault(__webpack_require__(/*! ./module/paperIn */ 29));
+var _paperOB = _interopRequireDefault(__webpack_require__(/*! ./module/paperOB */ 31));
+var _boxIn = _interopRequireDefault(__webpack_require__(/*! ./module/boxIn */ 33));
+var _qutation = _interopRequireDefault(__webpack_require__(/*! ./module/qutation */ 35));
+var _paperboard = _interopRequireDefault(__webpack_require__(/*! ./module/paperboard */ 37));
+var _paperBox = _interopRequireDefault(__webpack_require__(/*! ./module/paperBox */ 39));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+_vue.default.use(_vuex.default);var _default =
+
+new _vuex.default.Store({
+  state: {},
+
+
+  mutations: {},
+
+
+  actions: {},
+
+
+  modules: {
+    app: _app.default,
+    user: _user.default,
+    report: _report.default,
+    verify: _verify.default,
+    paperIn: _paperIn.default,
+    paperOB: _paperOB.default,
+    boxIn: _boxIn.default,
+    qutation: _qutation.default,
+    paperBox: _paperBox.default,
+    paperboard: _paperboard.default } });exports.default = _default;
+
+/***/ }),
+
+/***/ 153:
 /*!**********************************************************************!*\
   !*** E:/cl_vue/erpApp/node_modules/_dayjs@1.8.16@dayjs/dayjs.min.js ***!
   \**********************************************************************/
@@ -1616,7 +1665,7 @@ function normalizeComponent (
 
 /***/ }),
 
-/***/ 148:
+/***/ 154:
 /*!********************************************************!*\
   !*** E:/cl_vue/erpApp/components/u-charts/u-charts.js ***!
   \********************************************************/
@@ -7091,7 +7140,7 @@ if ( true && typeof module.exports === "object") {
 
 /***/ }),
 
-/***/ 149:
+/***/ 155:
 /*!******************************************!*\
   !*** E:/cl_vue/erpApp/common/checker.js ***!
   \******************************************/
@@ -7123,48 +7172,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 15:
-/*!***************************************!*\
-  !*** E:/cl_vue/erpApp/store/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
-var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ 16));
-var _app = _interopRequireDefault(__webpack_require__(/*! ./module/app */ 17));
-var _user = _interopRequireDefault(__webpack_require__(/*! ./module/user */ 18));
-var _report = _interopRequireDefault(__webpack_require__(/*! ./module/report */ 25));
-var _verify = _interopRequireDefault(__webpack_require__(/*! ./module/verify */ 27));
-var _paperIn = _interopRequireDefault(__webpack_require__(/*! ./module/paperIn */ 29));
-var _paperOB = _interopRequireDefault(__webpack_require__(/*! ./module/paperOB */ 31));
-var _boxIn = _interopRequireDefault(__webpack_require__(/*! ./module/boxIn */ 33));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-
-_vue.default.use(_vuex.default);var _default =
-
-new _vuex.default.Store({
-  state: {},
-
-
-  mutations: {},
-
-
-  actions: {},
-
-
-  modules: {
-    app: _app.default,
-    user: _user.default,
-    report: _report.default,
-    verify: _verify.default,
-    paperIn: _paperIn.default,
-    paperOB: _paperOB.default,
-    boxIn: _boxIn.default } });exports.default = _default;
-
-/***/ }),
-
-/***/ 150:
+/***/ 156:
 /*!**************************************!*\
   !*** E:/cl_vue/erpApp/mock/index.js ***!
   \**************************************/
@@ -8158,7 +8166,94 @@ var index_esm = {
 
 /***/ }),
 
-/***/ 167:
+/***/ 17:
+/*!********************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/app.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _util = __webpack_require__(/*! @/libs/util */ 18);var _default =
+{
+  state: {
+    //当前选择功能下标
+    subIndex: (0, _util.getLocalStorage)("subIndex") == '' ? '' : (0, _util.JSONParseLocalStorage)("subIndex"),
+    dataSelectedPageTitle: (0, _util.getLocalStorage)("dataSelectedPageTitle") == '' ? '' : (0, _util.JSONParseLocalStorage)("dataSelectedPageTitle"),
+    dataSelectedList: (0, _util.getLocalStorage)("dataSelectedList") == '' ? '' : (0, _util.JSONParseLocalStorage)("dataSelectedList"),
+    currentComFactoryChartData: (0, _util.getLocalStorage)("currentComFactoryChartData") == '' ? '' : (0, _util.JSONParseLocalStorage)("currentComFactoryChartData"),
+    currentSelectedMenuIndex: '',
+    currentSelectedFooterMenu: '' },
+
+  //获取：this.$store.getters.currentSelectedMenu_getter
+  getters: {
+    //当前选择功能下标
+    subIndex_getter: function subIndex_getter(state) {
+      return state.subIndex;
+    },
+    //数据选择列表 缓存数据==>页面标题
+    dataSelectedPageTitle_getter: function dataSelectedPageTitle_getter(state) {
+      return state.dataSelectedPageTitle;
+    },
+    //数据选择列表 缓存数据
+    dataSelectedList_getter: function dataSelectedList_getter(state) {
+      return state.dataSelectedList;
+    },
+    currentComFactoryChartData_getter: function currentComFactoryChartData_getter(state) {
+      return state.currentComFactoryChartData;
+    },
+    currentSelectedMenu_getter: function currentSelectedMenu_getter(state) {
+      if (state.currentSelectedFooterMenu == '') {
+        return 'index';
+      }
+      return state.currentSelectedFooterMenu;
+    },
+    currentSelectedMenuIndex_getter: function currentSelectedMenuIndex_getter(state) {
+      if (state.currentSelectedMenuIndex == null || state.currentSelectedMenuIndex == 'undefined') {
+        return 0;
+      }
+      return state.currentSelectedMenuIndex;
+    } },
+
+  //设置：this.$store.commit('setCurrentSelectdMenu',data)
+  mutations: {
+    //当前选择功能下标
+    setSubIndex: function setSubIndex(state, data) {
+      state.subIndex = data;
+      uni.setStorageSync("subIndex", JSON.stringify(data));
+    },
+    //数据选择列表 ==>页面标题
+    setDataSelectedPageTitle: function setDataSelectedPageTitle(state, data) {
+      state.dataSelectedPageTitle = data;
+      uni.setStorageSync("dataSelectedPageTitle", JSON.stringify(data));
+    },
+    //保存数据列表选择数据
+    setDataSelectedList: function setDataSelectedList(state, data) {
+      state.dataSelectedList = data;
+      uni.setStorageSync("dataSelectedList", JSON.stringify(data));
+    },
+    setCurrentComFactoryChartData: function setCurrentComFactoryChartData(state, data) {
+      state.currentComFactoryChartData = data;
+      uni.setStorageSync("currentComFactoryChartData", JSON.stringify(data));
+
+    },
+    setCurrentSelectdFooterMenu: function setCurrentSelectdFooterMenu(state, data) {
+      state.currentSelectedFooterMenu = data;
+      uni.setStorageSync("currentSelectedFooterMenu", JSON.stringify(data));
+
+    },
+    setCurrentSelectdMenuIndex: function setCurrentSelectdMenuIndex(state, data) {
+      state.currentSelectedMenuIndex = data;
+      uni.setStorageSync("currentSelectedMenuIndex", JSON.stringify(data));
+
+    } },
+
+  actions: {} };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 173:
 /*!***************************************!*\
   !*** E:/cl_vue/erpApp/mock/tableW.js ***!
   \***************************************/
@@ -8242,340 +8337,479 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 /***/ }),
 
-/***/ 17:
-/*!********************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/app.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
-{
-  state: {
-    //当前选择功能下标
-    subIndex: uni.getStorageSync("subIndex") == '' ? '' : JSON.parse(uni.getStorageSync("subIndex")),
-    dataSelectedPageTitle: uni.getStorageSync("dataSelectedPageTitle") == '' ? '' : JSON.parse(uni.getStorageSync("dataSelectedPageTitle")),
-    dataSelectedList: uni.getStorageSync("dataSelectedList") == '' ? '' : JSON.parse(uni.getStorageSync("dataSelectedList")),
-    currentComFactoryChartData: uni.getStorageSync("currentComFactoryChartData") == '' ? '' : JSON.parse(uni.getStorageSync("currentComFactoryChartData")),
-    currentSelectedMenuIndex: '',
-    currentSelectedFooterMenu: '' },
-
-  //获取：this.$store.getters.currentSelectedMenu_getter
-  getters: {
-    //当前选择功能下标
-    subIndex_getter: function subIndex_getter(state) {
-      return state.subIndex;
-    },
-    //数据选择列表 缓存数据==>页面标题
-    dataSelectedPageTitle_getter: function dataSelectedPageTitle_getter(state) {
-      return state.dataSelectedPageTitle;
-    },
-    //数据选择列表 缓存数据
-    dataSelectedList_getter: function dataSelectedList_getter(state) {
-      return state.dataSelectedList;
-    },
-    currentComFactoryChartData_getter: function currentComFactoryChartData_getter(state) {
-      return state.currentComFactoryChartData;
-    },
-    currentSelectedMenu_getter: function currentSelectedMenu_getter(state) {
-      if (state.currentSelectedFooterMenu == '') {
-        return 'index';
-      }
-      return state.currentSelectedFooterMenu;
-    },
-    currentSelectedMenuIndex_getter: function currentSelectedMenuIndex_getter(state) {
-      if (state.currentSelectedMenuIndex == null || state.currentSelectedMenuIndex == 'undefined') {
-        return 0;
-      }
-      return state.currentSelectedMenuIndex;
-    } },
-
-  //设置：this.$store.commit('setCurrentSelectdMenu',data)
-  mutations: {
-    //当前选择功能下标
-    setSubIndex: function setSubIndex(state, data) {
-      state.subIndex = data;
-      uni.setStorageSync("subIndex", JSON.stringify(data));
-    },
-    //数据选择列表 ==>页面标题
-    setDataSelectedPageTitle: function setDataSelectedPageTitle(state, data) {
-      state.dataSelectedPageTitle = data;
-      uni.setStorageSync("dataSelectedPageTitle", JSON.stringify(data));
-    },
-    //保存数据列表选择数据
-    setDataSelectedList: function setDataSelectedList(state, data) {
-      state.dataSelectedList = data;
-      uni.setStorageSync("dataSelectedList", JSON.stringify(data));
-    },
-    setCurrentComFactoryChartData: function setCurrentComFactoryChartData(state, data) {
-      state.currentComFactoryChartData = data;
-      uni.setStorageSync("currentComFactoryChartData", JSON.stringify(data));
-
-    },
-    setCurrentSelectdFooterMenu: function setCurrentSelectdFooterMenu(state, data) {
-      state.currentSelectedFooterMenu = data;
-      uni.setStorageSync("currentSelectedFooterMenu", JSON.stringify(data));
-
-    },
-    setCurrentSelectdMenuIndex: function setCurrentSelectdMenuIndex(state, data) {
-      state.currentSelectedMenuIndex = data;
-      uni.setStorageSync("currentSelectedMenuIndex", JSON.stringify(data));
-
-    } },
-
-  actions: {} };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
 /***/ 18:
-/*!*********************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/user.js ***!
-  \*********************************************/
+/*!*************************************!*\
+  !*** E:/cl_vue/erpApp/libs/util.js ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _user = __webpack_require__(/*! @/api/user */ 19);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-var _util = __webpack_require__(/*! @/libs/util */ 23);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.localRead = exports.localSave = exports.routeHasExist = exports.routeEqual = exports.showByAccess = exports.findNodeDownward = exports.findNodeUpperByClasses = exports.findNodeUpper = exports.getTableDataFromArray = exports.getArrayFromFile = exports.doCustomTimes = exports.getNextRoute = exports.getParams = exports.canTurnTo = exports.getNewTagList = exports.getHomeRoute = exports.getTagNavListFromLocalstorage = exports.setTagNavListInLocalstorage = exports.showTitle = exports.getRouteTitleHandled = exports.getBreadCrumbList = exports.getMenuByRouter = exports.hasChild = exports.removeLocalStorage = exports.getLocalStorage = exports.setLocalStorage = exports.JSONParseLocalStorage = exports.TOKEN_KEY = void 0;
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _tools = __webpack_require__(/*! @/libs/tools */ 20);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
+var isApp = _config.default.isRunApp ? true : false;
+var TOKEN_KEY = 'token';exports.TOKEN_KEY = TOKEN_KEY;
+var currentPage = 0;
+//JSON.parse
+var JSONParseLocalStorage = function JSONParseLocalStorage(key) {
+  try {
+    //debugger
+    var valueStr = JSON.parse(uni.getStorageSync(key));
+    return valueStr;
+  } catch (e) {
+    currentPage++;
+
+    console.error('====JSONParseLocalStorage====:' + key);
+    //TODO handle the exception
+    if (key === 'TOKEN' || key === 'menuList' || key === 'userInfo') {
+      var _valueStr = uni.getStorageSync('userInfo');
+      uni.clearStorageSync();
+      if (_valueStr) {
+        setLocalStorage('userInfo', _valueStr);
+      }
 
 
-{
-  state: {
-    token: uni.getStorageSync("TOKEN") == '' ? '' : JSON.parse(uni.getStorageSync("TOKEN")),
-    menuList: uni.getStorageSync("menuList") == '' ? '' : JSON.parse(uni.getStorageSync("menuList")) },
+    }
+  }
 
-  getters: {
-    menuList_getters: function menuList_getters(state, getters) {
-      return state.menuList;
-    } },
+};
+// 设置数据存储
+exports.JSONParseLocalStorage = JSONParseLocalStorage;var setLocalStorage = function setLocalStorage(key, value) {
+  try {
+    uni.setStorageSync(key, value);
+  } catch (e) {
+    // error
+    console.error('====setLocalStorage======:' + key);
+    uni.clearStorageSync();
+    uni.reLaunch({
+      url: '/pages/login/login' });
 
-  mutations: {
-    setLoginToken: function setLoginToken(state, token) {
-      //debugger
-      state.token = token;
-      //setLocalStorage('TOKEN',token)
-      uni.setStorageSync("TOKEN", JSON.stringify(token));
-    },
-    //保存菜單
-    setMenuList: function setMenuList(state, data) {
-      state.menuList = data;
-      //setLocalStorage('menuList',data)
-      uni.setStorageSync("menuList", JSON.stringify(data));
-    } },
+  }
 
-  actions: {
-    /**
-             * @description 获取随机码，用于MD5 加密
-             * @params { username }
-             */
-    getValidatorToken_action: function getValidatorToken_action(_ref, params) {var commit = _ref.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          // debugger
-          (0, _user.getValidatorToken)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
+};
 
-              resolve(data);
-            } else
+// 获取数据存储
+exports.setLocalStorage = setLocalStorage;var getLocalStorage = function getLocalStorage(key) {
+  try {
+    var value = uni.getStorageSync('storage_key');
+    if (value) {
+      //console.log(value);
+      return value;
+    }
+  } catch (e) {
+    // error
+    console.error('====getLocalStorage======:' + key);
+    uni.clearStorageSync();
+    uni.reLaunch({
+      url: '/pages/login/login' });
 
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
+  }
+};
+
+// 移除指定数据存储
+exports.getLocalStorage = getLocalStorage;var removeLocalStorage = function removeLocalStorage(key) {
+  uni.removeStorage({
+    key: key,
+    success: function success(res) {
+      //  console.log('success');
+    } });
+
+};exports.removeLocalStorage = removeLocalStorage;
+
+var hasChild = function hasChild(item) {
+  return item.children && item.children.length !== 0;
+};exports.hasChild = hasChild;
+
+var showThisMenuEle = function showThisMenuEle(item, access) {
+  if (item.meta && item.meta.access && item.meta.access.length) {
+    if ((0, _tools.hasOneOf)(item.meta.access, access)) return true;else
+    return false;
+  } else return true;
+};
+/**
+    * @param {Array} list 通过路由列表得到菜单列表
+    * @returns {Array}
+    */
+var getMenuByRouter = function getMenuByRouter(list, access) {
+  var res = [];
+  (0, _tools.forEach)(list, function (item) {
+    if (!item.meta || item.meta && !item.meta.hideInMenu) {
+      var obj = {
+        icon: item.meta && item.meta.icon || '',
+        name: item.name,
+        meta: item.meta };
+
+      if ((hasChild(item) || item.meta && item.meta.showAlways) && showThisMenuEle(item, access)) {
+        obj.children = getMenuByRouter(item.children, access);
+      }
+      if (item.meta && item.meta.href) obj.href = item.meta.href;
+      if (showThisMenuEle(item, access)) res.push(obj);
+    }
+  });
+  return res;
+};
+
+/**
+    * @param {Array} routeMetched 当前路由metched
+    * @returns {Array}
+    */exports.getMenuByRouter = getMenuByRouter;
+var getBreadCrumbList = function getBreadCrumbList(route, homeRoute) {
+  var homeItem = _objectSpread({}, homeRoute, { icon: homeRoute.meta.icon });
+  var routeMetched = route.matched;
+  if (routeMetched.some(function (item) {return item.name === homeRoute.name;})) return [homeItem];
+  var res = routeMetched.filter(function (item) {
+    return item.meta === undefined || !item.meta.hide;
+  }).map(function (item) {
+    var meta = _objectSpread({}, item.meta);
+    if (meta.title && typeof meta.title === 'function') meta.title = meta.title(route);
+    var obj = {
+      icon: item.meta && item.meta.icon || '',
+      name: item.name,
+      meta: meta };
+
+    return obj;
+  });
+  res = res.filter(function (item) {
+    return !item.meta.hideInMenu;
+  });
+  return [_objectSpread({}, homeItem, { to: homeRoute.path })].concat(_toConsumableArray(res));
+};exports.getBreadCrumbList = getBreadCrumbList;
+
+var getRouteTitleHandled = function getRouteTitleHandled(route) {
+  var router = _objectSpread({}, route);
+  var meta = _objectSpread({}, route.meta);
+  var title = '';
+  if (meta.title) {
+    if (typeof meta.title === 'function') title = meta.title(router);else
+    title = meta.title;
+  }
+  meta.title = title;
+  router.meta = meta;
+  return router;
+};exports.getRouteTitleHandled = getRouteTitleHandled;
+
+var showTitle = function showTitle(item, vm) {
+  var title = item.meta.title;
+  if (vm.$config.useI18n) {
+    if (title.includes('{{') && title.includes('}}') && vm.$config.useI18n) title = title.replace(/({{[\s\S]+?}})/, function (m, str) {return str.replace(/{{([\s\S]*)}}/, function (m, _) {return vm.$t(_.trim());});});else
+    title = vm.$t(item.name);
+  } else title = item.meta && item.meta.title || item.name;
+  return title;
+};
+
+/**
+    * @description 本地存储和获取标签导航列表
+    */exports.showTitle = showTitle;
+var setTagNavListInLocalstorage = function setTagNavListInLocalstorage(list) {
+  localStorage.tagNaveList = JSON.stringify(list);
+};
+/**
+    * @returns {Array} 其中的每个元素只包含路由原信息中的name, path, meta三项
+    */exports.setTagNavListInLocalstorage = setTagNavListInLocalstorage;
+var getTagNavListFromLocalstorage = function getTagNavListFromLocalstorage() {
+  var list = localStorage.tagNaveList;
+  return list ? JSON.parse(list) : [];
+};
+
+/**
+    * @param {Array} routers 路由列表数组
+    * @description 用于找到路由列表中name为home的对象
+    */exports.getTagNavListFromLocalstorage = getTagNavListFromLocalstorage;
+var getHomeRoute = function getHomeRoute(routers) {var homeName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'home';
+  var i = -1;
+  var len = routers.length;
+  var homeRoute = {};
+  while (++i < len) {
+    var item = routers[i];
+    if (item.children && item.children.length) {
+      var res = getHomeRoute(item.children, homeName);
+      if (res.name) return res;
+    } else {
+      if (item.name === homeName) homeRoute = item;
+    }
+  }
+  return homeRoute;
+};
+
+/**
+    * @param {*} list 现有标签导航列表
+    * @param {*} newRoute 新添加的路由原信息对象
+    * @description 如果该newRoute已经存在则不再添加
+    */exports.getHomeRoute = getHomeRoute;
+var getNewTagList = function getNewTagList(list, newRoute) {var
+  name = newRoute.name,path = newRoute.path,meta = newRoute.meta;
+  var newList = _toConsumableArray(list);
+  if (newList.findIndex(function (item) {return item.name === name;}) >= 0) return newList;else
+  newList.push({ name: name, path: path, meta: meta });
+  return newList;
+};
+
+/**
+    * @param {*} access 用户权限数组，如 ['super_admin', 'admin']
+    * @param {*} route 路由列表
+    */exports.getNewTagList = getNewTagList;
+var hasAccess = function hasAccess(access, route) {
+  if (route.meta && route.meta.access) return (0, _tools.hasOneOf)(access, route.meta.access);else
+  return true;
+};
+
+/**
+    * 权鉴
+    * @param {*} name 即将跳转的路由name
+    * @param {*} access 用户权限数组
+    * @param {*} routes 路由列表
+    * @description 用户是否可跳转到该页
+    */
+var canTurnTo = function canTurnTo(name, access, routes) {
+  var routePermissionJudge = function routePermissionJudge(list) {
+    return list.some(function (item) {
+      if (item.children && item.children.length) {
+        return routePermissionJudge(item.children);
+      } else if (item.name === name) {
+        return hasAccess(access, item);
+      }
+    });
+  };
+
+  return routePermissionJudge(routes);
+};
+
+/**
+    * @param {String} url
+    * @description 从URL中解析参数
+    */exports.canTurnTo = canTurnTo;
+var getParams = function getParams(url) {
+  var keyValueArr = url.split('?')[1].split('&');
+  var paramObj = {};
+  keyValueArr.forEach(function (item) {
+    var keyValue = item.split('=');
+    paramObj[keyValue[0]] = keyValue[1];
+  });
+  return paramObj;
+};
+
+/**
+    * @param {Array} list 标签列表
+    * @param {String} name 当前关闭的标签的name
+    */exports.getParams = getParams;
+var getNextRoute = function getNextRoute(list, route) {
+  var res = {};
+  if (list.length === 2) {
+    res = getHomeRoute(list);
+  } else {
+    var index = list.findIndex(function (item) {return routeEqual(item, route);});
+    if (index === list.length - 1) res = list[list.length - 2];else
+    res = list[index + 1];
+  }
+  return res;
+};
+
+/**
+    * @param {Number} times 回调函数需要执行的次数
+    * @param {Function} callback 回调函数
+    */exports.getNextRoute = getNextRoute;
+var doCustomTimes = function doCustomTimes(times, callback) {
+  var i = -1;
+  while (++i < times) {
+    callback(i);
+  }
+};
+
+/**
+    * @param {Object} file 从上传组件得到的文件对象
+    * @returns {Promise} resolve参数是解析后的二维数组
+    * @description 从Csv文件中解析出表格，解析成二维数组
+    */exports.doCustomTimes = doCustomTimes;
+var getArrayFromFile = function getArrayFromFile(file) {
+  var nameSplit = file.name.split('.');
+  var format = nameSplit[nameSplit.length - 1];
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
+    reader.readAsText(file); // 以文本格式读取
+    var arr = [];
+    reader.onload = function (evt) {
+      var data = evt.target.result; // 读到的数据
+      var pasteData = data.trim();
+      arr = pasteData.split(/[\n\u0085\u2028\u2029]|\r\n?/g).map(function (row) {
+        return row.split('\t');
+      }).map(function (item) {
+        return item[0].split(',');
       });
-    },
-    /**
-        * @description 用户登录
-        * @params { username, password }
-        */
-    Login_action: function Login_action(_ref2, params) {var commit = _ref2.commit;
-      // debugger
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _user.login)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+      if (format === 'csv') resolve(arr);else
+      reject(new Error('[Format Error]:你上传的不是Csv文件'));
+    };
+  });
+};
 
-            if (data.success)
-            {
-              //commit('setToken',data.data.token)
-              resolve(data);
-            } else
+/**
+    * @param {Array} array 表格数据二维数组
+    * @returns {Object} { columns, tableData }
+    * @description 从二维数组中获取表头和表格数据，将第一行作为表头，用于在iView的表格中展示数据
+    */exports.getArrayFromFile = getArrayFromFile;
+var getTableDataFromArray = function getTableDataFromArray(array) {
+  var columns = [];
+  var tableData = [];
+  if (array.length > 1) {
+    var titles = array.shift();
+    columns = titles.map(function (item) {
+      return {
+        title: item,
+        key: item };
 
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-
-
+    });
+    tableData = array.map(function (item) {
+      var res = {};
+      item.forEach(function (col, i) {
+        res[titles[i]] = col;
       });
-    },
-    /**
-       * @description 根据token,获取用户功能菜单
-       * @params { token } 
-       */
-    getMenuByToken_action: function getMenuByToken_action(_ref3, params) {var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _user.getMenuByToken)(params).then(function (res) {
-            // debugger
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              commit('setMenuList', data.data);
-              resolve(data.data);
-            } else
+      return res;
+    });
+  }
+  return {
+    columns: columns,
+    tableData: tableData };
 
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    /**
-       * @description 获取过滤选择用户列表
-       * @params { token } 
-       */
-    getCustomerInfo_action: function getCustomerInfo_action(_ref4, params) {var commit = _ref4.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _user.getCustomerInfo)(params).then(function (res) {
-            // debugger
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
+};exports.getTableDataFromArray = getTableDataFromArray;
 
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    } } };exports.default = _default;
+var findNodeUpper = function findNodeUpper(ele, tag) {
+  if (ele.parentNode) {
+    if (ele.parentNode.tagName === tag.toUpperCase()) {
+      return ele.parentNode;
+    } else {
+      return findNodeUpper(ele.parentNode, tag);
+    }
+  }
+};exports.findNodeUpper = findNodeUpper;
+
+var findNodeUpperByClasses = function findNodeUpperByClasses(ele, classes) {
+  var parentNode = ele.parentNode;
+  if (parentNode) {
+    var classList = parentNode.classList;
+    if (classList && classes.every(function (className) {return classList.contains(className);})) {
+      return parentNode;
+    } else {
+      return findNodeUpperByClasses(parentNode, classes);
+    }
+  }
+};exports.findNodeUpperByClasses = findNodeUpperByClasses;
+
+var findNodeDownward = function findNodeDownward(ele, tag) {
+  var tagName = tag.toUpperCase();
+  if (ele.childNodes.length) {
+    var i = -1;
+    var len = ele.childNodes.length;
+    while (++i < len) {
+      var child = ele.childNodes[i];
+      if (child.tagName === tagName) return child;else
+      return findNodeDownward(child, tag);
+    }
+  }
+};exports.findNodeDownward = findNodeDownward;
+
+var showByAccess = function showByAccess(access, canViewAccess) {
+  return (0, _tools.hasOneOf)(canViewAccess, access);
+};
+
+/**
+    * @description 根据name/params/query判断两个路由对象是否相等
+    * @param {*} route1 路由对象
+    * @param {*} route2 路由对象
+    */exports.showByAccess = showByAccess;
+var routeEqual = function routeEqual(route1, route2) {
+  var params1 = route1.params || {};
+  var params2 = route2.params || {};
+  var query1 = route1.query || {};
+  var query2 = route2.query || {};
+  return route1.name === route2.name && (0, _tools.objEqual)(params1, params2) && (0, _tools.objEqual)(query1, query2);
+};
+
+/**
+    * 判断打开的标签列表里是否已存在这个新添加的路由对象
+    */exports.routeEqual = routeEqual;
+var routeHasExist = function routeHasExist(tagNavList, routeItem) {
+  var len = tagNavList.length;
+  var res = false;
+  doCustomTimes(len, function (index) {
+    if (routeEqual(tagNavList[index], routeItem)) res = true;
+  });
+  return res;
+};exports.routeHasExist = routeHasExist;
+
+var localSave = function localSave(key, value) {
+  localStorage.setItem(key, value);
+};exports.localSave = localSave;
+
+var localRead = function localRead(key) {
+  return localStorage.getItem(key) || '';
+};exports.localRead = localRead;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
 /***/ 19:
-/*!************************************!*\
-  !*** E:/cl_vue/erpApp/api/user.js ***!
-  \************************************/
+/*!****************************************!*\
+  !*** E:/cl_vue/erpApp/config/index.js ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getCustomerInfo = exports.getMenuByToken = exports.login = exports.getValidatorToken = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 20));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-//import Qs from 'qs'
-var apiPath = '/clerp-app-api'; //正式环境
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+// const is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|ipad|iphone|android|coolpad|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|wince)/i) != null;
+// /**
+//  * @returns {String} 当前浏览器名称
+//  */ 
+// const getExplorer = () => {
+//   const ua = window.navigator.userAgent
+//   const isExplorer = (exp) => {
+//     return ua.indexOf(exp) > -1
+//   }
+//   if (isExplorer('MSIE')) return 'IE'
+//   else if (isExplorer('Firefox')) return 'Firefox'
+//   else if (isExplorer('Chrome')) return 'Chrome'
+//   else if (isExplorer('Opera')) return 'Opera'
+//   else if (isExplorer('Safari')) return 'Safari'
+// }
 
-/**
-* @description 获取随机码，用于MD5 加密
-* @params { userId }
-*/
-var getValidatorToken = function getValidatorToken(_ref) {var userId = _ref.userId;
-  //debugger
-  //参数
-  var data = {
-    userId: userId };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/user/validatorToken"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description 用户登录
-   * @params { userId, password }
-   */exports.getValidatorToken = getValidatorToken;
-var login = function login(_ref2) {var userId = _ref2.userId,pwd = _ref2.pwd;
-  //参数
-  var data = {
-    userId: userId,
-    pwd: pwd };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/user/login"),
-    data: data,
-    method: 'POST' });
-
-
-};
+// console.log("is_mobi:"+is_mobi)
+// console.log("getExplorer:"+getExplorer())
+var _default = {
+  /**
+                  * @description 默认页面标题
+                  */
+  title: 'webApp',
+  /**
+                    * @description 是否app 运行环境
+                    */
+  isRunApp: false, //process.env.NODE_ENV === 'production',//is_mobi,//true,// 
+  /**
+   * @description token在Cookie中存储的天数，默认1天
+   */
+  cookieExpires: 1,
+  /**
+                     * @description api请求基础路径 http://120.78.91.203:8082/clerp-app-api/swagger-ui.html
+                     */
+  baseUrl: {
+    dev: 'http://120.78.91.203:8083',
+    pro: 'http://120.78.91.203:8083' },
 
 
-/**
-   * @description 根据token,获取用户功能菜单
-   * @params { token } 
-   */exports.login = login;
-var getMenuByToken = function getMenuByToken(_ref3) {var token = _ref3.token;
-  //参数
-  var data = {
-    isLoad: 'false' };
+  baseImgUrl: 'http://120.78.91.203:8083/clerp-app-api',
 
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/user/resourceInfoV2"),
-    data: data,
-    method: 'POST' });
-
-
-};
-
-
-/**
-   * @description 获取过滤选择用户列表
-   * @params { token } 
-   */exports.getMenuByToken = getMenuByToken;
-var getCustomerInfo = function getCustomerInfo() {
-  // console.warn('=======getCustomerInfo======'+apiPath)
-  //参数
-  var data = {
-    //token
-  };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/user/customerInfo"),
-    data: data,
-    method: 'POST' });
-
-};exports.getCustomerInfo = getCustomerInfo;
+  /**
+                                                          * @description 默认打开的首页的路由name值，默认为home
+                                                          */
+  homeName: 'home',
+  /**
+                     * @description 需要加载的插件
+                     */
+  plugin: {
+    // 'error-store': {
+    //   showInHeader: true, // 设为false后不会在顶部显示错误日志徽标
+    //   developmentOff: false // 设为true后在开发环境不会收集错误信息，方便开发中排查错误
+    // }
+  } };exports.default = _default;
 
 /***/ }),
 
@@ -14543,836 +14777,6 @@ internalMixin(Vue);
 /***/ }),
 
 /***/ 20:
-/*!********************************************!*\
-  !*** E:/cl_vue/erpApp/libs/api.request.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-
-
-var _request = _interopRequireDefault(__webpack_require__(/*! ./request/request */ 22));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var baseUrl = _config.default.isRunApp ? _config.default.baseUrl.pro : _config.default.baseUrl.dev;var currentToken = '';
-
-var axios = new _request.default();
-
-axios.setConfig(function (config) {/* 设置全局配置 */
-  config.baseUrl = baseUrl; /* 根域名不同 */
-  config.header = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    //'Content-Type': 'application/json;charset=UTF-8',
-    token: '', //uni.getStorageSync("TOKEN") 这里获取无效
-    time: Date.now().toString() };
-
-  return config;
-});
-
-axios.interceptor.request(function (config, cancel) {/* 请求之前拦截器 */
-  config.header = _objectSpread({},
-  config.header);
-
-
-  currentToken = uni.getStorageSync("TOKEN") == '' ? '' : JSON.parse(uni.getStorageSync("TOKEN")) || '';
-  console.warn('请求之前拦截器==Token===' + currentToken);
-  config.header.token = currentToken;
-
-  uni.showLoading({
-    mask: true,
-    title: '请稍候...' });
-
-  /*
-                         if (!token) { // 如果token不存在，调用cancel 会取消本次请求，但是该函数的catch() 仍会执行
-                           cancel('token 不存在') // 接收一个参数，会传给catch((err) => {}) err.errMsg === 'token 不存在'
-                         }
-                         */
-  return config;
-});
-
-axios.interceptor.response(function (res) {/* 请求之后拦截器 */
-  uni.hideLoading();
-  // debugger
-  // console.log(JSON.stringify(res))
-  if (res.status === 10000 || res.data.status === 10000) {
-    uni.showToast({
-      title: '登陆超时，请重新登陆！',
-      duration: 2000 });
-
-    try {
-      uni.removeStorageSync('TOKEN');
-    } catch (e) {
-
-    } // error
-    // uni.navigateTo({
-    //     url: '../login/login'
-    // })
-    // debugger
-    // let pages =getCurrentPages()
-    // var page = pages[pages.length - 1]
-    // uni.reLaunch({
-    //     url: '../login/login'
-    // });
-    // return
-  } else {
-    return res;
-  }
-
-
-}, function (error) {// 请求错误做点什么
-  uni.hideLoading();
-  return Promise.reject(error);
-});var _default =
-
-axios;exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 21:
-/*!****************************************!*\
-  !*** E:/cl_vue/erpApp/config/index.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
-// const is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|ipad|iphone|android|coolpad|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|wince)/i) != null;
-// /**
-//  * @returns {String} 当前浏览器名称
-//  */ 
-// const getExplorer = () => {
-//   const ua = window.navigator.userAgent
-//   const isExplorer = (exp) => {
-//     return ua.indexOf(exp) > -1
-//   }
-//   if (isExplorer('MSIE')) return 'IE'
-//   else if (isExplorer('Firefox')) return 'Firefox'
-//   else if (isExplorer('Chrome')) return 'Chrome'
-//   else if (isExplorer('Opera')) return 'Opera'
-//   else if (isExplorer('Safari')) return 'Safari'
-// }
-
-// console.log("is_mobi:"+is_mobi)
-// console.log("getExplorer:"+getExplorer())
-var _default = {
-  /**
-                  * @description 默认页面标题
-                  */
-  title: 'webApp',
-  /**
-                    * @description 是否app 运行环境
-                    */
-  isRunApp: "development" === 'production', //is_mobi,//true,// 
-  /**
-   * @description token在Cookie中存储的天数，默认1天
-   */
-  cookieExpires: 1,
-  /**
-                     * @description api请求基础路径 http://120.78.91.203:8082/clerp-app-api/swagger-ui.html
-                     */
-  baseUrl: {
-    dev: 'http://120.78.91.203:8082',
-    pro: 'http://120.78.91.203:8082' },
-
-
-  baseImgUrl: 'http://120.78.91.203:8082/clerp-app-api',
-
-  /**
-                                                          * @description 默认打开的首页的路由name值，默认为home
-                                                          */
-  homeName: 'home',
-  /**
-                     * @description 需要加载的插件
-                     */
-  plugin: {
-    // 'error-store': {
-    //   showInHeader: true, // 设为false后不会在顶部显示错误日志徽标
-    //   developmentOff: false // 设为true后在开发环境不会收集错误信息，方便开发中排查错误
-    // }
-  } };exports.default = _default;
-
-/***/ }),
-
-/***/ 22:
-/*!************************************************!*\
-  !*** E:/cl_vue/erpApp/libs/request/request.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}function _createClass(Constructor, protoProps, staticProps) {if (protoProps) _defineProperties(Constructor.prototype, protoProps);if (staticProps) _defineProperties(Constructor, staticProps);return Constructor;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;} /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Request 0.0.9
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Class Request
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @description luch-request 0.0.9 http请求插件
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Author lu-ch
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Date 2019-08-20
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Email webwork.s@qq.com
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * http://ext.dcloud.net.cn/plugin?id=392
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */var
-Request = /*#__PURE__*/function () {function Request() {var _this = this;_classCallCheck(this, Request);_defineProperty(this, "config",
-    {
-      baseUrl: '',
-      header: {
-        // 'Content-Type': 'application/json;charset=UTF-8'
-        'Content-Type': 'application/x-www-form-urlencoded' },
-
-      method: 'GET',
-      dataType: 'json',
-      responseType: 'text' });_defineProperty(this, "interceptor",
-
-
-
-
-
-
-
-
-
-
-
-    {
-      /**
-       * @param {Request~requestCallback} cb - 请求之前拦截,接收一个函数（config, cancel）=> {return config}。第一个参数为全局config,第二个参数为函数，调用则取消本次请求。
-       */
-      request: function request(cb) {
-        if (cb) {
-          _this.requestBeforeFun = cb;
-        }
-      },
-      /**
-          * @param {Request~responseCallback} cb 响应拦截器，对响应数据做点什么
-          * @param {Request~responseErrCallback} ecb 响应拦截器，对响应错误做点什么
-          */
-      response: function response(cb, ecb) {
-        if (cb && ecb) {
-          _this.requestComFun = cb;
-          _this.requestComFail = ecb;
-        }
-      } });}_createClass(Request, [{ key: "requestBeforeFun", value: function requestBeforeFun(
-
-
-    config) {
-      return config;
-    } }, { key: "requestComFun", value: function requestComFun(
-
-    response) {
-      return response;
-    } }, { key: "requestComFail", value: function requestComFail(
-
-    response) {
-      return response;
-    }
-
-    /**
-       * @Function
-       * @param {Request~setConfigCallback} f - 设置全局默认配置
-       */ }, { key: "setConfig", value: function setConfig(
-    f) {
-      this.config = f(this.config);
-    }
-
-    /**
-       * @Function
-       * @param {Object} options - 请求配置项
-       * @prop {String} options.url - 请求路径
-       * @prop {Object} options.data - 请求参数
-       * @prop {Object} [options.responseType = config.responseType] [text|arraybuffer] - 响应的数据类型
-       * @prop {Object} [options.dataType = config.dataType] - 如果设为 json，会尝试对返回的数据做一次 JSON.parse
-       * @prop {Object} [options.header = config.header] - 请求header
-       * @prop {Object} [options.method = config.method] - 请求方法
-       * @returns {Promise<unknown>}
-       */ }, { key: "request", value: function request()
-    {var _this2 = this;var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      options.baseUrl = this.config.baseUrl;
-      options.dataType = options.dataType || this.config.dataType;
-      options.responseType = options.responseType || this.config.responseType;
-      options.url = Request.posUrl(options.url) ? options.url : options.baseUrl + options.url;
-      options.data = options.data || {};
-      options.header = options.header || this.config.header;
-      options.method = options.method || this.config.method;
-      return new Promise(function (resolve, reject) {
-        var next = true;
-        var _config = null;
-        options.complete = function (response) {
-          var statusCode = response.statusCode;
-          response.config = _config;
-          if (statusCode === 200) {// 成功
-            response = _this2.requestComFun(response);
-            resolve(response);
-          } else {
-            response = _this2.requestComFail(response);
-            reject(response);
-          }
-        };
-        var cancel = function cancel() {var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'handle cancel';var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : options;
-          var err = {
-            errMsg: t,
-            config: config };
-
-          reject(err);
-          next = false;
-        };
-
-        _config = _objectSpread({}, _this2.requestBeforeFun(options, cancel));
-        if (!next) return;
-        uni.request(_config);
-      });
-    } }, { key: "get", value: function get(
-
-    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'GET' },
-      options));
-
-    } }, { key: "post", value: function post(
-
-    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'POST' },
-      options));
-
-    } }, { key: "put", value: function put(
-
-
-    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'PUT' },
-      options));
-
-    } }, { key: "delete", value: function _delete(
-
-
-
-    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'DELETE' },
-      options));
-
-    } }, { key: "connect", value: function connect(
-
-
-
-    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'CONNECT' },
-      options));
-
-    } }, { key: "head", value: function head(
-
-
-
-    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'HEAD' },
-      options));
-
-    } }, { key: "options", value: function options(
-
-
-
-    url, data) {var _options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'OPTIONS' },
-      _options));
-
-    } }, { key: "trace", value: function trace(
-
-
-
-    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.request(_objectSpread({
-        url: url,
-        data: data,
-        method: 'TRACE' },
-      options));
-
-    } }], [{ key: "posUrl", value: function posUrl(url) {/* 判断url是否为绝对路径 */return /(http|https):\/\/([\w.]+\/?)\S*/.test(url);} /**
-                                                                                                                                 * @property {Function} request 请求拦截器
-                                                                                                                                 * @property {Function} response 响应拦截器
-                                                                                                                                 * @type {{request: Request.interceptor.request, response: Request.interceptor.response}}
-                                                                                                                                 */ }]);return Request;}(); /**
-                                                                                                                                                             * setConfig回调
-                                                                                                                                                             * @return {Object} - 返回操作后的config
-                                                                                                                                                             * @callback Request~setConfigCallback
-                                                                                                                                                             * @param {Object} config - 全局默认config
-                                                                                                                                                             */ /**
-                                                                                                                                                                 * 请求拦截器回调
-                                                                                                                                                                 * @return {Object} - 返回操作后的config
-                                                                                                                                                                 * @callback Request~requestCallback
-                                                                                                                                                                 * @param {Object} config - 全局config
-                                                                                                                                                                 * @param {Function} [cancel] - 取消请求钩子，调用会取消本次请求
-                                                                                                                                                                 */
-/**
-                                                                                                                                                                     * 响应拦截器回调
-                                                                                                                                                                     * @return {Object} - 返回操作后的response
-                                                                                                                                                                     * @callback Request~responseCallback
-                                                                                                                                                                     * @param {Object} response - 请求结果 response
-                                                                                                                                                                     */
-/**
-                                                                                                                                                                         * 响应错误拦截器回调
-                                                                                                                                                                         * @return {Object} - 返回操作后的response
-                                                                                                                                                                         * @callback Request~responseErrCallback
-                                                                                                                                                                         * @param {Object} response - 请求结果 response
-                                                                                                                                                                         */exports.default = Request;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 23:
-/*!*************************************!*\
-  !*** E:/cl_vue/erpApp/libs/util.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.localRead = exports.localSave = exports.routeHasExist = exports.routeEqual = exports.showByAccess = exports.findNodeDownward = exports.findNodeUpperByClasses = exports.findNodeUpper = exports.getTableDataFromArray = exports.getArrayFromFile = exports.doCustomTimes = exports.getNextRoute = exports.getParams = exports.canTurnTo = exports.getNewTagList = exports.getHomeRoute = exports.getTagNavListFromLocalstorage = exports.setTagNavListInLocalstorage = exports.showTitle = exports.getRouteTitleHandled = exports.getBreadCrumbList = exports.getMenuByRouter = exports.hasChild = exports.removeLocalStorage = exports.getLocalStorage = exports.setLocalStorage = exports.TOKEN_KEY = void 0;
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-var _tools = __webpack_require__(/*! @/libs/tools */ 24);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
-var isApp = _config.default.isRunApp ? true : false;
-var TOKEN_KEY = 'token';
-
-
-// 设置数据存储
-exports.TOKEN_KEY = TOKEN_KEY;var setLocalStorage = function setLocalStorage(key, value) {
-  uni.setStorage({
-    key: key,
-    data: value,
-    success: function success() {
-      // console.log('success');
-    } });
-
-
-};
-
-// 获取数据存储
-exports.setLocalStorage = setLocalStorage;var getLocalStorage = function getLocalStorage(key) {
-  //debugger
-  uni.getStorage({
-    key: key,
-    success: function success(res) {
-      // console.log(res.data);
-    } });
-
-};
-
-// 移除指定数据存储
-exports.getLocalStorage = getLocalStorage;var removeLocalStorage = function removeLocalStorage(key) {
-  uni.removeStorage({
-    key: key,
-    success: function success(res) {
-      //  console.log('success');
-    } });
-
-};exports.removeLocalStorage = removeLocalStorage;
-
-var hasChild = function hasChild(item) {
-  return item.children && item.children.length !== 0;
-};exports.hasChild = hasChild;
-
-var showThisMenuEle = function showThisMenuEle(item, access) {
-  if (item.meta && item.meta.access && item.meta.access.length) {
-    if ((0, _tools.hasOneOf)(item.meta.access, access)) return true;else
-    return false;
-  } else return true;
-};
-/**
-    * @param {Array} list 通过路由列表得到菜单列表
-    * @returns {Array}
-    */
-var getMenuByRouter = function getMenuByRouter(list, access) {
-  var res = [];
-  (0, _tools.forEach)(list, function (item) {
-    if (!item.meta || item.meta && !item.meta.hideInMenu) {
-      var obj = {
-        icon: item.meta && item.meta.icon || '',
-        name: item.name,
-        meta: item.meta };
-
-      if ((hasChild(item) || item.meta && item.meta.showAlways) && showThisMenuEle(item, access)) {
-        obj.children = getMenuByRouter(item.children, access);
-      }
-      if (item.meta && item.meta.href) obj.href = item.meta.href;
-      if (showThisMenuEle(item, access)) res.push(obj);
-    }
-  });
-  return res;
-};
-
-/**
-    * @param {Array} routeMetched 当前路由metched
-    * @returns {Array}
-    */exports.getMenuByRouter = getMenuByRouter;
-var getBreadCrumbList = function getBreadCrumbList(route, homeRoute) {
-  var homeItem = _objectSpread({}, homeRoute, { icon: homeRoute.meta.icon });
-  var routeMetched = route.matched;
-  if (routeMetched.some(function (item) {return item.name === homeRoute.name;})) return [homeItem];
-  var res = routeMetched.filter(function (item) {
-    return item.meta === undefined || !item.meta.hide;
-  }).map(function (item) {
-    var meta = _objectSpread({}, item.meta);
-    if (meta.title && typeof meta.title === 'function') meta.title = meta.title(route);
-    var obj = {
-      icon: item.meta && item.meta.icon || '',
-      name: item.name,
-      meta: meta };
-
-    return obj;
-  });
-  res = res.filter(function (item) {
-    return !item.meta.hideInMenu;
-  });
-  return [_objectSpread({}, homeItem, { to: homeRoute.path })].concat(_toConsumableArray(res));
-};exports.getBreadCrumbList = getBreadCrumbList;
-
-var getRouteTitleHandled = function getRouteTitleHandled(route) {
-  var router = _objectSpread({}, route);
-  var meta = _objectSpread({}, route.meta);
-  var title = '';
-  if (meta.title) {
-    if (typeof meta.title === 'function') title = meta.title(router);else
-    title = meta.title;
-  }
-  meta.title = title;
-  router.meta = meta;
-  return router;
-};exports.getRouteTitleHandled = getRouteTitleHandled;
-
-var showTitle = function showTitle(item, vm) {
-  var title = item.meta.title;
-  if (vm.$config.useI18n) {
-    if (title.includes('{{') && title.includes('}}') && vm.$config.useI18n) title = title.replace(/({{[\s\S]+?}})/, function (m, str) {return str.replace(/{{([\s\S]*)}}/, function (m, _) {return vm.$t(_.trim());});});else
-    title = vm.$t(item.name);
-  } else title = item.meta && item.meta.title || item.name;
-  return title;
-};
-
-/**
-    * @description 本地存储和获取标签导航列表
-    */exports.showTitle = showTitle;
-var setTagNavListInLocalstorage = function setTagNavListInLocalstorage(list) {
-  localStorage.tagNaveList = JSON.stringify(list);
-};
-/**
-    * @returns {Array} 其中的每个元素只包含路由原信息中的name, path, meta三项
-    */exports.setTagNavListInLocalstorage = setTagNavListInLocalstorage;
-var getTagNavListFromLocalstorage = function getTagNavListFromLocalstorage() {
-  var list = localStorage.tagNaveList;
-  return list ? JSON.parse(list) : [];
-};
-
-/**
-    * @param {Array} routers 路由列表数组
-    * @description 用于找到路由列表中name为home的对象
-    */exports.getTagNavListFromLocalstorage = getTagNavListFromLocalstorage;
-var getHomeRoute = function getHomeRoute(routers) {var homeName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'home';
-  var i = -1;
-  var len = routers.length;
-  var homeRoute = {};
-  while (++i < len) {
-    var item = routers[i];
-    if (item.children && item.children.length) {
-      var res = getHomeRoute(item.children, homeName);
-      if (res.name) return res;
-    } else {
-      if (item.name === homeName) homeRoute = item;
-    }
-  }
-  return homeRoute;
-};
-
-/**
-    * @param {*} list 现有标签导航列表
-    * @param {*} newRoute 新添加的路由原信息对象
-    * @description 如果该newRoute已经存在则不再添加
-    */exports.getHomeRoute = getHomeRoute;
-var getNewTagList = function getNewTagList(list, newRoute) {var
-  name = newRoute.name,path = newRoute.path,meta = newRoute.meta;
-  var newList = _toConsumableArray(list);
-  if (newList.findIndex(function (item) {return item.name === name;}) >= 0) return newList;else
-  newList.push({ name: name, path: path, meta: meta });
-  return newList;
-};
-
-/**
-    * @param {*} access 用户权限数组，如 ['super_admin', 'admin']
-    * @param {*} route 路由列表
-    */exports.getNewTagList = getNewTagList;
-var hasAccess = function hasAccess(access, route) {
-  if (route.meta && route.meta.access) return (0, _tools.hasOneOf)(access, route.meta.access);else
-  return true;
-};
-
-/**
-    * 权鉴
-    * @param {*} name 即将跳转的路由name
-    * @param {*} access 用户权限数组
-    * @param {*} routes 路由列表
-    * @description 用户是否可跳转到该页
-    */
-var canTurnTo = function canTurnTo(name, access, routes) {
-  var routePermissionJudge = function routePermissionJudge(list) {
-    return list.some(function (item) {
-      if (item.children && item.children.length) {
-        return routePermissionJudge(item.children);
-      } else if (item.name === name) {
-        return hasAccess(access, item);
-      }
-    });
-  };
-
-  return routePermissionJudge(routes);
-};
-
-/**
-    * @param {String} url
-    * @description 从URL中解析参数
-    */exports.canTurnTo = canTurnTo;
-var getParams = function getParams(url) {
-  var keyValueArr = url.split('?')[1].split('&');
-  var paramObj = {};
-  keyValueArr.forEach(function (item) {
-    var keyValue = item.split('=');
-    paramObj[keyValue[0]] = keyValue[1];
-  });
-  return paramObj;
-};
-
-/**
-    * @param {Array} list 标签列表
-    * @param {String} name 当前关闭的标签的name
-    */exports.getParams = getParams;
-var getNextRoute = function getNextRoute(list, route) {
-  var res = {};
-  if (list.length === 2) {
-    res = getHomeRoute(list);
-  } else {
-    var index = list.findIndex(function (item) {return routeEqual(item, route);});
-    if (index === list.length - 1) res = list[list.length - 2];else
-    res = list[index + 1];
-  }
-  return res;
-};
-
-/**
-    * @param {Number} times 回调函数需要执行的次数
-    * @param {Function} callback 回调函数
-    */exports.getNextRoute = getNextRoute;
-var doCustomTimes = function doCustomTimes(times, callback) {
-  var i = -1;
-  while (++i < times) {
-    callback(i);
-  }
-};
-
-/**
-    * @param {Object} file 从上传组件得到的文件对象
-    * @returns {Promise} resolve参数是解析后的二维数组
-    * @description 从Csv文件中解析出表格，解析成二维数组
-    */exports.doCustomTimes = doCustomTimes;
-var getArrayFromFile = function getArrayFromFile(file) {
-  var nameSplit = file.name.split('.');
-  var format = nameSplit[nameSplit.length - 1];
-  return new Promise(function (resolve, reject) {
-    var reader = new FileReader();
-    reader.readAsText(file); // 以文本格式读取
-    var arr = [];
-    reader.onload = function (evt) {
-      var data = evt.target.result; // 读到的数据
-      var pasteData = data.trim();
-      arr = pasteData.split(/[\n\u0085\u2028\u2029]|\r\n?/g).map(function (row) {
-        return row.split('\t');
-      }).map(function (item) {
-        return item[0].split(',');
-      });
-      if (format === 'csv') resolve(arr);else
-      reject(new Error('[Format Error]:你上传的不是Csv文件'));
-    };
-  });
-};
-
-/**
-    * @param {Array} array 表格数据二维数组
-    * @returns {Object} { columns, tableData }
-    * @description 从二维数组中获取表头和表格数据，将第一行作为表头，用于在iView的表格中展示数据
-    */exports.getArrayFromFile = getArrayFromFile;
-var getTableDataFromArray = function getTableDataFromArray(array) {
-  var columns = [];
-  var tableData = [];
-  if (array.length > 1) {
-    var titles = array.shift();
-    columns = titles.map(function (item) {
-      return {
-        title: item,
-        key: item };
-
-    });
-    tableData = array.map(function (item) {
-      var res = {};
-      item.forEach(function (col, i) {
-        res[titles[i]] = col;
-      });
-      return res;
-    });
-  }
-  return {
-    columns: columns,
-    tableData: tableData };
-
-};exports.getTableDataFromArray = getTableDataFromArray;
-
-var findNodeUpper = function findNodeUpper(ele, tag) {
-  if (ele.parentNode) {
-    if (ele.parentNode.tagName === tag.toUpperCase()) {
-      return ele.parentNode;
-    } else {
-      return findNodeUpper(ele.parentNode, tag);
-    }
-  }
-};exports.findNodeUpper = findNodeUpper;
-
-var findNodeUpperByClasses = function findNodeUpperByClasses(ele, classes) {
-  var parentNode = ele.parentNode;
-  if (parentNode) {
-    var classList = parentNode.classList;
-    if (classList && classes.every(function (className) {return classList.contains(className);})) {
-      return parentNode;
-    } else {
-      return findNodeUpperByClasses(parentNode, classes);
-    }
-  }
-};exports.findNodeUpperByClasses = findNodeUpperByClasses;
-
-var findNodeDownward = function findNodeDownward(ele, tag) {
-  var tagName = tag.toUpperCase();
-  if (ele.childNodes.length) {
-    var i = -1;
-    var len = ele.childNodes.length;
-    while (++i < len) {
-      var child = ele.childNodes[i];
-      if (child.tagName === tagName) return child;else
-      return findNodeDownward(child, tag);
-    }
-  }
-};exports.findNodeDownward = findNodeDownward;
-
-var showByAccess = function showByAccess(access, canViewAccess) {
-  return (0, _tools.hasOneOf)(canViewAccess, access);
-};
-
-/**
-    * @description 根据name/params/query判断两个路由对象是否相等
-    * @param {*} route1 路由对象
-    * @param {*} route2 路由对象
-    */exports.showByAccess = showByAccess;
-var routeEqual = function routeEqual(route1, route2) {
-  var params1 = route1.params || {};
-  var params2 = route2.params || {};
-  var query1 = route1.query || {};
-  var query2 = route2.query || {};
-  return route1.name === route2.name && (0, _tools.objEqual)(params1, params2) && (0, _tools.objEqual)(query1, query2);
-};
-
-/**
-    * 判断打开的标签列表里是否已存在这个新添加的路由对象
-    */exports.routeEqual = routeEqual;
-var routeHasExist = function routeHasExist(tagNavList, routeItem) {
-  var len = tagNavList.length;
-  var res = false;
-  doCustomTimes(len, function (index) {
-    if (routeEqual(tagNavList[index], routeItem)) res = true;
-  });
-  return res;
-};exports.routeHasExist = routeHasExist;
-
-var localSave = function localSave(key, value) {
-  localStorage.setItem(key, value);
-};exports.localSave = localSave;
-
-var localRead = function localRead(key) {
-  return localStorage.getItem(key) || '';
-};exports.localRead = localRead;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 238:
-/*!**********************************************************!*\
-  !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(/*! regenerator-runtime */ 239);
-
-
-/***/ }),
-
-/***/ 239:
-/*!************************************************************!*\
-  !*** ./node_modules/regenerator-runtime/runtime-module.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-// This method of obtaining a reference to the global object needs to be
-// kept identical to the way it is obtained in runtime.js
-var g = (function() {
-  return this || (typeof self === "object" && self);
-})() || Function("return this")();
-
-// Use `getOwnPropertyNames` because not all browsers support calling
-// `hasOwnProperty` on the global `self` object in a worker. See #183.
-var hadRuntime = g.regeneratorRuntime &&
-  Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0;
-
-// Save the old regeneratorRuntime in case it needs to be restored later.
-var oldRuntime = hadRuntime && g.regeneratorRuntime;
-
-// Force reevalutation of runtime.js.
-g.regeneratorRuntime = undefined;
-
-module.exports = __webpack_require__(/*! ./runtime */ 240);
-
-if (hadRuntime) {
-  // Restore the original runtime.
-  g.regeneratorRuntime = oldRuntime;
-} else {
-  // Remove the global property added by runtime.js.
-  try {
-    delete g.regeneratorRuntime;
-  } catch(e) {
-    g.regeneratorRuntime = undefined;
-  }
-}
-
-
-/***/ }),
-
-/***/ 24:
 /*!**************************************!*\
   !*** E:/cl_vue/erpApp/libs/tools.js ***!
   \**************************************/
@@ -15744,7 +15148,1884 @@ var toThousands = function toThousands(num) {
 
 /***/ }),
 
-/***/ 240:
+/***/ 21:
+/*!*********************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/user.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _user = __webpack_require__(/*! @/api/user */ 22);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {
+    token: (0, _util.getLocalStorage)("TOKEN") == '' ? '' : (0, _util.JSONParseLocalStorage)("TOKEN"),
+    // token: uni.getStorageSync("TOKEN")==''?'':JSON.parse(uni.getStorageSync("TOKEN")),
+    menuList: (0, _util.getLocalStorage)("menuList") == '' ? '' : (0, _util.JSONParseLocalStorage)("menuList"),
+    userInfo: (0, _util.getLocalStorage)("userInfo") == '' ? '' : (0, _util.JSONParseLocalStorage)("userInfo") },
+
+  getters: {
+    menuList_getters: function menuList_getters(state, getters) {
+      return state.menuList;
+    },
+    userInfo_getters: function userInfo_getters(state, getters) {
+      return state.userInfo;
+    } },
+
+  mutations: {
+    setLoginToken: function setLoginToken(state, token) {
+      //debugger
+      state.token = token;
+      //setLocalStorage('TOKEN',token)
+      uni.setStorageSync("TOKEN", JSON.stringify(token));
+    },
+    //保存菜單
+    setMenuList: function setMenuList(state, data) {
+      state.menuList = data;
+      //setLocalStorage('menuList',data)
+      uni.setStorageSync("menuList", JSON.stringify(data));
+    },
+    //保存用户信息
+    setUserInfo: function setUserInfo(state, data) {
+      state.userInfo = data;
+      uni.setStorageSync("userInfo", JSON.stringify(data));
+    } },
+
+  actions: {
+    /**
+             * @description 获取随机码，用于MD5 加密
+             * @params { username }
+             */
+    getValidatorToken_action: function getValidatorToken_action(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          // debugger
+          (0, _user.getValidatorToken)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+        * @description 用户登录
+        * @params { username, password }
+        */
+    Login_action: function Login_action(_ref2, params) {var commit = _ref2.commit;
+      // debugger
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _user.login)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+
+            if (data.success)
+            {
+              //commit('setToken',data.data.token)
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+
+
+      });
+    },
+    /**
+       * @description 根据token,获取用户功能菜单
+       * @params { token } 
+       */
+    getMenuByToken_action: function getMenuByToken_action(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _user.getMenuByToken)(params).then(function (res) {
+            // debugger
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              commit('setMenuList', data.data);
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 获取过滤选择用户列表
+       * @params { token } 
+       */
+    getCustomerInfo_action: function getCustomerInfo_action(_ref4, params) {var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _user.getCustomerInfo)(params).then(function (res) {
+            // debugger
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+
+    /**
+         * @description 获取过滤选择用户列表
+         * @params { token } 
+         */
+    getQutationCustomerList_action: function getQutationCustomerList_action(_ref5, params) {var commit = _ref5.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _user.getQutationCustomerList)(params).then(function (res) {
+            // debugger
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+
+    /**
+         * @description 业务员列表
+         * @params { w_OptType } w_OptType(类型)0:业务员
+         */
+    getSalesmanList_action: function getSalesmanList_action(_ref6, params) {var commit = _ref6.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _user.getSalesmanList)(params).then(function (res) {
+            // debugger
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 22:
+/*!************************************!*\
+  !*** E:/cl_vue/erpApp/api/user.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getSalesmanList = exports.getQutationCustomerList = exports.getCustomerInfo = exports.getMenuByToken = exports.login = exports.getValidatorToken = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+
+/**
+* @description 获取随机码，用于MD5 加密
+* @params { userId }
+*/
+var getValidatorToken = function getValidatorToken(_ref) {var userId = _ref.userId;
+  //debugger
+  //参数
+  var data = {
+    userId: userId };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/user/validatorToken"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 用户登录
+   * @params { userId, password }
+   */exports.getValidatorToken = getValidatorToken;
+var login = function login(_ref2) {var userId = _ref2.userId,pwd = _ref2.pwd;
+  //参数
+  var data = {
+    userId: userId,
+    pwd: pwd };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/user/login"),
+    data: data,
+    method: 'POST' });
+
+
+};
+
+
+/**
+   * @description 根据token,获取用户功能菜单
+   * @params { token } 
+   */exports.login = login;
+var getMenuByToken = function getMenuByToken(_ref3) {var token = _ref3.token;
+  //参数
+  var data = {
+    isLoad: 'false' };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/user/resourceInfoV2"),
+    data: data,
+    method: 'POST' });
+
+
+};
+
+
+/**
+   * @description 获取过滤选择用户列表
+   * @params { token } 
+   */exports.getMenuByToken = getMenuByToken;
+var getCustomerInfo = function getCustomerInfo() {
+  // console.warn('=======getCustomerInfo======'+apiPath)
+  //参数
+  var data = {
+    //token
+  };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/user/customerInfo"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  获取过滤选择 ===报价 ===用户列表
+   * /common/select_T_Customer/findList
+   * ct_Type(客户类型)0:全部,1:纸箱,2:纸板,3:蜂窝 多个逗号分开
+   * @params { ct_Type }  
+   * 返回值：
+   	(ct_ID)客户编号
+   	(ct_Desc)客户名称
+   	(ct_Type)客户类型
+   */exports.getCustomerInfo = getCustomerInfo;
+var getQutationCustomerList = function getQutationCustomerList(_ref4) {var ct_Type = _ref4.ct_Type;
+  //参数
+  var data = {
+    ct_Type: ct_Type };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/select_T_Customer/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  业务员查询
+   * 搜索条件：
+   	w_OptType(类型)0:业务员
+    返回值：
+   	(w_ID)业务员id
+   	(w_Name)业务员名称
+   */exports.getQutationCustomerList = getQutationCustomerList;
+var getSalesmanList = function getSalesmanList(_ref5) {var w_OptType = _ref5.w_OptType;
+  //参数
+  var data = {
+    w_OptType: w_OptType };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/select_T_Worker/findList"),
+    data: data,
+    method: 'POST' });
+
+};exports.getSalesmanList = getSalesmanList;
+
+/***/ }),
+
+/***/ 23:
+/*!********************************************!*\
+  !*** E:/cl_vue/erpApp/libs/api.request.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+
+
+var _request = _interopRequireDefault(__webpack_require__(/*! ./request/request */ 24));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var baseUrl = _config.default.isRunApp ? _config.default.baseUrl.pro : _config.default.baseUrl.dev;var currentToken = '';
+
+var axios = new _request.default();
+
+axios.setConfig(function (config) {/* 设置全局配置 */
+  config.baseUrl = baseUrl; /* 根域名不同 */
+  config.header = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    //'Content-Type': 'application/json;charset=UTF-8',
+    token: '', //uni.getStorageSync("TOKEN") 这里获取无效
+    time: Date.now().toString() };
+
+  return config;
+});
+
+axios.interceptor.request(function (config, cancel) {/* 请求之前拦截器 */
+  config.header = _objectSpread({},
+  config.header);
+
+
+  currentToken = uni.getStorageSync("TOKEN") == '' ? '' : JSON.parse(uni.getStorageSync("TOKEN")) || '';
+  console.warn('请求之前拦截器==Token===' + currentToken);
+  config.header.token = currentToken;
+
+  uni.showLoading({
+    mask: true,
+    title: '请稍候...' });
+
+  /*
+                         if (!token) { // 如果token不存在，调用cancel 会取消本次请求，但是该函数的catch() 仍会执行
+                           cancel('token 不存在') // 接收一个参数，会传给catch((err) => {}) err.errMsg === 'token 不存在'
+                         }
+                         */
+  return config;
+});
+
+axios.interceptor.response(function (res) {/* 请求之后拦截器 */
+  uni.hideLoading();
+  if (res.status === 10000 || res.data.status === 10000) {
+    uni.showToast({
+      title: '登陆超时，请重新登陆！',
+      duration: 2000 });
+
+    try {
+      uni.removeStorageSync('TOKEN');
+    } catch (e) {
+      // error
+    }
+
+  } else {
+    return res;
+  }
+
+
+}, function (error) {// 请求错误做点什么
+  // debugger
+  uni.hideLoading();
+  //return Promise.reject(error)
+  if (error && error.statusCode) {
+    switch (error.statusCode) {
+      case 400:
+        error.errMsg = '错误请求';
+        break;
+      case 401:
+        error.errMsg = '未授权，请重新登录';
+        break;
+      case 403:
+        error.errMsg = '拒绝访问';
+        break;
+      case 404:
+        error.errMsg = '请求错误,未找到该资源';
+        break;
+      case 405:
+        error.errMsg = '请求方法未允许';
+        break;
+      case 408:
+        error.errMsg = '请求超时';
+        break;
+      case 500:
+        error.errMsg = '服务器端出错';
+        break;
+      case 501:
+        error.errMsg = '网络未实现';
+        break;
+      case 502:
+        error.errMsg = '网络错误';
+        break;
+      case 503:
+        error.errMsg = '服务不可用';
+        break;
+      case 504:
+        error.errMsg = '网络超时';
+        break;
+      case 505:
+        error.errMsg = 'http版本不支持该请求';
+        break;
+      default:
+        error.errMsg = "\u8FDE\u63A5\u9519\u8BEF".concat(error.response.status);}
+
+  } else {
+    error.errMsg = '连接到服务器失败';
+  }
+  return Promise.reject(error.errMsg + ' ' + error.statusCode);
+});var _default =
+
+axios;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 24:
+/*!************************************************!*\
+  !*** E:/cl_vue/erpApp/libs/request/request.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}function _createClass(Constructor, protoProps, staticProps) {if (protoProps) _defineProperties(Constructor.prototype, protoProps);if (staticProps) _defineProperties(Constructor, staticProps);return Constructor;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;} /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Request 0.0.9
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Class Request
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @description luch-request 0.0.9 http请求插件
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Author lu-ch
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Date 2019-08-20
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @Email webwork.s@qq.com
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * http://ext.dcloud.net.cn/plugin?id=392
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */var
+Request = /*#__PURE__*/function () {function Request() {var _this = this;_classCallCheck(this, Request);_defineProperty(this, "config",
+    {
+      baseUrl: '',
+      header: {
+        // 'Content-Type': 'application/json;charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded' },
+
+      method: 'GET',
+      dataType: 'json',
+      responseType: 'text' });_defineProperty(this, "interceptor",
+
+
+
+
+
+
+
+
+
+
+
+    {
+      /**
+       * @param {Request~requestCallback} cb - 请求之前拦截,接收一个函数（config, cancel）=> {return config}。第一个参数为全局config,第二个参数为函数，调用则取消本次请求。
+       */
+      request: function request(cb) {
+        if (cb) {
+          _this.requestBeforeFun = cb;
+        }
+      },
+      /**
+          * @param {Request~responseCallback} cb 响应拦截器，对响应数据做点什么
+          * @param {Request~responseErrCallback} ecb 响应拦截器，对响应错误做点什么
+          */
+      response: function response(cb, ecb) {
+        if (cb && ecb) {
+          _this.requestComFun = cb;
+          _this.requestComFail = ecb;
+        }
+      } });}_createClass(Request, [{ key: "requestBeforeFun", value: function requestBeforeFun(
+
+
+    config) {
+      return config;
+    } }, { key: "requestComFun", value: function requestComFun(
+
+    response) {
+      return response;
+    } }, { key: "requestComFail", value: function requestComFail(
+
+    response) {
+      return response;
+    }
+
+    /**
+       * @Function
+       * @param {Request~setConfigCallback} f - 设置全局默认配置
+       */ }, { key: "setConfig", value: function setConfig(
+    f) {
+      this.config = f(this.config);
+    }
+
+    /**
+       * @Function
+       * @param {Object} options - 请求配置项
+       * @prop {String} options.url - 请求路径
+       * @prop {Object} options.data - 请求参数
+       * @prop {Object} [options.responseType = config.responseType] [text|arraybuffer] - 响应的数据类型
+       * @prop {Object} [options.dataType = config.dataType] - 如果设为 json，会尝试对返回的数据做一次 JSON.parse
+       * @prop {Object} [options.header = config.header] - 请求header
+       * @prop {Object} [options.method = config.method] - 请求方法
+       * @returns {Promise<unknown>}
+       */ }, { key: "request", value: function request()
+    {var _this2 = this;var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      options.baseUrl = this.config.baseUrl;
+      options.dataType = options.dataType || this.config.dataType;
+      options.responseType = options.responseType || this.config.responseType;
+      options.url = Request.posUrl(options.url) ? options.url : options.baseUrl + options.url;
+      options.data = options.data || {};
+      options.header = options.header || this.config.header;
+      options.method = options.method || this.config.method;
+      return new Promise(function (resolve, reject) {
+        var next = true;
+        var _config = null;
+        options.complete = function (response) {
+          var statusCode = response.statusCode;
+          response.config = _config;
+          if (statusCode === 200) {// 成功
+            response = _this2.requestComFun(response);
+            resolve(response);
+          } else {
+            response = _this2.requestComFail(response);
+            reject(response);
+          }
+        };
+        var cancel = function cancel() {var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'handle cancel';var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : options;
+          var err = {
+            errMsg: t,
+            config: config };
+
+          reject(err);
+          next = false;
+        };
+
+        _config = _objectSpread({}, _this2.requestBeforeFun(options, cancel));
+        if (!next) return;
+        uni.request(_config);
+      });
+    } }, { key: "get", value: function get(
+
+    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'GET' },
+      options));
+
+    } }, { key: "post", value: function post(
+
+    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'POST' },
+      options));
+
+    } }, { key: "put", value: function put(
+
+
+    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'PUT' },
+      options));
+
+    } }, { key: "delete", value: function _delete(
+
+
+
+    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'DELETE' },
+      options));
+
+    } }, { key: "connect", value: function connect(
+
+
+
+    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'CONNECT' },
+      options));
+
+    } }, { key: "head", value: function head(
+
+
+
+    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'HEAD' },
+      options));
+
+    } }, { key: "options", value: function options(
+
+
+
+    url, data) {var _options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'OPTIONS' },
+      _options));
+
+    } }, { key: "trace", value: function trace(
+
+
+
+    url, data) {var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return this.request(_objectSpread({
+        url: url,
+        data: data,
+        method: 'TRACE' },
+      options));
+
+    } }], [{ key: "posUrl", value: function posUrl(url) {/* 判断url是否为绝对路径 */return /(http|https):\/\/([\w.]+\/?)\S*/.test(url);} /**
+                                                                                                                                 * @property {Function} request 请求拦截器
+                                                                                                                                 * @property {Function} response 响应拦截器
+                                                                                                                                 * @type {{request: Request.interceptor.request, response: Request.interceptor.response}}
+                                                                                                                                 */ }]);return Request;}(); /**
+                                                                                                                                                             * setConfig回调
+                                                                                                                                                             * @return {Object} - 返回操作后的config
+                                                                                                                                                             * @callback Request~setConfigCallback
+                                                                                                                                                             * @param {Object} config - 全局默认config
+                                                                                                                                                             */ /**
+                                                                                                                                                                 * 请求拦截器回调
+                                                                                                                                                                 * @return {Object} - 返回操作后的config
+                                                                                                                                                                 * @callback Request~requestCallback
+                                                                                                                                                                 * @param {Object} config - 全局config
+                                                                                                                                                                 * @param {Function} [cancel] - 取消请求钩子，调用会取消本次请求
+                                                                                                                                                                 */
+/**
+                                                                                                                                                                     * 响应拦截器回调
+                                                                                                                                                                     * @return {Object} - 返回操作后的response
+                                                                                                                                                                     * @callback Request~responseCallback
+                                                                                                                                                                     * @param {Object} response - 请求结果 response
+                                                                                                                                                                     */
+/**
+                                                                                                                                                                         * 响应错误拦截器回调
+                                                                                                                                                                         * @return {Object} - 返回操作后的response
+                                                                                                                                                                         * @callback Request~responseErrCallback
+                                                                                                                                                                         * @param {Object} response - 请求结果 response
+                                                                                                                                                                         */exports.default = Request;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 25:
+/*!***********************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/report.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _report = __webpack_require__(/*! @/api/report */ 26);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {},
+
+
+  mutations: {},
+
+
+  actions: {
+    /**
+             * @description 客户欠款汇总表
+             * @params { 根据开始日期(startDate)，结束日期(endDate)，客户(ctCode)来汇总客户欠款 }
+             */
+    getAccRAnalyzer_action: function getAccRAnalyzer_action(_ref, params) {var commit = _ref.commit;
+
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _report.getAccRAnalyzer)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description New 全厂综合报表 
+       * @params {token来获取全厂综合报表 }
+       */
+    getFactoryKanban_action: function getFactoryKanban_action(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _report.getFactoryKanban)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+
+
+      });
+    },
+    /**
+       * @description 全厂综合报表 ==>暂时注销，需求变更 20190802 edit by andy
+       * @params { 根据开始日期(startDate)，结束日期(endDate),token来获取全厂综合报表 }
+       */
+    getColligateAnalyzer_action: function getColligateAnalyzer_action(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _report.getColligateAnalyzer)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+
+
+      });
+    },
+    /**
+       * @description 订单查询
+       * @params { 根据开始日期(startDate)， 
+          结束日期(endDate) ，
+          客户编号(ctCode)，
+          汇总方式(mode)来获取订单信息。
+          入参：startDate,endDate,ctCode,mode,token,size(前多少条数，
+          默认20条)；结果集是个map：key--orderData(订单数据)，topData(前多少条数据) }
+       */
+    getPaperCOQueryAnaly_action: function getPaperCOQueryAnaly_action(_ref4, params) {var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _report.getPaperCOQueryAnaly)(params).then(function (res) {
+            //debugger
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+        * @description 送货查询
+        * @params { 
+            根据开始日期(startDate)， 
+            结束日期(endDate) ，客户编号(ctCode)查询送货信息。
+            入参：startDate,endDate,ctCode,token; 
+                }
+        */
+    getPaperDeliTotal_action: function getPaperDeliTotal_action(_ref5, params) {var commit = _ref5.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _report.getPaperDeliTotal)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+
+/***/ }),
+
+/***/ 26:
+/*!**************************************!*\
+  !*** E:/cl_vue/erpApp/api/report.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getPaperDeliTotal = exports.getPaperCOQueryAnaly = exports.getFactoryKanban = exports.getColligateAnalyzer = exports.getAccRAnalyzer = exports.getFunctionList = exports.getReportList = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+
+
+
+
+/**
+ * @description 报表页面菜单 NEW FOR UNI-APP
+ * @params {token}
+ */
+var getReportList = function getReportList(_ref)
+
+{var token = _ref.token;
+  //debugger
+  //参数
+  var data = {
+    token: token };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/report"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 功能页面菜单 NEW FOR UNI-APP
+    * @params {token}
+    */exports.getReportList = getReportList;
+var getFunctionList = function getFunctionList(_ref2)
+
+{var token = _ref2.token;
+  //debugger
+  //参数
+  var data = {
+    token: token };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/function"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 客户欠款汇总表 SumOfCustArrears
+    * @params { 根据开始日期(startDate)，结束日期(endDate)，客户(ctCode)来汇总客户欠款 }
+    */exports.getFunctionList = getFunctionList;
+var getAccRAnalyzer = function getAccRAnalyzer(_ref3)
+
+
+
+
+{var startDate = _ref3.startDate,endDate = _ref3.endDate,ctCode = _ref3.ctCode,token = _ref3.token;
+  //参数
+  var data = {
+    startDate: startDate,
+    endDate: endDate,
+    ctCode: ctCode,
+    token: token };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/report/simple/aspAccRAnalyzer"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 全厂综合报表 CompFactoryReport ==>暂时注销使用，需求变更
+    * @params { 根据开始日期(startDate)，结束日期(endDate),token来获取全厂综合报表 }
+    */exports.getAccRAnalyzer = getAccRAnalyzer;
+var getColligateAnalyzer = function getColligateAnalyzer(_ref4)
+
+
+
+{var startDate = _ref4.startDate,endDate = _ref4.endDate,token = _ref4.token;
+  //debugger
+  //参数
+  var data = {
+    startDate: startDate,
+    endDate: endDate,
+    token: token };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/report/simple/aspSysColligateAnalyzer"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 全厂综合报表 New  CompFactoryReport 20190802
+    * @params {token来获取全厂综合报表 }
+    */exports.getColligateAnalyzer = getColligateAnalyzer;
+var getFactoryKanban = function getFactoryKanban(_ref5)
+
+{var token = _ref5.token;
+  //debugger
+  //参数
+  var data = {
+    token: token };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/report/simple/spGetFactoryKanban"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 订单查询 paperOrderQuery
+   * @params { 根据开始日期(startDate)， 
+       结束日期(endDate) ，
+       客户编号(ctCode)，
+       汇总方式(mode)来获取订单信息。
+       入参：startDate,endDate,ctCode,mode,token,size(前多少条数，
+       默认20条)；结果集是个map：key--orderData(订单数据)，topData(前多少条数据) }
+   */exports.getFactoryKanban = getFactoryKanban;
+var getPaperCOQueryAnaly = function getPaperCOQueryAnaly(_ref6)
+
+
+
+
+
+
+{var startDate = _ref6.startDate,endDate = _ref6.endDate,ctCode = _ref6.ctCode,token = _ref6.token,mode = _ref6.mode,size = _ref6.size;
+  //参数
+  var data = {
+    startDate: startDate,
+    endDate: endDate,
+    ctCode: ctCode,
+    token: token,
+    mode: mode,
+    size: size };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/report/simple/aspSysPaperCOQueryAnaly"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 送货查询 deliveryQuery
+   * @params { 
+       根据开始日期(startDate)， 
+       结束日期(endDate) ，客户编号(ctCode)查询送货信息。
+       入参：startDate,endDate,ctCode,token; 
+           }
+   */exports.getPaperCOQueryAnaly = getPaperCOQueryAnaly;
+var getPaperDeliTotal = function getPaperDeliTotal(_ref7)
+
+
+
+
+{var startDate = _ref7.startDate,endDate = _ref7.endDate,ctCode = _ref7.ctCode,token = _ref7.token;
+  //debugger
+  //参数
+  var data = {
+    startDate: startDate,
+    endDate: endDate,
+    ctCode: ctCode,
+    token: token };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/report/simple/aspSysPaperDeliTotal"),
+    data: data,
+    method: 'POST' });
+
+};exports.getPaperDeliTotal = getPaperDeliTotal;
+
+/***/ }),
+
+/***/ 27:
+/*!***********************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/verify.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _verify = __webpack_require__(/*! @/api/verify */ 28);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {
+    //纸箱
+    boxList: uni.getStorageSync("boxList") == '' ? '' : JSON.parse(uni.getStorageSync("boxList")),
+    //辅料
+    materialList: uni.getStorageSync("materialList") == '' ? '' : JSON.parse(uni.getStorageSync("materialList")),
+    //原纸
+    originalPapersList: uni.getStorageSync("originalPapersList") == '' ? '' : JSON.parse(uni.getStorageSync("originalPapersList")),
+    //特价
+    barginPriceList: uni.getStorageSync("barginPriceList") == '' ? '' : JSON.parse(uni.getStorageSync("barginPriceList")) },
+
+  getters: {
+    //纸箱审批
+    boxList_getter: function boxList_getter(state) {
+      return state.boxList;
+    },
+    //特价审批
+    barginPriceList_getter: function barginPriceList_getter(state) {
+      return state.barginPriceList;
+    },
+    //原纸审批
+    originalPapersList_getter: function originalPapersList_getter(state) {
+      return state.originalPapersList;
+    },
+    //辅料审批
+    materialList_getter: function materialList_getter(state) {
+      return state.materialList;
+    } },
+
+  mutations: {
+    //纸箱审批-存储
+    setBoxList: function setBoxList(state, data) {
+      state.boxList = data;
+      uni.setStorageSync("boxList", JSON.stringify(data));
+    },
+    //特价审批-存储
+    setBarginPriceList: function setBarginPriceList(state, data) {
+      state.barginPriceList = data;
+      uni.setStorageSync("barginPriceList", JSON.stringify(data));
+    },
+    //原纸审批-存储
+    setOriginalPapersList: function setOriginalPapersList(state, data) {
+      state.originalPapersList = data;
+      uni.setStorageSync("originalPapersList", JSON.stringify(data));
+    },
+    //辅料审批-存储
+    setMaterialList: function setMaterialList(state, data) {
+      state.materialList = data;
+      uni.setStorageSync("materialList", JSON.stringify(data));
+    } },
+
+  actions: {
+    //獲取通知信息個數
+    getNoticeInfoAction: function getNoticeInfoAction(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.getNoticeInfo)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            // console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    // 纸箱审批-数据列表查询
+    searchBoxApprovalListAction: function searchBoxApprovalListAction(_ref2) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.searchBoxApprovalList)().then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              commit('setBoxList', data.data);
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    boxDetailApprovalAction: function boxDetailApprovalAction(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.boxDetailApproval)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+
+    },
+    // 原纸审批-数据列表查询-OK
+    searchPODataAction: function searchPODataAction(_ref4) {var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.searchPOData)().then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              commit('setOriginalPapersList', data.data);
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //查询原纸详细信息
+    searchPODetailAction: function searchPODetailAction(_ref5, params) {var commit = _ref5.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.searchPODetail)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    approvePOAction: function approvePOAction(_ref6, params) {var commit = _ref6.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.approvePO)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+
+    },
+    //查询==辅料审批== 数据列表
+    searchProdPOAction: function searchProdPOAction(_ref7) {var commit = _ref7.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.searchProdPO)().then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              commit('setMaterialList', data.data);
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //辅料过滤查询 
+    searchProdPODetailAction: function searchProdPODetailAction(_ref8, params) {var commit = _ref8.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.searchProdPODetail)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //辅料--》审批 说明--》提交
+    approveProdPoAction: function approveProdPoAction(_ref9, params) {var commit = _ref9.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.approveProdPo)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+
+    },
+    //查询特价审批 数据列表
+    searchSpecPriceAction: function searchSpecPriceAction(_ref10) {var commit = _ref10.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.searchSpecPrice)().then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              commit('setBarginPriceList', data.data);
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+
+    },
+    //特价--》审批说明--提交
+    approvePaperSpecPriceAction: function approvePaperSpecPriceAction(_ref11, params) {var commit = _ref11.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _verify.approvePaperSpecPrice)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            // console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 28:
+/*!**************************************!*\
+  !*** E:/cl_vue/erpApp/api/verify.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.approvePaperSpecPrice = exports.searchSpecPrice = exports.approveProdPo = exports.searchProdPODetail = exports.searchProdPO = exports.approvePO = exports.searchPODetail = exports.searchPOData = exports.boxDetailApproval = exports.searchBoxApprovalList = exports.getNoticeInfo = void 0;
+
+
+var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
+                                                                                                                                                         *审批API
+                                                                                                                                                         */ //import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境 
+/**
+ * @description 獲取通知信息個數
+ * @params {url} 動態地址查詢
+ */var getNoticeInfo = function getNoticeInfo(_ref) {var url = _ref.url;
+  //参数
+  var data = {
+    isLoad: 'false' };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath).concat(url),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 纸箱特价审批列表查询
+    * @params {}
+    */exports.getNoticeInfo = getNoticeInfo;
+var searchBoxApprovalList = function searchBoxApprovalList() {
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/priceAudit/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 纸箱特价审批
+    * @params {}
+    */exports.searchBoxApprovalList = searchBoxApprovalList;
+var boxDetailApproval = function boxDetailApproval(_ref2)
+
+
+
+{var Id = _ref2.Id,approvalExplain = _ref2.approvalExplain,approveState = _ref2.approveState;
+  //参数
+  var data = {
+    ID1: Id,
+    bi_SPriceAudit: approveState, //1:审批，0:未审批
+    bi_SPriceAuditExplain: approvalExplain //审批说明
+  };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/priceAudit/priceAudit"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+    * @description 原纸审批列表查询
+    * @params {}
+    */exports.boxDetailApproval = boxDetailApproval;
+var searchPOData = function searchPOData() {
+  //参数
+  var data = {};
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/spaperpo/searchPOData"),
+    data: data,
+    method: 'POST' });
+
+};
+
+//查询原纸详细信息
+exports.searchPOData = searchPOData;var searchPODetail = function searchPODetail(_ref3)
+
+{var poId = _ref3.poId;
+  //参数
+  var data = {
+    poId: poId };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/spaperpo/searchPODetail"),
+    data: data,
+    method: 'POST' });
+
+};
+//原纸审批说明--》提交
+exports.searchPODetail = searchPODetail;var approvePO = function approvePO(_ref4)
+
+
+
+{var poId = _ref4.poId,approvalExplain = _ref4.approvalExplain,approveState = _ref4.approveState;
+  //参数
+  var data = {
+    poId: poId,
+    approvalExplain: approvalExplain,
+    approveState: approveState };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/spaperpo/approvePO"),
+    data: data,
+    method: 'POST' });
+
+};
+//查询辅料审批-数据列表
+exports.approvePO = approvePO;var searchProdPO = function searchProdPO() {
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/prodpo/searchProdPO"),
+    data: data,
+    method: 'POST' });
+
+};
+
+////查询辅料详细信息
+exports.searchProdPO = searchProdPO;var searchProdPODetail = function searchProdPODetail(_ref5)
+
+{var poId = _ref5.poId;
+  //参数
+  var data = {
+    poId: poId };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/prodpo/searchProdPODetail"),
+    data: data,
+    method: 'POST' });
+
+};
+//辅料审批说明--》提交
+exports.searchProdPODetail = searchProdPODetail;var approveProdPo = function approveProdPo(_ref6)
+
+
+
+{var poId = _ref6.poId,approvalExplain = _ref6.approvalExplain,approveState = _ref6.approveState;
+  //参数
+  var data = {
+    poId: poId,
+    approvalExplain: approvalExplain,
+    approveState: approveState };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/prodpo/approveProdPo"),
+    data: data,
+    method: 'POST' });
+
+};
+
+//POST /confirm/paperspecprice/
+/*特价列表查询*/exports.approveProdPo = approveProdPo;
+var searchSpecPrice = function searchSpecPrice() {
+  //参数
+  var data = {};
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/paperspecprice/searchSpecPrice"),
+    data: data,
+    method: 'POST' });
+
+};
+//POST /confirm/paperspecprice/
+//审批特价说明-提交
+exports.searchSpecPrice = searchSpecPrice;var approvePaperSpecPrice = function approvePaperSpecPrice(_ref7) {var coId = _ref7.coId,approveState = _ref7.approveState,approvalExplain = _ref7.approvalExplain;
+  //参数
+  var data = {
+    coId: coId,
+    approvalExplain: approvalExplain,
+    approveState: approveState };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/confirm/paperspecprice/approvePaperSpecPrice"),
+    data: data,
+    method: 'POST' });
+
+};exports.approvePaperSpecPrice = approvePaperSpecPrice;
+
+/***/ }),
+
+/***/ 29:
+/*!************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/paperIn.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperIn = __webpack_require__(/*! @/api/paperIn */ 30);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {},
+
+
+  mutations: {},
+
+
+  actions: {
+    spScanOrderAction: function spScanOrderAction(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperIn.spScanOrder)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+
+/***/ }),
+
+/***/ 3:
+/*!***********************************!*\
+  !*** (webpack)/buildin/global.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+
+/***/ 30:
+/*!***************************************!*\
+  !*** E:/cl_vue/erpApp/api/paperIn.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.spScanOrder = void 0;
+
+
+var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
+                                                                                                                                                         * 纸板入库，出仓
+                                                                                                                                                         */ //import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+var spScanOrder = function spScanOrder(_ref) {var BarCodeStr = _ref.BarCodeStr,Station = _ref.Station,Flag = _ref.Flag,FOrderNo = _ref.FOrderNo,FQty = _ref.FQty,FDNum = _ref.FDNum,FLine = _ref.FLine,FClass = _ref.FClass,Remark = _ref.Remark;
+  //参数
+  var data = {
+    BarCodeStr: BarCodeStr, Station: Station, Flag: Flag, FOrderNo: FOrderNo, FQty: FQty, FDNum: FDNum, FLine: FLine, FClass: FClass, Remark: Remark };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/spScanOrder"),
+    data: data,
+    method: 'POST' });
+
+};exports.spScanOrder = spScanOrder;
+
+/***/ }),
+
+/***/ 31:
+/*!************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/paperOB.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperOB = __webpack_require__(/*! @/api/paperOB */ 32);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {},
+
+
+  mutations: {},
+
+
+  actions: {
+    spGetSPaperStoreForPDAAction: function spGetSPaperStoreForPDAAction(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperOB.spGetSPaperStoreForPDA)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    }, aspExeuteSPaperSimpleAutoScanAction: function aspExeuteSPaperSimpleAutoScanAction(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperOB.aspExeuteSPaperSimpleAutoScan)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    }, spSPaperStoreQueryForPDAAction: function spSPaperStoreQueryForPDAAction(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperOB.spSPaperStoreQueryForPDA)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+
+/***/ }),
+
+/***/ 316:
+/*!**********************************************************!*\
+  !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! regenerator-runtime */ 317);
+
+
+/***/ }),
+
+/***/ 317:
+/*!************************************************************!*\
+  !*** ./node_modules/regenerator-runtime/runtime-module.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+// This method of obtaining a reference to the global object needs to be
+// kept identical to the way it is obtained in runtime.js
+var g = (function() {
+  return this || (typeof self === "object" && self);
+})() || Function("return this")();
+
+// Use `getOwnPropertyNames` because not all browsers support calling
+// `hasOwnProperty` on the global `self` object in a worker. See #183.
+var hadRuntime = g.regeneratorRuntime &&
+  Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0;
+
+// Save the old regeneratorRuntime in case it needs to be restored later.
+var oldRuntime = hadRuntime && g.regeneratorRuntime;
+
+// Force reevalutation of runtime.js.
+g.regeneratorRuntime = undefined;
+
+module.exports = __webpack_require__(/*! ./runtime */ 318);
+
+if (hadRuntime) {
+  // Restore the original runtime.
+  g.regeneratorRuntime = oldRuntime;
+} else {
+  // Remove the global property added by runtime.js.
+  try {
+    delete g.regeneratorRuntime;
+  } catch(e) {
+    g.regeneratorRuntime = undefined;
+  }
+}
+
+
+/***/ }),
+
+/***/ 318:
 /*!*****************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime.js ***!
   \*****************************************************/
@@ -16476,18 +17757,124 @@ var toThousands = function toThousands(num) {
 
 /***/ }),
 
-/***/ 25:
-/*!***********************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/report.js ***!
-  \***********************************************/
+/***/ 32:
+/*!***************************************!*\
+  !*** E:/cl_vue/erpApp/api/paperOB.js ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _report = __webpack_require__(/*! @/api/report */ 26);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-var _util = __webpack_require__(/*! @/libs/util */ 23);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
+Object.defineProperty(exports, "__esModule", { value: true });exports.spSPaperStoreQueryForPDA = exports.aspExeuteSPaperSimpleAutoScan = exports.spGetSPaperStoreForPDA = void 0;
+
+
+var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
+                                                                                                                                                         * 纸板入库，出仓
+                                                                                                                                                         */ //import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+var spGetSPaperStoreForPDA = function spGetSPaperStoreForPDA(_ref)
+
+
+{var Coil = _ref.Coil,Flag = _ref.Flag;
+  //参数
+  var data = {
+    Coil: Coil,
+    Flag: Flag };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/spGetSPaperStoreForPDA"),
+    data: data,
+    method: 'POST' });
+
+};exports.spGetSPaperStoreForPDA = spGetSPaperStoreForPDA;
+
+var aspExeuteSPaperSimpleAutoScan = function aspExeuteSPaperSimpleAutoScan(_ref2)
+
+
+
+
+
+
+
+
+
+
+{var Line = _ref2.Line,Group = _ref2.Group,Oper = _ref2.Oper,Flag = _ref2.Flag,Coil = _ref2.Coil,OutUseID = _ref2.OutUseID,InUseID = _ref2.InUseID,Wt = _ref2.Wt,OperDate_IN_date = _ref2.OperDate_IN_date,ErrorStr_OUT_varchar = _ref2.ErrorStr_OUT_varchar;
+  //参数
+  var data = {
+    Line: Line,
+    Group: Group,
+    Oper: Oper,
+    Flag: Flag,
+    Coil: Coil,
+    OutUseID: OutUseID,
+    InUseID: InUseID,
+    Wt: Wt,
+    OperDate_IN_date: OperDate_IN_date,
+    ErrorStr_OUT_varchar: ErrorStr_OUT_varchar };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspExeuteSPaperSimpleAutoScan_InI"),
+    data: data,
+    method: 'POST' });
+
+};exports.aspExeuteSPaperSimpleAutoScan = aspExeuteSPaperSimpleAutoScan;
+
+
+var spSPaperStoreQueryForPDA = function spSPaperStoreQueryForPDA(_ref3)
+
+
+
+
+
+
+{var Coil = _ref3.Coil,Vend = _ref3.Vend,Type = _ref3.Type,Width = _ref3.Width,Gram = _ref3.Gram,Station = _ref3.Station;
+  //参数
+  var data = {
+    Coil: Coil,
+    Vend: Vend,
+    Type: Type,
+    Width: Width,
+    Gram: Gram,
+    Station: Station };
+
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/spSPaperStoreQueryForPDA"),
+    data: data,
+    method: 'POST' });
+
+};exports.spSPaperStoreQueryForPDA = spSPaperStoreQueryForPDA;
+
+/***/ }),
+
+/***/ 33:
+/*!**********************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/boxIn.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _boxIn = __webpack_require__(/*! @/api/boxIn */ 34);
+
+
+
+
+
+
+
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+
+
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
 
 
 {
@@ -16498,22 +17885,21 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
 
 
   actions: {
-    /**
-             * @description 客户欠款汇总表
-             * @params { 根据开始日期(startDate)，结束日期(endDate)，客户(ctCode)来汇总客户欠款 }
-             */
-    getAccRAnalyzer_action: function getAccRAnalyzer_action(_ref, params) {var commit = _ref.commit;
+    baseAction: function baseAction(_ref,
 
+    callback, params) {var commit = _ref.commit;
+
+    },
+    aspSaveBoxInAction: function aspSaveBoxInAction(_ref2,
+
+    params) {var commit = _ref2.commit;
       return new Promise(function (resolve, reject) {
         try {
-          (0, _report.getAccRAnalyzer)(params).then(function (res) {
+          (0, _boxIn.aspSaveBoxIn)(params).then(function (res) {
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
+            if (data.success) {
               resolve(data.data);
-            } else
-
-            {
+            } else {
               reject(data.msg);
             }
           }).catch(function (err) {
@@ -16525,83 +17911,16 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
         }
       });
     },
-    /**
-       * @description New 全厂综合报表 
-       * @params {token来获取全厂综合报表 }
-       */
-    getFactoryKanban_action: function getFactoryKanban_action(_ref2, params) {var commit = _ref2.commit;
+    boxScanOrderAction: function boxScanOrderAction(_ref3,
+
+    params) {var commit = _ref3.commit;
       return new Promise(function (resolve, reject) {
         try {
-          (0, _report.getFactoryKanban)(params).then(function (res) {
+          (0, _boxIn.boxScanOrder)(params).then(function (res) {
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
+            if (data.success) {
               resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-
-
-      });
-    },
-    /**
-       * @description 全厂综合报表 ==>暂时注销，需求变更 20190802 edit by andy
-       * @params { 根据开始日期(startDate)，结束日期(endDate),token来获取全厂综合报表 }
-       */
-    getColligateAnalyzer_action: function getColligateAnalyzer_action(_ref3, params) {var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _report.getColligateAnalyzer)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-
-
-      });
-    },
-    /**
-       * @description 订单查询
-       * @params { 根据开始日期(startDate)， 
-          结束日期(endDate) ，
-          客户编号(ctCode)，
-          汇总方式(mode)来获取订单信息。
-          入参：startDate,endDate,ctCode,mode,token,size(前多少条数，
-          默认20条)；结果集是个map：key--orderData(订单数据)，topData(前多少条数据) }
-       */
-    getPaperCOQueryAnaly_action: function getPaperCOQueryAnaly_action(_ref4, params) {var commit = _ref4.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _report.getPaperCOQueryAnaly)(params).then(function (res) {
-            //debugger
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
+            } else {
               reject(data.msg);
             }
           }).catch(function (err) {
@@ -16613,25 +17932,75 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
         }
       });
     },
-    /**
-        * @description 送货查询
-        * @params { 
-            根据开始日期(startDate)， 
-            结束日期(endDate) ，客户编号(ctCode)查询送货信息。
-            入参：startDate,endDate,ctCode,token; 
-                }
-        */
-    getPaperDeliTotal_action: function getPaperDeliTotal_action(_ref5, params) {var commit = _ref5.commit;
+    aspSaveBoxOutTempAction: function aspSaveBoxOutTempAction(_ref4,
+
+    params) {var commit = _ref4.commit;
       return new Promise(function (resolve, reject) {
         try {
-          (0, _report.getPaperDeliTotal)(params).then(function (res) {
+          (0, _boxIn.aspSaveBoxOutTemp)(params).then(function (res) {
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
+            if (data.success) {
               resolve(data.data);
-            } else
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    aspSaveBoxHalfProdInAction: function aspSaveBoxHalfProdInAction(_ref5,
 
-            {
+    params) {var commit = _ref5.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _boxIn.aspSaveBoxHalfProdIn)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    }, findUserAction: function findUserAction(_ref6,
+
+    params) {var commit = _ref6.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _boxIn.findUser)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    }, findCarAction: function findCarAction(_ref7) {var commit = _ref7.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _boxIn.findCar)().then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
               reject(data.msg);
             }
           }).catch(function (err) {
@@ -16646,203 +18015,367 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
 
 /***/ }),
 
-/***/ 26:
-/*!**************************************!*\
-  !*** E:/cl_vue/erpApp/api/report.js ***!
-  \**************************************/
+/***/ 34:
+/*!*************************************!*\
+  !*** E:/cl_vue/erpApp/api/boxIn.js ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getPaperDeliTotal = exports.getPaperCOQueryAnaly = exports.getFactoryKanban = exports.getColligateAnalyzer = exports.getAccRAnalyzer = exports.getFunctionList = exports.getReportList = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 20));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-//import Qs from 'qs'
+Object.defineProperty(exports, "__esModule", { value: true });exports.findCar = exports.findUser = exports.aspSaveBoxHalfProdIn = exports.aspSaveBoxOutTemp = exports.boxScanOrder = exports.aspSaveBoxIn = void 0;
+
+
+var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
+                                                                                                                                                         * 纸箱成品入库,成品出库,半成品入库
+                                                                                                                                                         */ //import Qs from 'qs'
 var apiPath = '/clerp-app-api'; //正式环境
-
-
-
-
 /**
- * @description 报表页面菜单 NEW FOR UNI-APP
- * @params {token}
+ * @desc boxIn 描述 添加出入库
+ * 
+ * @params 参数
+ * 
+ * @author Andy Huang
+ * 
+ * @created 2019/08/22 13:43:45
  */
-var getReportList = function getReportList(_ref)
 
-{var token = _ref.token;
-  //debugger
+var aspSaveBoxIn = function aspSaveBoxIn(_ref)
+
+
+
+{var bi_Group = _ref.bi_Group,bi_WorkNo = _ref.bi_WorkNo,bi_InQty = _ref.bi_InQty;
   //参数
   var data = {
-    token: token };
+    bi_Group: bi_Group,
+    bi_WorkNo: bi_WorkNo,
+    bi_InQty: bi_InQty };
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/report"),
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspSaveBoxIn"),
     data: data,
     method: 'POST' });
 
-};
+};exports.aspSaveBoxIn = aspSaveBoxIn;
 
-/**
-    * @description 功能页面菜单 NEW FOR UNI-APP
-    * @params {token}
-    */exports.getReportList = getReportList;
-var getFunctionList = function getFunctionList(_ref2)
+var boxScanOrder = function boxScanOrder(_ref2)
 
-{var token = _ref2.token;
-  //debugger
+
+
+{var bi_WorkNo = _ref2.bi_WorkNo,bc_No = _ref2.bc_No,Flag = _ref2.Flag;
   //参数
   var data = {
-    token: token };
+    bi_WorkNo: bi_WorkNo,
+    bc_No: bc_No,
+    Flag: Flag };
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/function"),
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/boxScanOrder"),
     data: data,
     method: 'POST' });
 
-};
+};exports.boxScanOrder = boxScanOrder;
 
-/**
-    * @description 客户欠款汇总表 SumOfCustArrears
-    * @params { 根据开始日期(startDate)，结束日期(endDate)，客户(ctCode)来汇总客户欠款 }
-    */exports.getFunctionList = getFunctionList;
-var getAccRAnalyzer = function getAccRAnalyzer(_ref3)
+var aspSaveBoxOutTemp = function aspSaveBoxOutTemp(_ref3)
 
 
 
 
-{var startDate = _ref3.startDate,endDate = _ref3.endDate,ctCode = _ref3.ctCode,token = _ref3.token;
+
+
+{var bd_CarNo = _ref3.bd_CarNo,bd_Follower = _ref3.bd_Follower,bd_Loador = _ref3.bd_Loador,bd_SenderID = _ref3.bd_SenderID,OrderQtyStr = _ref3.OrderQtyStr,NoStr = _ref3.NoStr;
   //参数
   var data = {
-    startDate: startDate,
-    endDate: endDate,
-    ctCode: ctCode,
-    token: token };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/report/simple/aspAccRAnalyzer"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-    * @description 全厂综合报表 CompFactoryReport ==>暂时注销使用，需求变更
-    * @params { 根据开始日期(startDate)，结束日期(endDate),token来获取全厂综合报表 }
-    */exports.getAccRAnalyzer = getAccRAnalyzer;
-var getColligateAnalyzer = function getColligateAnalyzer(_ref4)
-
-
-
-{var startDate = _ref4.startDate,endDate = _ref4.endDate,token = _ref4.token;
-  //debugger
-  //参数
-  var data = {
-    startDate: startDate,
-    endDate: endDate,
-    token: token };
+    bd_CarNo: bd_CarNo,
+    bd_Follower: bd_Follower,
+    bd_Loador: bd_Loador,
+    bd_SenderID: bd_SenderID,
+    OrderQtyStr: OrderQtyStr,
+    NoStr: NoStr };
 
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/report/simple/aspSysColligateAnalyzer"),
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspSaveBoxOutTemp"),
     data: data,
     method: 'POST' });
 
-};
 
-/**
-    * @description 全厂综合报表 New  CompFactoryReport 20190802
-    * @params {token来获取全厂综合报表 }
-    */exports.getColligateAnalyzer = getColligateAnalyzer;
-var getFactoryKanban = function getFactoryKanban(_ref5)
+};exports.aspSaveBoxOutTemp = aspSaveBoxOutTemp;
 
-{var token = _ref5.token;
-  //debugger
+var aspSaveBoxHalfProdIn = function aspSaveBoxHalfProdIn(_ref4)
+
+
+
+
+
+
+{var hp_bi_WorkNo = _ref4.hp_bi_WorkNo,hp_wpl_Id = _ref4.hp_wpl_Id,hp_mo_ID = _ref4.hp_mo_ID,hp_tt_Code = _ref4.hp_tt_Code,Qty = _ref4.Qty,Remark = _ref4.Remark;
   //参数
   var data = {
-    token: token };
-
+    hp_bi_WorkNo: hp_bi_WorkNo,
+    hp_wpl_Id: hp_wpl_Id,
+    hp_mo_ID: hp_mo_ID,
+    hp_tt_Code: hp_tt_Code,
+    Qty: Qty,
+    Remark: Remark };
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/report/simple/spGetFactoryKanban"),
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspSaveBoxHalfProdIn"),
     data: data,
     method: 'POST' });
 
-};
 
-/**
-   * @description 订单查询 paperOrderQuery
-   * @params { 根据开始日期(startDate)， 
-       结束日期(endDate) ，
-       客户编号(ctCode)，
-       汇总方式(mode)来获取订单信息。
-       入参：startDate,endDate,ctCode,mode,token,size(前多少条数，
-       默认20条)；结果集是个map：key--orderData(订单数据)，topData(前多少条数据) }
-   */exports.getFactoryKanban = getFactoryKanban;
-var getPaperCOQueryAnaly = function getPaperCOQueryAnaly(_ref6)
+};exports.aspSaveBoxHalfProdIn = aspSaveBoxHalfProdIn;
 
+var findUser = function findUser(_ref5)
 
-
-
-
-
-{var startDate = _ref6.startDate,endDate = _ref6.endDate,ctCode = _ref6.ctCode,token = _ref6.token,mode = _ref6.mode,size = _ref6.size;
+{var workType = _ref5.workType;
   //参数
   var data = {
-    startDate: startDate,
-    endDate: endDate,
-    ctCode: ctCode,
-    token: token,
-    mode: mode,
-    size: size };
-
+    workType: workType };
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/report/simple/aspSysPaperCOQueryAnaly"),
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/findUser"),
     data: data,
     method: 'POST' });
 
-};
 
-/**
-   * @description 送货查询 deliveryQuery
-   * @params { 
-       根据开始日期(startDate)， 
-       结束日期(endDate) ，客户编号(ctCode)查询送货信息。
-       入参：startDate,endDate,ctCode,token; 
-           }
-   */exports.getPaperCOQueryAnaly = getPaperCOQueryAnaly;
-var getPaperDeliTotal = function getPaperDeliTotal(_ref7)
+};exports.findUser = findUser;
 
-
-
-
-{var startDate = _ref7.startDate,endDate = _ref7.endDate,ctCode = _ref7.ctCode,token = _ref7.token;
-  //debugger
+var findCar = function findCar() {
   //参数
-  var data = {
-    startDate: startDate,
-    endDate: endDate,
-    ctCode: ctCode,
-    token: token };
-
-
+  var data = {};
 
   return _api.default.request({
-    url: "".concat(apiPath, "/report/simple/aspSysPaperDeliTotal"),
+    url: "".concat(apiPath, "/warehouse/warehouse/execute/findCar"),
     data: data,
     method: 'POST' });
 
-};exports.getPaperDeliTotal = getPaperDeliTotal;
+};exports.findCar = findCar;
 
 /***/ }),
 
-/***/ 269:
+/***/ 35:
+/*!*************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/qutation.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _qutation = __webpack_require__(/*! @/api/qutation */ 36);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {
+    //原纸报价 纸质报价 配纸加价 楞别加价
+    basePaper: uni.getStorageSync("basePaper") == '' ? '' : JSON.parse(uni.getStorageSync("basePaper")),
+    paperQuality: uni.getStorageSync("paperQuality") == '' ? '' : JSON.parse(uni.getStorageSync("paperQuality")),
+    paperParts: uni.getStorageSync("paperParts") == '' ? '' : JSON.parse(uni.getStorageSync("paperParts")),
+    paperlb: uni.getStorageSync("paperlb") == '' ? '' : JSON.parse(uni.getStorageSync("paperlb")) },
+
+  getters: {
+    //原纸报价 纸质报价 配纸加价 楞别加价
+    basePaper_getters: function basePaper_getters(state, getters) {
+      return state.basePaper;
+    },
+    paperQuality_getters: function paperQuality_getters(state, getters) {
+      return state.paperQuality;
+    },
+    paperParts_getters: function paperParts_getters(state, getters) {
+      return state.paperParts;
+    },
+    paperlb_getters: function paperlb_getters(state, getters) {
+      return state.paperlb;
+    } },
+
+  mutations: {
+    //原纸报价 纸质报价 配纸加价 楞别加价
+    set_basePaper: function set_basePaper(state, data) {
+      state.basePaper = data;
+      uni.setStorageSync("basePaper", JSON.stringify(data));
+    },
+    set_paperQuality: function set_paperQuality(state, data) {
+      state.paperQuality = data;
+      uni.setStorageSync("paperQuality", JSON.stringify(data));
+    },
+    set_paperParts: function set_paperParts(state, data) {
+      state.paperParts = data;
+      uni.setStorageSync("paperParts", JSON.stringify(data));
+    },
+    set_paperlb: function set_paperlb(state, data) {
+      state.paperlb = data;
+      uni.setStorageSync("paperlb", JSON.stringify(data));
+    } },
+
+
+  actions: {
+    /**
+             * @description 纸箱报价
+             * @params { ct_ID }
+             */
+    getQutation_boxArea_action: function getQutation_boxArea_action(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _qutation.getQutation_boxArea)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 产品报价
+       * @params { ct_ID }
+       */
+    getQutation_products_action: function getQutation_products_action(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+
+          (0, _qutation.getQutation_products)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 原纸报价
+       * @params { ct_ID }
+       */
+    getQutation_basePaper_action: function getQutation_basePaper_action(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          console.log('getQutation_basePaper_action:' + JSON.stringify(params));
+          (0, _qutation.getQutation_basePaper)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description // 纸质报价
+       * @params { ct_ID }
+       */
+    getQutation_paperQuality_action: function getQutation_paperQuality_action(_ref4, params) {var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _qutation.getQutation_paperQuality)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description  配纸加价 
+       * @params { ct_ID }
+       */
+    getQutation_paperParts_action: function getQutation_paperParts_action(_ref5, params) {var commit = _ref5.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _qutation.getQutation_paperParts)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 楞别加价
+       * @params { ct_ID }
+       */
+    getQutation_lb_action: function getQutation_lb_action(_ref6, params) {var commit = _ref6.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _qutation.getQutation_lb)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 357:
 /*!******************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/province.js ***!
   \******************************************************************/
@@ -16992,337 +18525,7 @@ provinceData;exports.default = _default;
 
 /***/ }),
 
-/***/ 27:
-/*!***********************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/verify.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _verify = __webpack_require__(/*! @/api/verify */ 28);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-var _util = __webpack_require__(/*! @/libs/util */ 23);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
-
-
-{
-  state: {
-    //纸箱
-    boxList: uni.getStorageSync("boxList") == '' ? '' : JSON.parse(uni.getStorageSync("boxList")),
-    //辅料
-    materialList: uni.getStorageSync("materialList") == '' ? '' : JSON.parse(uni.getStorageSync("materialList")),
-    //原纸
-    originalPapersList: uni.getStorageSync("originalPapersList") == '' ? '' : JSON.parse(uni.getStorageSync("originalPapersList")),
-    //特价
-    barginPriceList: uni.getStorageSync("barginPriceList") == '' ? '' : JSON.parse(uni.getStorageSync("barginPriceList")) },
-
-  getters: {
-    //纸箱审批
-    boxList_getter: function boxList_getter(state) {
-      return state.boxList;
-    },
-    //特价审批
-    barginPriceList_getter: function barginPriceList_getter(state) {
-      return state.barginPriceList;
-    },
-    //原纸审批
-    originalPapersList_getter: function originalPapersList_getter(state) {
-      return state.originalPapersList;
-    },
-    //辅料审批
-    materialList_getter: function materialList_getter(state) {
-      return state.materialList;
-    } },
-
-  mutations: {
-    //纸箱审批-存储
-    setBoxList: function setBoxList(state, data) {
-      state.boxList = data;
-      uni.setStorageSync("boxList", JSON.stringify(data));
-    },
-    //特价审批-存储
-    setBarginPriceList: function setBarginPriceList(state, data) {
-      state.barginPriceList = data;
-      uni.setStorageSync("barginPriceList", JSON.stringify(data));
-    },
-    //原纸审批-存储
-    setOriginalPapersList: function setOriginalPapersList(state, data) {
-      state.originalPapersList = data;
-      uni.setStorageSync("originalPapersList", JSON.stringify(data));
-    },
-    //辅料审批-存储
-    setMaterialList: function setMaterialList(state, data) {
-      state.materialList = data;
-      uni.setStorageSync("materialList", JSON.stringify(data));
-    } },
-
-  actions: {
-    //獲取通知信息個數
-    getNoticeInfoAction: function getNoticeInfoAction(_ref, params) {var commit = _ref.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.getNoticeInfo)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            // console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    // 纸箱审批-数据列表查询
-    searchBoxApprovalListAction: function searchBoxApprovalListAction(_ref2) {var commit = _ref2.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.searchBoxApprovalList)().then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              commit('setBoxList', data.data);
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    boxDetailApprovalAction: function boxDetailApprovalAction(_ref3, params) {var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.boxDetailApproval)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-
-    },
-    // 原纸审批-数据列表查询-OK
-    searchPODataAction: function searchPODataAction(_ref4) {var commit = _ref4.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.searchPOData)().then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              commit('setOriginalPapersList', data.data);
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    //查询原纸详细信息
-    searchPODetailAction: function searchPODetailAction(_ref5, params) {var commit = _ref5.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.searchPODetail)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    approvePOAction: function approvePOAction(_ref6, params) {var commit = _ref6.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.approvePO)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-
-    },
-    //查询==辅料审批== 数据列表
-    searchProdPOAction: function searchProdPOAction(_ref7) {var commit = _ref7.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.searchProdPO)().then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              commit('setMaterialList', data.data);
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    //辅料过滤查询 
-    searchProdPODetailAction: function searchProdPODetailAction(_ref8, params) {var commit = _ref8.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.searchProdPODetail)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    //辅料--》审批 说明--》提交
-    approveProdPoAction: function approveProdPoAction(_ref9, params) {var commit = _ref9.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.approveProdPo)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-
-    },
-    //查询特价审批 数据列表
-    searchSpecPriceAction: function searchSpecPriceAction(_ref10) {var commit = _ref10.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.searchSpecPrice)().then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              commit('setBarginPriceList', data.data);
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-
-    },
-    //特价--》审批说明--提交
-    approvePaperSpecPriceAction: function approvePaperSpecPriceAction(_ref11, params) {var commit = _ref11.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _verify.approvePaperSpecPrice)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            // console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-
-    } } };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 270:
+/***/ 358:
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/city.js ***!
   \**************************************************************/
@@ -18836,7 +20039,7 @@ cityData;exports.default = _default;
 
 /***/ }),
 
-/***/ 271:
+/***/ 359:
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/area.js ***!
   \**************************************************************/
@@ -31389,7 +32592,154 @@ areaData;exports.default = _default;
 
 /***/ }),
 
-/***/ 272:
+/***/ 36:
+/*!****************************************!*\
+  !*** E:/cl_vue/erpApp/api/qutation.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getQutation_lb = exports.getQutation_paperParts = exports.getQutation_paperQuality = exports.getQutation_basePaper = exports.getQutation_products = exports.getQutation_boxArea = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+
+
+
+/**
+* @description  纸箱纸质面积报价
+* 搜索条件：
+*	bp_CustID(客户编号)
+*	bi_ArtID(纸质)
+* @params { bp_CustID,bi_ArtID }
+* 返回值：
+	(bp_CustID)客户编号
+	(ct_Desc)客户名称
+	(bi_SalerPrice)生效日期
+	(bi_ArtID)纸质
+	(h_Name)坑别
+	(bi_SalerPrice)报价
+*/
+var getQutation_boxArea = function getQutation_boxArea(_ref) {var bp_CustID = _ref.bp_CustID,bi_ArtID = _ref.bi_ArtID;
+  //参数
+  var data = {
+    bp_CustID: bp_CustID,
+    bi_ArtID: bi_ArtID
+    // size:-1,
+    // current:-1
+  };
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/select_T_BoxArtPriceMain/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  纸箱产品报价
+   * /common/select_T_UnionProductPrice/findList
+   *   up_CustID(客户类型)
+   * 	ui_UPNo(产品编号)
+   * 	ui_UPName(产品名称)
+   * @params { up_CustID,ui_UPNo,ui_UPName }
+   * 返回值：
+   	(up_CustID)客户编号
+   	(ct_Desc)客户名称
+   	(ui_UPNo)产品编号
+   	(ui_UPName)产品名称
+   	(ui_Price)报价
+   	(up_StartDate)生效日期
+   	(Csize)规格
+   */exports.getQutation_boxArea = getQutation_boxArea;
+var getQutation_products = function getQutation_products(_ref2) {var up_CustID = _ref2.up_CustID,ui_UPNo = _ref2.ui_UPNo,ui_UPName = _ref2.ui_UPName;
+  //参数
+  var data = {
+    up_CustID: up_CustID, ui_UPNo: ui_UPNo, ui_UPName: ui_UPName };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/select_T_UnionProductPrice/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+//=======================end=============================
+/**
+* @description  原纸报价 纸质报价 配纸加价 楞别加价
+* @params { userId }
+*/exports.getQutation_products = getQutation_products;
+var getQutation_basePaper = function getQutation_basePaper(_ref3) {var ct_ID = _ref3.ct_ID;
+  console.log('getQutation_basePaper ct_ID:' + ct_ID);
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/basePaper"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 纸质报价
+   * @params { userId }
+   */exports.getQutation_basePaper = getQutation_basePaper;
+var getQutation_paperQuality = function getQutation_paperQuality(_ref4) {var ct_ID = _ref4.ct_ID;
+  //debugger
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/paperQuality"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 配纸加价
+   * @params { userId }
+   */exports.getQutation_paperQuality = getQutation_paperQuality;
+var getQutation_paperParts = function getQutation_paperParts(_ref5) {var ct_ID = _ref5.ct_ID;
+  //debugger
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/paperParts"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 楞别加价
+   * @params { userId }
+   */exports.getQutation_paperParts = getQutation_paperParts;
+var getQutation_lb = function getQutation_lb(_ref6) {var ct_ID = _ref6.ct_ID;
+  //debugger
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/lb"),
+    data: data,
+    method: 'POST' });
+
+};exports.getQutation_lb = getQutation_lb;
+
+/***/ }),
+
+/***/ 360:
 /*!********************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/w-picker.js ***!
   \********************************************************/
@@ -31902,247 +33252,87 @@ initPicker;exports.default = _default;
 
 /***/ }),
 
-/***/ 28:
-/*!**************************************!*\
-  !*** E:/cl_vue/erpApp/api/verify.js ***!
-  \**************************************/
+/***/ 37:
+/*!***************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/paperboard.js ***!
+  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.approvePaperSpecPrice = exports.searchSpecPrice = exports.approveProdPo = exports.searchProdPODetail = exports.searchProdPO = exports.approvePO = exports.searchPODetail = exports.searchPOData = exports.boxDetailApproval = exports.searchBoxApprovalList = exports.getNoticeInfo = void 0;
-
-
-var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 20));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
-                                                                                                                                                         *审批API
-                                                                                                                                                         */ //import Qs from 'qs'
-var apiPath = '/clerp-app-api'; //正式环境 
-/**
- * @description 獲取通知信息個數
- * @params {url} 動態地址查詢
- */var getNoticeInfo = function getNoticeInfo(_ref) {var url = _ref.url;
-  //参数
-  var data = {
-    isLoad: 'false' };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath).concat(url),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-    * @description 纸箱特价审批列表查询
-    * @params {}
-    */exports.getNoticeInfo = getNoticeInfo;
-var searchBoxApprovalList = function searchBoxApprovalList() {
-  //参数
-  var data = {};
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/priceAudit/findList"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-    * @description 纸箱特价审批
-    * @params {}
-    */exports.searchBoxApprovalList = searchBoxApprovalList;
-var boxDetailApproval = function boxDetailApproval(_ref2)
-
-
-
-{var Id = _ref2.Id,approvalExplain = _ref2.approvalExplain,approveState = _ref2.approveState;
-  //参数
-  var data = {
-    ID1: Id,
-    bi_SPriceAudit: approveState, //1:审批，0:未审批
-    bi_SPriceAuditExplain: approvalExplain //审批说明
-  };
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/priceAudit/priceAudit"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-    * @description 原纸审批列表查询
-    * @params {}
-    */exports.boxDetailApproval = boxDetailApproval;
-var searchPOData = function searchPOData() {
-  //参数
-  var data = {};
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/spaperpo/searchPOData"),
-    data: data,
-    method: 'POST' });
-
-};
-
-//查询原纸详细信息
-exports.searchPOData = searchPOData;var searchPODetail = function searchPODetail(_ref3)
-
-{var poId = _ref3.poId;
-  //参数
-  var data = {
-    poId: poId };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/spaperpo/searchPODetail"),
-    data: data,
-    method: 'POST' });
-
-};
-//原纸审批说明--》提交
-exports.searchPODetail = searchPODetail;var approvePO = function approvePO(_ref4)
-
-
-
-{var poId = _ref4.poId,approvalExplain = _ref4.approvalExplain,approveState = _ref4.approveState;
-  //参数
-  var data = {
-    poId: poId,
-    approvalExplain: approvalExplain,
-    approveState: approveState };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/spaperpo/approvePO"),
-    data: data,
-    method: 'POST' });
-
-};
-//查询辅料审批-数据列表
-exports.approvePO = approvePO;var searchProdPO = function searchProdPO() {
-  //参数
-  var data = {};
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/prodpo/searchProdPO"),
-    data: data,
-    method: 'POST' });
-
-};
-
-////查询辅料详细信息
-exports.searchProdPO = searchProdPO;var searchProdPODetail = function searchProdPODetail(_ref5)
-
-{var poId = _ref5.poId;
-  //参数
-  var data = {
-    poId: poId };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/prodpo/searchProdPODetail"),
-    data: data,
-    method: 'POST' });
-
-};
-//辅料审批说明--》提交
-exports.searchProdPODetail = searchProdPODetail;var approveProdPo = function approveProdPo(_ref6)
-
-
-
-{var poId = _ref6.poId,approvalExplain = _ref6.approvalExplain,approveState = _ref6.approveState;
-  //参数
-  var data = {
-    poId: poId,
-    approvalExplain: approvalExplain,
-    approveState: approveState };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/prodpo/approveProdPo"),
-    data: data,
-    method: 'POST' });
-
-};
-
-//POST /confirm/paperspecprice/
-/*特价列表查询*/exports.approveProdPo = approveProdPo;
-var searchSpecPrice = function searchSpecPrice() {
-  //参数
-  var data = {};
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/paperspecprice/searchSpecPrice"),
-    data: data,
-    method: 'POST' });
-
-};
-//POST /confirm/paperspecprice/
-//审批特价说明-提交
-exports.searchSpecPrice = searchSpecPrice;var approvePaperSpecPrice = function approvePaperSpecPrice(_ref7) {var coId = _ref7.coId,approveState = _ref7.approveState,approvalExplain = _ref7.approvalExplain;
-  //参数
-  var data = {
-    coId: coId,
-    approvalExplain: approvalExplain,
-    approveState: approveState };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/confirm/paperspecprice/approvePaperSpecPrice"),
-    data: data,
-    method: 'POST' });
-
-};exports.approvePaperSpecPrice = approvePaperSpecPrice;
-
-/***/ }),
-
-/***/ 29:
-/*!************************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/paperIn.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperIn = __webpack_require__(/*! @/api/paperIn */ 30);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-var _util = __webpack_require__(/*! @/libs/util */ 23);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperboard = __webpack_require__(/*! @/api/paperboard */ 38);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
 
 
 {
-  state: {},
+  state: {
+    //纸板进度列表
+    progressList: uni.getStorageSync("progressList") == '' ? '' : JSON.parse(uni.getStorageSync("progressList")) },
+
+  getters: {
+    //纸板进度列表
+    progressList_getters: function progressList_getters(state, getters) {
+      return state.progressList;
+    } },
 
 
-  mutations: {},
+  mutations: {
+    //纸板进度列表
+    set_progressList: function set_progressList(state, data) {
+      state.progressList = data;
+      uni.setStorageSync("progressList", JSON.stringify(data));
+    } },
+
 
 
   actions: {
-    spScanOrderAction: function spScanOrderAction(_ref, params) {var commit = _ref.commit;
+    /**
+             * @description 纸板进度查询
+             * @params { ct_ID }
+             */
+    getProgress_action: function getProgress_action(_ref, params) {var commit = _ref.commit;
       return new Promise(function (resolve, reject) {
         try {
-          (0, _paperIn.spScanOrder)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+          (0, _paperboard.getProgress)(params).then(function (res) {
+            //debugger
+            var data = _config.default.isRunApp ? res : res.data;
             if (data.success)
             {
-              resolve(data.data);
+              commit('set_progressList', data.data.records);
+              resolve(data);
             } else
 
             {
               reject(data.msg);
             }
           }).catch(function (err) {
-            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 纸板进度详细
+       * @params { coNo }
+       */
+    getProgressDetail_action: function getProgressDetail_action(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperboard.getProgressDetail)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data;
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
             reject(serverBusyTips);
           });
         } catch (error) {
@@ -32150,561 +33340,194 @@ var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
         }
       });
     } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
-/***/ 3:
-/*!***********************************!*\
-  !*** (webpack)/buildin/global.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-
-/***/ 30:
-/*!***************************************!*\
-  !*** E:/cl_vue/erpApp/api/paperIn.js ***!
-  \***************************************/
+/***/ 38:
+/*!******************************************!*\
+  !*** E:/cl_vue/erpApp/api/paperboard.js ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.spScanOrder = void 0;
-
-
-var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 20));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
-                                                                                                                                                         * 纸板入库，出仓
-                                                                                                                                                         */ //import Qs from 'qs'
+Object.defineProperty(exports, "__esModule", { value: true });exports.getProgressDetail = exports.getProgress = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
 var apiPath = '/clerp-app-api'; //正式环境
-var spScanOrder = function spScanOrder(_ref) {var BarCodeStr = _ref.BarCodeStr,Station = _ref.Station,Flag = _ref.Flag,FOrderNo = _ref.FOrderNo,FQty = _ref.FQty,FDNum = _ref.FDNum,FLine = _ref.FLine,FClass = _ref.FClass,Remark = _ref.Remark;
-  //参数
-  var data = {
-    BarCodeStr: BarCodeStr, Station: Station, Flag: Flag, FOrderNo: FOrderNo, FQty: FQty, FDNum: FDNum, FLine: FLine, FClass: FClass, Remark: Remark };
 
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/spScanOrder"),
-    data: data,
-    method: 'POST' });
-
-};exports.spScanOrder = spScanOrder;
-
-/***/ }),
-
-/***/ 31:
-/*!************************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/paperOB.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperOB = __webpack_require__(/*! @/api/paperOB */ 32);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-var _util = __webpack_require__(/*! @/libs/util */ 23);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
-
-
-{
-  state: {},
-
-
-  mutations: {},
-
-
-  actions: {
-    spGetSPaperStoreForPDAAction: function spGetSPaperStoreForPDAAction(_ref, params) {var commit = _ref.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperOB.spGetSPaperStoreForPDA)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    }, aspExeuteSPaperSimpleAutoScanAction: function aspExeuteSPaperSimpleAutoScanAction(_ref2, params) {var commit = _ref2.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperOB.aspExeuteSPaperSimpleAutoScan)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    }, spSPaperStoreQueryForPDAAction: function spSPaperStoreQueryForPDAAction(_ref3, params) {var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperOB.spSPaperStoreQueryForPDA)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    } } };exports.default = _default;
-
-/***/ }),
-
-/***/ 32:
-/*!***************************************!*\
-  !*** E:/cl_vue/erpApp/api/paperOB.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.spSPaperStoreQueryForPDA = exports.aspExeuteSPaperSimpleAutoScan = exports.spGetSPaperStoreForPDA = void 0;
-
-
-var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 20));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
-                                                                                                                                                         * 纸板入库，出仓
-                                                                                                                                                         */ //import Qs from 'qs'
-var apiPath = '/clerp-app-api'; //正式环境
-var spGetSPaperStoreForPDA = function spGetSPaperStoreForPDA(_ref)
-
-
-{var Coil = _ref.Coil,Flag = _ref.Flag;
-  //参数
-  var data = {
-    Coil: Coil,
-    Flag: Flag };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/spGetSPaperStoreForPDA"),
-    data: data,
-    method: 'POST' });
-
-};exports.spGetSPaperStoreForPDA = spGetSPaperStoreForPDA;
-
-var aspExeuteSPaperSimpleAutoScan = function aspExeuteSPaperSimpleAutoScan(_ref2)
-
-
-
-
-
-
-
-
-
-
-{var Line = _ref2.Line,Group = _ref2.Group,Oper = _ref2.Oper,Flag = _ref2.Flag,Coil = _ref2.Coil,OutUseID = _ref2.OutUseID,InUseID = _ref2.InUseID,Wt = _ref2.Wt,OperDate_IN_date = _ref2.OperDate_IN_date,ErrorStr_OUT_varchar = _ref2.ErrorStr_OUT_varchar;
-  //参数
-  var data = {
-    Line: Line,
-    Group: Group,
-    Oper: Oper,
-    Flag: Flag,
-    Coil: Coil,
-    OutUseID: OutUseID,
-    InUseID: InUseID,
-    Wt: Wt,
-    OperDate_IN_date: OperDate_IN_date,
-    ErrorStr_OUT_varchar: ErrorStr_OUT_varchar };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspExeuteSPaperSimpleAutoScan_InI"),
-    data: data,
-    method: 'POST' });
-
-};exports.aspExeuteSPaperSimpleAutoScan = aspExeuteSPaperSimpleAutoScan;
-
-
-var spSPaperStoreQueryForPDA = function spSPaperStoreQueryForPDA(_ref3)
-
-
-
-
-
-
-{var Coil = _ref3.Coil,Vend = _ref3.Vend,Type = _ref3.Type,Width = _ref3.Width,Gram = _ref3.Gram,Station = _ref3.Station;
-  //参数
-  var data = {
-    Coil: Coil,
-    Vend: Vend,
-    Type: Type,
-    Width: Width,
-    Gram: Gram,
-    Station: Station };
-
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/spSPaperStoreQueryForPDA"),
-    data: data,
-    method: 'POST' });
-
-};exports.spSPaperStoreQueryForPDA = spSPaperStoreQueryForPDA;
-
-/***/ }),
-
-/***/ 33:
-/*!**********************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/boxIn.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _boxIn = __webpack_require__(/*! @/api/boxIn */ 34);
-
-
-
-
-
-
-
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));
-var _util = __webpack_require__(/*! @/libs/util */ 23);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-
-
-
-var serverBusyTips = "服务繁忙，请稍后再试！";var _default =
-
-
-{
-  state: {},
-
-
-  mutations: {},
-
-
-  actions: {
-    baseAction: function baseAction(_ref,
-
-    callback, params) {var commit = _ref.commit;
-
-    },
-    aspSaveBoxInAction: function aspSaveBoxInAction(_ref2,
-
-    params) {var commit = _ref2.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _boxIn.aspSaveBoxIn)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    boxScanOrderAction: function boxScanOrderAction(_ref3,
-
-    params) {var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _boxIn.boxScanOrder)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    aspSaveBoxOutTempAction: function aspSaveBoxOutTempAction(_ref4,
-
-    params) {var commit = _ref4.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _boxIn.aspSaveBoxOutTemp)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    aspSaveBoxHalfProdInAction: function aspSaveBoxHalfProdInAction(_ref5,
-
-    params) {var commit = _ref5.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _boxIn.aspSaveBoxHalfProdIn)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    }, findUserAction: function findUserAction(_ref6,
-
-    params) {var commit = _ref6.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _boxIn.findUser)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    }, findCarAction: function findCarAction(_ref7) {var commit = _ref7.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _boxIn.findCar)().then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    } } };exports.default = _default;
-
-/***/ }),
-
-/***/ 34:
-/*!*************************************!*\
-  !*** E:/cl_vue/erpApp/api/boxIn.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.findCar = exports.findUser = exports.aspSaveBoxHalfProdIn = exports.aspSaveBoxOutTemp = exports.boxScanOrder = exports.aspSaveBoxIn = void 0;
-
-
-var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 20));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
-                                                                                                                                                         * 纸箱成品入库,成品出库,半成品入库
-                                                                                                                                                         */ //import Qs from 'qs'
-var apiPath = '/clerp-app-api'; //正式环境
 /**
- * @desc boxIn 描述 添加出入库
- * 
- * @params 参数
- * 
- * @author Andy Huang
- * 
- * @created 2019/08/22 13:43:45
- */
-
-var aspSaveBoxIn = function aspSaveBoxIn(_ref)
-
-
-
-{var bi_Group = _ref.bi_Group,bi_WorkNo = _ref.bi_WorkNo,bi_InQty = _ref.bi_InQty;
+* @description  纸板订单进度查询 /common/sp_PhoneInfoCONew/findList
+搜索条件：
+	DateFr(起始日期)
+	DateTo (起始日期)
+	Spec (规格，未填写的时候，传入空字符串， 格式为 宽*长)
+	Qty (数量, 未填写的时候，传入空字符串)
+	PO (客户PO, 未填写的时候，传入空字符串)
+	NoDeli (0:全部，1:已完成,2:未完成)
+	SizeL (纸长)
+	SizeW (纸宽)
+	ArtID (纸质)
+返回值：
+	(up_CustID)客户编号
+	(ct_Desc)客户名称
+	(ui_UPNo)产品编号
+	(ui_UPName)产品名称
+	(ui_Price)报价
+	(up_StartDate)生效日期
+	(Csize)规格
+*/
+var getProgress = function getProgress(_ref) {var DateFr = _ref.DateFr,DateTo = _ref.DateTo,Spec = _ref.Spec,Qty = _ref.Qty,PO = _ref.PO,NoDeli = _ref.NoDeli,SizeL = _ref.SizeL,SizeW = _ref.SizeW,ArtID = _ref.ArtID;
   //参数
   var data = {
-    bi_Group: bi_Group,
-    bi_WorkNo: bi_WorkNo,
-    bi_InQty: bi_InQty };
+    DateFr: DateFr, DateTo: DateTo, Qty: Qty, PO: PO, NoDeli: NoDeli, SizeL: SizeL, SizeW: SizeW, ArtID: ArtID };
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspSaveBoxIn"),
+    url: "".concat(apiPath, "/common/sp_PhoneInfoCONew/findList"),
     data: data,
     method: 'POST' });
 
-};exports.aspSaveBoxIn = aspSaveBoxIn;
+};
 
-var boxScanOrder = function boxScanOrder(_ref2)
-
-
-
-{var bi_WorkNo = _ref2.bi_WorkNo,bc_No = _ref2.bc_No,Flag = _ref2.Flag;
+/**
+   * @description  纸板进度详细 BY ID
+   * 搜索条件：
+   *   coNo(订单号)
+     返回值：
+   	(List)进度信息
+   */exports.getProgress = getProgress;
+var getProgressDetail = function getProgressDetail(_ref2) {var coNo = _ref2.coNo;
   //参数
   var data = {
-    bi_WorkNo: bi_WorkNo,
-    bc_No: bc_No,
-    Flag: Flag };
+    coNo: coNo };
 
 
   return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/boxScanOrder"),
+    url: "".concat(apiPath, "/common/detailSysOrder/get"),
     data: data,
     method: 'POST' });
 
-};exports.boxScanOrder = boxScanOrder;
+};exports.getProgressDetail = getProgressDetail;
 
-var aspSaveBoxOutTemp = function aspSaveBoxOutTemp(_ref3)
+/***/ }),
 
+/***/ 39:
+/*!*************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/paperBox.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-
-
-
-
-{var bd_CarNo = _ref3.bd_CarNo,bd_Follower = _ref3.bd_Follower,bd_Loador = _ref3.bd_Loador,bd_SenderID = _ref3.bd_SenderID,OrderQtyStr = _ref3.OrderQtyStr,NoStr = _ref3.NoStr;
-  //参数
-  var data = {
-    bd_CarNo: bd_CarNo,
-    bd_Follower: bd_Follower,
-    bd_Loador: bd_Loador,
-    bd_SenderID: bd_SenderID,
-    OrderQtyStr: OrderQtyStr,
-    NoStr: NoStr };
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperBox = __webpack_require__(/*! @/api/paperBox */ 40);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
 
 
+{
+  state: {
+    //纸箱进度列表
+    paperBoxProgressList: uni.getStorageSync("paperBoxProgressList") == '' ? '' : JSON.parse(uni.getStorageSync("paperBoxProgressList")) },
 
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspSaveBoxOutTemp"),
-    data: data,
-    method: 'POST' });
-
-
-};exports.aspSaveBoxOutTemp = aspSaveBoxOutTemp;
-
-var aspSaveBoxHalfProdIn = function aspSaveBoxHalfProdIn(_ref4)
-
-
+  getters: {
+    //纸箱进度列表
+    paperBoxProgressList_getters: function paperBoxProgressList_getters(state, getters) {
+      return state.paperBoxProgressList;
+    } },
 
 
+  mutations: {
+    //纸箱进度列表
+    set_paperBoxProgressList: function set_paperBoxProgressList(state, data) {
+      state.paperBoxProgressList = data;
+      uni.setStorageSync("paperBoxProgressList", JSON.stringify(data));
+    } },
 
 
-{var hp_bi_WorkNo = _ref4.hp_bi_WorkNo,hp_wpl_Id = _ref4.hp_wpl_Id,hp_mo_ID = _ref4.hp_mo_ID,hp_tt_Code = _ref4.hp_tt_Code,Qty = _ref4.Qty,Remark = _ref4.Remark;
-  //参数
-  var data = {
-    hp_bi_WorkNo: hp_bi_WorkNo,
-    hp_wpl_Id: hp_wpl_Id,
-    hp_mo_ID: hp_mo_ID,
-    hp_tt_Code: hp_tt_Code,
-    Qty: Qty,
-    Remark: Remark };
 
+  actions: {
+    /**
+             * @description 纸箱进度列表
+             * @params { ct_ID }
+             */
+    getPaperBoxProgress_action: function getPaperBoxProgress_action(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperBox.getPaperBoxProgress)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              commit('set_paperBoxProgressList', data);
+              resolve(data);
+            } else
 
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/aspSaveBoxHalfProdIn"),
-    data: data,
-    method: 'POST' });
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 纸箱订单汇总-
+       * @params { mode,cList,ct_SalerId,sFrom,sTo }
+       */
+    getPaperBoxOrderSummary_action: function getPaperBoxOrderSummary_action(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperBox.getPaperBoxOrderSummary)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              //commit('set_paperBoxProgressList',data)
+              resolve(data);
+            } else
 
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 纸箱送货汇总
+       * @params { ct_ID }
+       */
+    getPaperBoxDeliverySummary_action: function getPaperBoxDeliverySummary_action(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperBox.getPaperBoxDeliverySummary)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              // commit('set_paperBoxProgressList',data)
+              resolve(data);
+            } else
 
-};exports.aspSaveBoxHalfProdIn = aspSaveBoxHalfProdIn;
-
-var findUser = function findUser(_ref5)
-
-{var workType = _ref5.workType;
-  //参数
-  var data = {
-    workType: workType };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/findUser"),
-    data: data,
-    method: 'POST' });
-
-
-};exports.findUser = findUser;
-
-var findCar = function findCar() {
-  //参数
-  var data = {};
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/warehouse/warehouse/execute/findCar"),
-    data: data,
-    method: 'POST' });
-
-};exports.findCar = findCar;
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
@@ -32720,7 +33543,135 @@ var findCar = function findCar() {
 
 /***/ }),
 
-/***/ 41:
+/***/ 40:
+/*!****************************************!*\
+  !*** E:/cl_vue/erpApp/api/paperBox.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getPaperBoxDeliverySummary = exports.getPaperBoxOrderSummary = exports.getPaperBoxProgressDetail = exports.getPaperBoxProgress = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+
+/**
+* @description  纸箱进度查询
+* @params { ct_ID }
+*/
+var getPaperBoxProgress = function getPaperBoxProgress(_ref) {var ct_ID = _ref.ct_ID;
+  //参数
+  var data = {
+    //ct_IDP
+  };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/paperBox/progress"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  纸箱进度详细 BY ID
+   * @params { ct_ID }
+   */exports.getPaperBoxProgress = getPaperBoxProgress;
+var getPaperBoxProgressDetail = function getPaperBoxProgressDetail(_ref2) {var ct_ID = _ref2.ct_ID;
+  //参数
+  var data = {
+    //ct_ID
+  };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/paperBox/progress_detail"),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  纸箱订单汇总 
+   *
+   * 搜索条件：
+   	mode (0:客户 | 1:业务员)
+   	cList (客户编号)
+   	ct_SalerId(业务员ID)
+   	sFrom (开始时间)
+   	sTo (结束时间)
+    返回值：
+   	(ct_Desc|w_Name)(客户|业务员)名称
+   	(co_Qty)数量
+   	(BMoney)金额
+   	(Aarea)面积
+   	(Acube)体积
+   	(AmtB)金额点比
+   */exports.getPaperBoxProgressDetail = getPaperBoxProgressDetail;
+var getPaperBoxOrderSummary = function getPaperBoxOrderSummary(_ref3) {var mode = _ref3.mode,cList = _ref3.cList,ct_SalerId = _ref3.ct_SalerId,sFrom = _ref3.sFrom,sTo = _ref3.sTo;
+  //参数
+  var data = {};
+  if (mode == 0) {
+    data =
+    {
+      mode: mode, cList: cList, sFrom: sFrom, sTo: sTo };
+
+  } else {
+    data =
+    {
+      mode: mode, ct_SalerId: ct_SalerId, sFrom: sFrom, sTo: sTo };
+
+  }
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/aspBoxCOAnalyzerAPP/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  纸箱送货汇总
+   *
+   * 搜索条件：
+   	mode (0:客户 | 1:业务员)
+   	cList (客户编号)
+   	ct_SalerId(业务员ID)
+   	sFrom (开始时间)
+   	sTo (结束时间)
+     返回值：
+   	(ct_Desc|w_Name)(客户|业务员)名称
+   	(bi_Qty)数量
+   	(BMoney)金额
+   	(Aarea)面积
+   	(Acube)体积
+   	(AmtB)金额点比 Delivery summary
+   */exports.getPaperBoxOrderSummary = getPaperBoxOrderSummary;
+var getPaperBoxDeliverySummary = function getPaperBoxDeliverySummary(_ref4) {var mode = _ref4.mode,cList = _ref4.cList,ct_SalerId = _ref4.ct_SalerId,sFrom = _ref4.sFrom,sTo = _ref4.sTo;
+  //参数
+  var data = {};
+  if (mode == 0) {
+    data =
+    {
+      mode: mode, cList: cList, sFrom: sFrom, sTo: sTo };
+
+  } else {
+    data =
+    {
+      mode: mode, ct_SalerId: ct_SalerId, sFrom: sFrom, sTo: sTo };
+
+  }
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/aspBoxDeliAnalyzerAPP/findList"),
+    data: data,
+    method: 'POST' });
+
+};exports.getPaperBoxDeliverySummary = getPaperBoxDeliverySummary;
+
+/***/ }),
+
+/***/ 47:
 /*!****************************************!*\
   !*** E:/cl_vue/erpApp/mixins/index.js ***!
   \****************************************/
@@ -32735,7 +33686,7 @@ var findCar = function findCar() {
 
 
 
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 21));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
                                                                                                                                                          * @name mixin
                                                                                                                                                          * @description 所有.vue 公共方法
                                                                                                                                                          * @action .vue 中 添加mixin:[name]
@@ -32942,7 +33893,10 @@ var getPlatformName = function getPlatformName() {
 var getPackName = function getPackName() {
   var packName = '';
   if (getPlatformName() === 'wx' || getPlatformName() === 'qq') {
-    packName = uni.getAccountInfoSync().miniProgram.appId || '';
+    // 兼容微信小程序低版本基础库
+    if (uni.canIUse('getAccountInfoSync')) {
+      packName = uni.getAccountInfoSync().miniProgram.appId || '';
+    }
   }
   return packName;
 };
@@ -33554,7 +34508,7 @@ Stat = /*#__PURE__*/function (_Util) {_inherits(Stat, _Util);_createClass(Stat, 
     _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Stat).call(this));
     _this6.instance = null;
     // 注册拦截器
-    if (typeof uni.addInterceptor === 'function') {
+    if (typeof uni.addInterceptor === 'function' && "development" !== 'development') {
       _this6.addInterceptorInit();
       _this6.interceptLogin();
       _this6.interceptShare(true);
@@ -33732,7 +34686,7 @@ main();
 
 /***/ }),
 
-/***/ 50:
+/***/ 56:
 /*!*******************************************************!*\
   !*** E:/cl_vue/erpApp/node_modules/js-md5/src/md5.js ***!
   \*******************************************************/
@@ -33766,7 +34720,7 @@ main();
     root = self;
   }
   var COMMON_JS = !root.JS_MD5_NO_COMMON_JS && typeof module === 'object' && module.exports;
-  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 53);
+  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 59);
   var ARRAY_BUFFER = !root.JS_MD5_NO_ARRAY_BUFFER && typeof ArrayBuffer !== 'undefined';
   var HEX_CHARS = '0123456789abcdef'.split('');
   var EXTRA = [128, 32768, 8388608, -2147483648];
@@ -34424,11 +35378,11 @@ main();
     }
   }
 })();
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 51), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 57), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
 
 /***/ }),
 
-/***/ 51:
+/***/ 57:
 /*!********************************************************!*\
   !*** ./node_modules/node-libs-browser/mock/process.js ***!
   \********************************************************/
@@ -34455,7 +35409,7 @@ exports.binding = function (name) {
     var path;
     exports.cwd = function () { return cwd };
     exports.chdir = function (dir) {
-        if (!path) path = __webpack_require__(/*! path */ 52);
+        if (!path) path = __webpack_require__(/*! path */ 58);
         cwd = path.resolve(dir, cwd);
     };
 })();
@@ -34469,7 +35423,7 @@ exports.features = {};
 
 /***/ }),
 
-/***/ 52:
+/***/ 58:
 /*!***********************************************!*\
   !*** ./node_modules/path-browserify/index.js ***!
   \***********************************************/
@@ -34701,11 +35655,11 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 51)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 57)))
 
 /***/ }),
 
-/***/ 53:
+/***/ 59:
 /*!****************************************!*\
   !*** (webpack)/buildin/amd-options.js ***!
   \****************************************/
@@ -34726,11 +35680,11 @@ module.exports = __webpack_amd_options__;
 /*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.0.0-23320190923002","_inBundle":false,"_integrity":"sha512-MnftsvgOac3q1FCOBPzivbFn8GNQFo7D2DY325HeEZyFCWgx5GEwHpGYjT1PQU6v7DaDn0ruxa3ObdpUIYbmZw==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"@dcloudio/uni-stat@next","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"next","saveSpec":null,"fetchSpec":"next"},"_requiredBy":["#USER","/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-23320190923002.tgz","_shasum":"0c400c140ca0b3c05f52d25f11583cf05a0c4e9a","_spec":"@dcloudio/uni-stat@next","_where":"/Users/fxy/Documents/DCloud/HbuilderX-plugins/release/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"fed4c73fb9142a1b277dd79313939cad90693d3e","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-23320190923002"};
+module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.0.0-23720191024001","_inBundle":false,"_integrity":"sha512-vJEk493Vdb8KueNzR2otzDi23rfyRcQBo/t1R41MwNGPk+AUB94gh10+HVLo98DRcvMzkuVofz3KXTAfEx24iw==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"@dcloudio/uni-stat@next","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"next","saveSpec":null,"fetchSpec":"next"},"_requiredBy":["#USER","/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-23720191024001.tgz","_shasum":"18272814446a9bc6053bc92666ec7064a1767588","_spec":"@dcloudio/uni-stat@next","_where":"/Users/fxy/Documents/DCloud/HbuilderX-plugins/release/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"a725c04ef762e5df78a9a69d140c2666e0de05fc","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-23720191024001"};
 
 /***/ }),
 
-/***/ 62:
+/***/ 68:
 /*!*********************************************!*\
   !*** E:/cl_vue/erpApp/libs/eventBusType.js ***!
   \*********************************************/
@@ -34752,7 +35706,7 @@ var ReLoadData = 'ReLoadData';exports.ReLoadData = ReLoadData;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "navigationStyle": "custom", "usingComponents": {} }, "pages/login/login": { "navigationBarTitleText": "用户登陆", "navigationStyle": "custom", "usingComponents": {} }, "pages/function/function": { "navigationBarTitleText": "功能", "navigationStyle": "custom", "usingComponents": {} }, "pages/my/my": { "navigationBarTitleText": "关于我", "navigationStyle": "custom", "usingComponents": { "uni-icon": "/components/uni-icon/uni-icon" } }, "pages/report/report": { "navigationBarTitleText": "报表", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/bargainPrice/bargainPrice": { "navigationBarTitleText": "特价审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/bargainPrice/bpDetail": { "navigationBarTitleText": "特价详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/originalPaper/originalPaper": { "navigationBarTitleText": "原纸审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/originalPaper/opDetail": { "navigationBarTitleText": "原纸详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/material/material": { "navigationBarTitleText": "辅料审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/material/mtDetail": { "navigationBarTitleText": "辅料详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/boxApproval/boxApproval": { "navigationBarTitleText": "纸箱审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/boxApproval/boxDetail": { "navigationBarTitleText": "纸箱详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/report/deliveryquery/deliveryquery": { "navigationBarTitleText": "送货查询", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/report/compfactorykanban/compfactorykanban": { "navigationBarTitleText": "全厂综合查询", "navigationStyle": "custom", "usingComponents": { "uni-grid": "/components/uni-grid/uni-grid", "uni-grid-item": "/components/uni-grid-item/uni-grid-item", "uni-icon": "/components/uni-icon/uni-icon" } }, "pages/report/compfactorykanban/comFactoryCharts": { "navigationBarTitleText": "全厂综合-图表展示", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table" } }, "pages/report/paperorderquery/paperorderquery": { "navigationBarTitleText": "订单查询", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/report/sumofcustarrears/sumofcustarrears": { "navigationBarTitleText": "客户欠款", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/warehouse/boxIn/boxIn": { "navigationBarTitleText": "纸箱出入库", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "uni-popup": "/components/uni-popup/uni-popup" } }, "pages/warehouse/paperIn/paperIn": { "navigationBarTitleText": "纸板出入口", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table" } }, "pages/warehouse/paperOB/paperOB": { "navigationBarTitleText": "原纸出退仓", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table" } }, "components/list-select/list-select": { "navigationBarTitleText": "数据列表选择", "navigationStyle": "custom", "usingComponents": {} } }, "globalStyle": { "navigationBarTextStyle": "white", "navigationBarTitleText": "晨龙ERP", "navigationBarBackgroundColor": "#0081ff", "backgroundColor": "#FFFFFF" } };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "navigationStyle": "custom" }, "pages/login/login": { "navigationBarTitleText": "用户登陆", "navigationStyle": "custom" }, "pages/function/function": { "navigationBarTitleText": "功能", "navigationStyle": "custom" }, "pages/my/my": { "navigationBarTitleText": "关于我", "navigationStyle": "custom" }, "pages/report/report": { "navigationBarTitleText": "报表", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bargainPrice": { "navigationBarTitleText": "特价审批", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bpDetail": { "navigationBarTitleText": "特价详细", "navigationStyle": "custom" }, "pages/verify/originalPaper/originalPaper": { "navigationBarTitleText": "原纸审批", "navigationStyle": "custom" }, "pages/verify/originalPaper/opDetail": { "navigationBarTitleText": "原纸详细", "navigationStyle": "custom" }, "pages/verify/material/material": { "navigationBarTitleText": "辅料审批", "navigationStyle": "custom" }, "pages/verify/material/mtDetail": { "navigationBarTitleText": "辅料详细", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxApproval": { "navigationBarTitleText": "纸箱审批", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxDetail": { "navigationBarTitleText": "纸箱详细", "navigationStyle": "custom" }, "pages/report/deliveryquery/deliveryquery": { "navigationBarTitleText": "送货查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/compfactorykanban": { "navigationBarTitleText": "全厂综合查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/comFactoryCharts": { "navigationBarTitleText": "全厂综合-图表展示", "navigationStyle": "custom" }, "pages/report/paperorderquery/paperorderquery": { "navigationBarTitleText": "订单查询", "navigationStyle": "custom" }, "pages/report/sumofcustarrears/sumofcustarrears": { "navigationBarTitleText": "客户欠款", "navigationStyle": "custom" }, "pages/warehouse/boxIn/boxIn": { "navigationBarTitleText": "纸箱出入库", "navigationStyle": "custom" }, "pages/warehouse/paperIn/paperIn": { "navigationBarTitleText": "纸板出入口", "navigationStyle": "custom" }, "pages/warehouse/paperOB/paperOB": { "navigationBarTitleText": "原纸出退仓", "navigationStyle": "custom" }, "components/list-select/list-select": { "navigationBarTitleText": "数据列表选择", "navigationStyle": "custom" }, "pages/quotation/area": { "navigationBarTitleText": "纸箱纸质面积报价", "navigationStyle": "custom" }, "pages/quotation/boxProduct": { "navigationBarTitleText": "纸箱纸质产品报价", "navigationStyle": "custom" }, "pages/quotation/boxArea": { "navigationBarTitleText": "纸箱报价", "navigationStyle": "custom" }, "pages/paperboard/progress/progress": { "navigationBarTitleText": "纸板进度查询", "navigationStyle": "custom" }, "pages/paperboard/progress/progressDetail": { "navigationBarTitleText": "纸板进度详细", "navigationStyle": "custom" }, "pages/paperBox/progress/progress": { "navigationBarTitleText": "纸箱进度查询", "navigationStyle": "custom" }, "pages/paperBox/progress/progressDetail": { "navigationBarTitleText": "纸箱进度详细", "navigationStyle": "custom" }, "pages/paperBox/deliveryquery/deliveryquery": { "navigationBarTitleText": "纸箱送货汇总", "navigationStyle": "custom" }, "pages/paperBox/paperorderquery/paperorderquery": { "navigationBarTitleText": "纸箱订单汇总", "navigationStyle": "custom" } }, "globalStyle": { "navigationBarTextStyle": "white", "navigationBarTitleText": "晨龙ERP", "navigationBarBackgroundColor": "#0081ff", "backgroundColor": "#FFFFFF" } };exports.default = _default;
 
 /***/ }),
 
@@ -34764,7 +35718,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "appid": "__UNI__E9B86E8" };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "appid": "__UNI__E28211E" };exports.default = _default;
 
 /***/ })
 

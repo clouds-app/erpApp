@@ -1,0 +1,139 @@
+import axios from '@/libs/api.request'
+import config from '@/config'
+//import Qs from 'qs'
+ let apiPath= '/clerp-app-api'  //正式环境
+
+
+
+/**
+* @description  纸箱纸质面积报价
+* 搜索条件：
+*	bp_CustID(客户编号)
+*	bi_ArtID(纸质)
+* @params { bp_CustID,bi_ArtID }
+* 返回值：
+	(bp_CustID)客户编号
+	(ct_Desc)客户名称
+	(bi_SalerPrice)生效日期
+	(bi_ArtID)纸质
+	(h_Name)坑别
+	(bi_SalerPrice)报价
+*/
+export const getQutation_boxArea = ({ bp_CustID,bi_ArtID }) => {
+  //参数
+  let data = {
+    bp_CustID,
+	bi_ArtID,
+	// size:-1,
+	// current:-1
+   }
+ return axios.request({
+    url: `${apiPath}/common/select_T_BoxArtPriceMain/findList`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  纸箱产品报价
+* /common/select_T_UnionProductPrice/findList
+*   up_CustID(客户类型)
+* 	ui_UPNo(产品编号)
+* 	ui_UPName(产品名称)
+* @params { up_CustID,ui_UPNo,ui_UPName }
+* 返回值：
+	(up_CustID)客户编号
+	(ct_Desc)客户名称
+	(ui_UPNo)产品编号
+	(ui_UPName)产品名称
+	(ui_Price)报价
+	(up_StartDate)生效日期
+	(Csize)规格
+*/
+export const getQutation_products = ({ up_CustID,ui_UPNo,ui_UPName }) => {
+  //参数
+  let data = {
+    up_CustID,ui_UPNo,ui_UPName
+   }
+   
+ return axios.request({
+    url: `${apiPath}/common/select_T_UnionProductPrice/findList`,
+    data,
+    method: 'POST',
+  })
+}
+//=======================end=============================
+/**
+* @description  原纸报价 纸质报价 配纸加价 楞别加价
+* @params { userId }
+*/
+export const getQutation_basePaper = ({ ct_ID }) => {
+	console.log('getQutation_basePaper ct_ID:'+ct_ID)
+  //参数
+  let data = {
+    ct_ID
+   }
+   
+ return axios.request({
+    url: `${apiPath}/qutation/basePaper`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description 纸质报价
+* @params { userId }
+*/
+export const getQutation_paperQuality = ({ ct_ID }) => {
+	//debugger
+  //参数
+  let data = {
+    ct_ID
+   }
+   
+ return axios.request({
+    url: `${apiPath}/qutation/paperQuality`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description 配纸加价
+* @params { userId }
+*/
+export const getQutation_paperParts = ({ ct_ID }) => {
+	//debugger
+  //参数
+  let data = {
+    ct_ID
+   }
+   
+ return axios.request({
+    url: `${apiPath}/qutation/paperParts`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description 楞别加价
+* @params { userId }
+*/
+export const getQutation_lb = ({ ct_ID }) => {
+	//debugger
+  //参数
+  let data = {
+    ct_ID
+   }
+   
+ return axios.request({
+    url: `${apiPath}/qutation/lb`,
+    data,
+    method: 'POST',
+  })
+}
+
+
+

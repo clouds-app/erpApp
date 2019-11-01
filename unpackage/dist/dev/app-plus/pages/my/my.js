@@ -1,1 +1,2 @@
+setCssToHead([".",[1],"cu-avatar.",[1],"lg { width: 48px; height: 48px; font-size: 3em; color: #0081ff; }\n.",[1],"cu-avatar{ background-color: #FFFFFF; }\n.",[1],"margin-top5{ margin-top: 10px; }\n",],undefined,{path:"./pages/my/my.wxss"})();
 document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./pages/my/my.wxml') } }));

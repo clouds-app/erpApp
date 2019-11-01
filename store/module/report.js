@@ -1,7 +1,7 @@
 import {getFactoryKanban,getAccRAnalyzer,getColligateAnalyzer,getPaperCOQueryAnaly,getPaperDeliTotal } from '@/api/report'
 import config from '@/config'
 import {setLocalStorage,getLocalStorage } from '@/libs/util'
-const serverBusyTips="服务繁忙，请稍后再试！"
+const serverBusyTips="执行失败，请稍后再试！"
 
 
 export default {

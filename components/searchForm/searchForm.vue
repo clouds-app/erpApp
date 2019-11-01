@@ -11,6 +11,17 @@
 				</view>
 				<view class="text-left padding-sm">
 					<form>
+						<!-- <view class="cu-form-group">
+							<view class="title">类　　型</view>
+							<input disabled v-model="productTypeText" placeholder="请选择类型(纸板,纸箱...)" name="input"></input>
+							<button @click="isShowProList=true" class='cu-btn bg-green shadow'>选择</button>
+						</view> -->
+						<view class="cu-form-group">
+							<view class="title">快速方式</view>
+							<button @click="handleFilterData('week')" :class="currentFilterType==='week'? 'cu-btn bg-orange': 'cu-btn line-orange'" >本周</button>
+							<button @click="handleFilterData('month')" :class="currentFilterType==='month'? 'cu-btn bg-orange': 'cu-btn line-orange'">本月</button>
+							<button @click="handleFilterData('season')" :class="currentFilterType==='season'? 'cu-btn bg-orange': 'cu-btn line-orange'">本季</button>
+						</view>
 						<view class="cu-form-group">
 							<view class="title">开始日期</view>
 							<input disabled="true" placeholder="输入开始日期" v-model="startDate" name="input"></input>
@@ -23,8 +34,18 @@
 						</view>
 						<view class="cu-form-group">
 							<view class="title">客　　户</view>
-							<input v-model="customerInfo" placeholder="请选择客户" name="input"></input>
+							<input disabled v-model="customerInfo" placeholder="请选择客户" name="input"></input>
+							<button @click="customerInfo=''" class='margin-right cu-btn round line-green'>清空</button>
 							<button @click="openCustomerList" class='cu-btn bg-green shadow'>选择</button>
+							
+						</view>
+						
+						<view class="cu-form-group">
+							<view class="title"> 业 务 员 </view>
+							<input disabled v-model="SalesmanSearch.SalesmanItemText" placeholder=" 请选择客户" name="input"></input>
+							<button @click="SalesmanSearch.SalesmanItemText=''" class='margin-right cu-btn round line-green'>清空</button>
+							<button @click="openSalesmanList" class='cu-btn bg-green shadow'>选择</button>
+							
 						</view>
 					</form>
 					
@@ -44,8 +65,25 @@
 		    ref="DatePicker" 
 		    themeColor="#f00">
 		</w-picker>
+		<!-- 业务员信息列表 -->
+		<view @tap="SalesmanSearch.isShow=false" class="cu-modal drawer-modal justify-start" :class="SalesmanSearch.isShow ?'show':''">
+			
+			<view class="cu-dialog basis-lg" @tap.stop="" :style="[{top:CustomBar+'px',height:'calc(100vh - ' + CustomBar + 'px)'}]">
+				
+					<view :style="[{overflow:'scroll',  height:'calc(100vh - ' + CustomBar + 'px)'}]" class="cu-list menu text-left">
+						
+							<view @click="getSalesmanInfo(item)"  class="cu-item arrow" v-for="(item,index) in SalesmanSearch.SalesmanList" :key="index">
+								<view  style="overflow: scroll;" class="content">
+									<view v-text="item.w_Name"></view>
+								</view>
+							</view>
+						
+					</view>
+			
+			</view>
+			
+		</view>
 		<!-- 客户信息列表 -->
-		
 		<view @tap="isShowCustomerList=false" class="cu-modal drawer-modal justify-start" :class="isShowCustomerList ?'show':''">
 			
 			<view class="cu-dialog basis-lg" @tap.stop="" :style="[{top:CustomBar+'px',height:'calc(100vh - ' + CustomBar + 'px)'}]">
@@ -53,6 +91,25 @@
 					<view :style="[{overflow:'scroll',  height:'calc(100vh - ' + CustomBar + 'px)'}]" class="cu-list menu text-left">
 						
 							<view @click="getSelectCustomerInfo(item)"  class="cu-item arrow" v-for="(item,index) in customerList" :key="index">
+								<view  style="overflow: scroll;" class="content">
+									<view v-text="item.ct_Desc"></view>
+								</view>
+							</view>
+						
+					</view>
+			
+			</view>
+			
+		</view>
+		
+		<!-- 产品类型列表 -->
+		<view @tap="isShowProList=false" class="cu-modal drawer-modal justify-start" :class="isShowProList ?'show':''">
+			
+			<view class="cu-dialog basis-lg" @tap.stop="" :style="[{top:CustomBar+'px',height:'calc(100vh - ' + CustomBar + 'px)'}]">
+				
+					<view :style="[{overflow:'scroll',  height:'calc(100vh - ' + CustomBar + 'px)'}]" class="cu-list menu text-left">
+						
+							<view @click="getSelectProtypeInfo(item)"  class="cu-item arrow" v-for="(item,index) in productType" :key="index">
 								<view  style="overflow: scroll;" class="content">
 									<view v-text="item.ct_Desc"></view>
 								</view>
@@ -78,8 +135,27 @@
 	export default {
 		name:'searchForm',
 		components:{wPicker},
+		props:{
+			//搜索条件：
+			//ct_Type(客户类型)0:全部,1:纸箱,2:纸板,3:蜂窝 多个逗号分开
+			customerType:{
+				type:String,
+				default:'0'
+			}
+		},
 		data() {
 			return {
+				currentFilterType:'',//当前查询类型：周 week 月 month 季 season 是否选择，选中为 primary
+				SalesmanSearch:{
+					SalesmanItemText:'',
+					SalesmanItem:{},
+					isShow:false,//是否显示业务员列表
+					SalesmanList:[],//业务员列表
+				},
+				isShowProList:false,
+				productTypeText:'纸板',
+				productTypeItem:{},
+				productType:[{type:'1',ct_Desc:'纸板'},{type:'2',ct_Desc:'纸箱'}],//产品类型(1纸板,2纸箱...)
 				endYear:dayjs(Date.now()).format('YYYY'),//当前年份
 				CustomBar: this.CustomBar, //uni-app :内置属性，bar :高度
 				isShowCustomerList:false,//是否显示客户信息列表
@@ -104,8 +180,26 @@
 		},
 		// #endif
 		methods: {
-			
-			...mapActions(['getCustomerInfo_action']),
+			//切換按鈕事件 周 月 季
+			handleFilterData(type){
+				//debugger
+			    this.currentFilterType =type
+			    switch(type){
+			      case 'week':
+			        this.startDate =dayjs(Date.now()).startOf('week').format('YYYY-MM-DD')
+			        this.endDate =dayjs(Date.now()).format('YYYY-MM-DD')
+			         break
+			      case 'month':
+			        this.startDate =dayjs(Date.now()).startOf('month').format('YYYY-MM-DD')
+			        this.endDate =dayjs(Date.now()).format('YYYY-MM-DD')
+			        break 
+			      case 'season':
+			        this.startDate =dayjs(Date.now()).subtract(3, 'month').format('YYYY-MM-DD')
+			        this.endDate =dayjs(Date.now()).format('YYYY-MM-DD')
+			        break
+			    }
+			},
+			...mapActions(['getSalesmanList_action','getCustomerInfo_action','getQutationCustomerList_action']),
 			//验证两个输入的日期 是否有效
 			checkInputData() {
 			  let flag = true;
@@ -154,24 +248,70 @@
 			  let date = new Date(year, month - 1, day);
 			  return date;
 			},
-			loadCustomerList(){
-				//debugger
-				if(this.customerList.length>0){
-					//debugger
+			getSalesmanList(){
+				if(this.SalesmanSearch.SalesmanList.length>0){
 					return
 				}
-				let params ={}
-				this.getCustomerInfo_action(params).then(res=>{
-					this.customerList =res
-					//console.warn('customerList:'+JSON.stringify(res))
+				//搜索条件：
+				//w_OptType(类型)0:业务员,其它 暂时 没有
+				let params ={
+					w_OptType: 0
+				}
+				
+				this.getSalesmanList_action(params).then(res=>{
+					//debugger
+					this.SalesmanSearch.SalesmanList =res.records
 				}).catch(err=>{
-					//console.warn('customerList:'+JSON.stringify(err))
+					uni.showToast({
+						title:'获取业务员列表失败 err:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			// loadCustomerList(){
+			// 	//debugger
+			// 	if(this.customerList.length>0){
+			// 		//debugger
+			// 		return
+			// 	}
+			// 	let params ={}
+			// 	this.getCustomerInfo_action(params).then(res=>{
+			// 		this.customerList =res
+			// 	}).catch(err=>{
+			// 		uni.showToast({
+			// 			title:'获取客户列表失败 err:'+err,
+			// 			icon:'none',
+			// 			duration:2000
+			// 		})
+			// 	})
+			// },
+			loadCustomerList(){
+				if(this.customerList.length>0){
+					return
+				}
+				//搜索条件：
+				//ct_Type(客户类型)0:全部,1:纸箱,2:纸板,3:蜂窝 多个逗号分开
+				let params ={
+					ct_Type: this.customerType
+				}
+				
+				this.getQutationCustomerList_action(params).then(res=>{
+					//debugger
+					this.customerList =res.records
+				}).catch(err=>{
 					uni.showToast({
 						title:'获取客户列表失败 err:'+err,
 						icon:'none',
 						duration:2000
 					})
 				})
+			},
+			//获取选择的业务员信息
+			getSalesmanInfo(val){
+				this.SalesmanSearch.isShow =false
+				this.SalesmanSearch.SalesmanItemText =val.w_Name
+				this.SalesmanSearch.SalesmanItem =val
 			},
 			//获取选择的客户信息
 			getSelectCustomerInfo(val){
@@ -180,10 +320,22 @@
 				this.customerItem =val
 				//console.warn('currentItem:'+val.ct_ID)
 			},
+			//获取选择的产品类型信息
+			getSelectProtypeInfo(val){
+				this.isShowProList =false
+				this.productTypeText = val.ct_Desc
+				this.customerItem =val
+				//console.warn('currentItem:'+val.ct_ID)
+			},
 			//打开客户信息
 			openCustomerList(){
 				this.isShowCustomerList =true
 				this.loadCustomerList()
+			},
+			//打开业务员列表
+			openSalesmanList(){
+				this.SalesmanSearch.isShow = true
+				 this.getSalesmanList()
 			},
 			//弹出时间选择器
 			openDateSelect(type){
