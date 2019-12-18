@@ -1,0 +1,25 @@
+
+uni-swiper{
+	    display: block;
+		height: 500rpx;
+}
+.button-sp-area{
+		text-align: center;
+		padding-top: 10rpx;
+		background: #ffffff;
+}
+.button-sp-area button {
+		margin-left: 40rpx;
+}
+	/*样式的width和height一定要与定义的cWidth和cHeight相对应*/
+.qiun-charts {
+	width: 750rpx;
+	height: 500rpx;
+	background-color: #ffffff;
+}
+.charts {
+	width: 750rpx;
+	height: 500rpx;
+	background-color: #ffffff;
+}
+

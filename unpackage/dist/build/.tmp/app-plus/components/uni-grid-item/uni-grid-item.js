@@ -7,4 +7,4 @@
         })
     },
     [['components/uni-grid-item/uni-grid-item-create-component']]
-]);                
+]);

@@ -21,7 +21,18 @@
     "pages/warehouse/boxIn/boxIn",
     "pages/warehouse/paperIn/paperIn",
     "pages/warehouse/paperOB/paperOB",
-    "components/list-select/list-select"
+    "components/list-select/list-select",
+    "pages/quotation/area",
+    "pages/quotation/boxProduct",
+    "pages/quotation/boxArea",
+    "pages/paperboard/progress/progress",
+    "pages/paperboard/progress/progressDetail",
+    "pages/paperBox/progress/progress",
+    "pages/paperBox/progress/progressDetail",
+    "pages/paperBox/deliveryquery/deliveryquery",
+    "pages/paperBox/paperorderquery/paperorderquery",
+    "pages/cardBoard/inStorage/inStorage",
+    "pages/cardBoard/inStorage/inStorageDetail"
   ],
   "window": {
     "navigationBarTextStyle": "white",
@@ -65,14 +76,14 @@
       }
     ]
   },
-  "nvueCompiler": "weex",
+  "nvueCompiler": "uni-app",
   "renderer": "auto",
   "splashscreen": {
     "alwaysShowBeforeRender": true,
     "autoclose": false
   },
   "appname": "erpApp",
-  "compilerVersion": "2.3.7",
+  "compilerVersion": "2.4.6",
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"
   }

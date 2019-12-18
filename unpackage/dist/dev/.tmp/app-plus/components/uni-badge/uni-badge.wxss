@@ -26,8 +26,7 @@
 /* 文章场景相关 */
 .uni-badge {
   font-family: 'Helvetica Neue', Helvetica, sans-serif;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   font-size: 12px;
   line-height: 1;
   display: inline-block;
@@ -75,10 +74,8 @@
 }
 .uni-badge--small {
     -webkit-transform: scale(0.8);
-        -ms-transform: scale(0.8);
             transform: scale(0.8);
     -webkit-transform-origin: center center;
-        -ms-transform-origin: center center;
             transform-origin: center center;
 }
 

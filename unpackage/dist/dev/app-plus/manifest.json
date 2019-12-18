@@ -46,6 +46,11 @@
     },
     "usingComponents": true,
     "distribute": {
+      "icons": {
+        "android": {
+          "hdpi": ""
+        }
+      },
       "google": {
         "permissions": [
           "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
@@ -89,10 +94,13 @@
       }
     },
     "uni-app": {
-      "compilerVersion": "2.3.7",
+      "compilerVersion": "2.4.6",
       "control": "v8",
-      "nvueCompiler": "weex",
-      "renderer": "auto"
+      "nvueCompiler": "uni-app",
+      "renderer": "auto",
+      "nvue": {
+        "flex-direction": "column"
+      }
     },
     "tabBar": {
       "color": "#000000",

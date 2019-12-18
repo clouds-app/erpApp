@@ -241,7 +241,7 @@ var promiseInterceptor = {
 
 
 var SYNC_API_RE =
-/^\$|getMenuButtonBoundingClientRect|^report|interceptors|Interceptor$|getSubNVueById|requireNativePlugin|upx2px|hideKeyboard|canIUse|^create|Sync$|Manager$|base64ToArrayBuffer|arrayBufferToBase64/;
+/^\$|restoreGlobal|getCurrentSubNVue|getMenuButtonBoundingClientRect|^report|interceptors|Interceptor$|getSubNVueById|requireNativePlugin|upx2px|hideKeyboard|canIUse|^create|Sync$|Manager$|base64ToArrayBuffer|arrayBufferToBase64/;
 
 var CONTEXT_API_RE = /^create|Manager$/;
 
@@ -255,7 +255,7 @@ function isSyncApi(name) {
 }
 
 function isCallbackApi(name) {
-  return CALLBACK_API_RE.test(name);
+  return CALLBACK_API_RE.test(name) && name !== 'onPush';
 }
 
 function handlePromise(promise) {
@@ -1085,6 +1085,18 @@ function handleEvent(event) {var _this = this;
           {// mp-weixin,mp-toutiao 抽象节点模拟 scoped slots
             handlerCtx = handlerCtx.$parent.$parent;
           }
+          if (methodName === '$emit') {
+            handlerCtx.$emit.apply(handlerCtx,
+            processEventArgs(
+            _this.$vm,
+            event,
+            eventArray[1],
+            eventArray[2],
+            isCustom,
+            methodName));
+
+            return;
+          }
           var handler = handlerCtx[methodName];
           if (!isFn(handler)) {
             throw new Error(" _vm.".concat(methodName, " is not a function"));
@@ -1189,6 +1201,13 @@ function parseBaseApp(vm, _ref3)
 
   // 兼容旧版本 globalData
   appOptions.globalData = vm.$options.globalData || {};
+  // 将 methods 中的方法挂在 getApp() 中
+  var methods = vm.$options.methods;
+  if (methods) {
+    Object.keys(methods).forEach(function (name) {
+      appOptions[name] = methods[name];
+    });
+  }
 
   initHooks(appOptions, hooks);
 
@@ -1285,11 +1304,20 @@ function parseBaseComponent(vueComponentOptions)
 {var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},isPage = _ref5.isPage,initRelation = _ref5.initRelation;var _initVueComponent =
   initVueComponent(_vue.default, vueComponentOptions),_initVueComponent2 = _slicedToArray(_initVueComponent, 2),VueComponent = _initVueComponent2[0],vueOptions = _initVueComponent2[1];
 
-  var componentOptions = {
-    options: {
-      multipleSlots: true,
-      addGlobalClass: true },
+  var options = {
+    multipleSlots: true,
+    addGlobalClass: true };
 
+
+  {
+    // 微信 multipleSlots 部分情况有 bug，导致内容顺序错乱 如 u-list，提供覆盖选项
+    if (vueOptions['mp-weixin'] && vueOptions['mp-weixin']['options']) {
+      Object.assign(options, vueOptions['mp-weixin']['options']);
+    }
+  }
+
+  var componentOptions = {
+    options: options,
     data: initData(vueOptions, _vue.default.prototype),
     behaviors: initBehaviors(vueOptions, initBehavior),
     properties: initProperties(vueOptions.props, false, vueOptions.__file),
@@ -1626,7 +1654,8 @@ var _paperOB = _interopRequireDefault(__webpack_require__(/*! ./module/paperOB *
 var _boxIn = _interopRequireDefault(__webpack_require__(/*! ./module/boxIn */ 33));
 var _qutation = _interopRequireDefault(__webpack_require__(/*! ./module/qutation */ 35));
 var _paperboard = _interopRequireDefault(__webpack_require__(/*! ./module/paperboard */ 37));
-var _paperBox = _interopRequireDefault(__webpack_require__(/*! ./module/paperBox */ 39));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var _paperBox = _interopRequireDefault(__webpack_require__(/*! ./module/paperBox */ 39));
+var _cardBoard = _interopRequireDefault(__webpack_require__(/*! ./module/cardBoard */ 41));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 _vue.default.use(_vuex.default);var _default =
 
 new _vuex.default.Store({
@@ -1649,11 +1678,12 @@ new _vuex.default.Store({
     boxIn: _boxIn.default,
     qutation: _qutation.default,
     paperBox: _paperBox.default,
-    paperboard: _paperboard.default } });exports.default = _default;
+    paperboard: _paperboard.default,
+    cardBoard: _cardBoard.default } });exports.default = _default;
 
 /***/ }),
 
-/***/ 153:
+/***/ 155:
 /*!**********************************************************************!*\
   !*** E:/cl_vue/erpApp/node_modules/_dayjs@1.8.16@dayjs/dayjs.min.js ***!
   \**********************************************************************/
@@ -1665,7 +1695,7 @@ new _vuex.default.Store({
 
 /***/ }),
 
-/***/ 154:
+/***/ 156:
 /*!********************************************************!*\
   !*** E:/cl_vue/erpApp/components/u-charts/u-charts.js ***!
   \********************************************************/
@@ -7140,7 +7170,7 @@ if ( true && typeof module.exports === "object") {
 
 /***/ }),
 
-/***/ 155:
+/***/ 157:
 /*!******************************************!*\
   !*** E:/cl_vue/erpApp/common/checker.js ***!
   \******************************************/
@@ -7172,7 +7202,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 156:
+/***/ 158:
 /*!**************************************!*\
   !*** E:/cl_vue/erpApp/mock/index.js ***!
   \**************************************/
@@ -8253,7 +8283,7 @@ var index_esm = {
 
 /***/ }),
 
-/***/ 173:
+/***/ 175:
 /*!***************************************!*\
   !*** E:/cl_vue/erpApp/mock/tableW.js ***!
   \***************************************/
@@ -8360,7 +8390,7 @@ var JSONParseLocalStorage = function JSONParseLocalStorage(key) {
   } catch (e) {
     currentPage++;
 
-    console.error('====JSONParseLocalStorage====:' + key);
+    console.warn('====JSONParseLocalStorage====:' + key);
     //TODO handle the exception
     if (key === 'TOKEN' || key === 'menuList' || key === 'userInfo') {
       var _valueStr = uni.getStorageSync('userInfo');
@@ -8755,29 +8785,11 @@ var localRead = function localRead(key) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
-// const is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|ipad|iphone|android|coolpad|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|wince)/i) != null;
-// /**
-//  * @returns {String} 当前浏览器名称
-//  */ 
-// const getExplorer = () => {
-//   const ua = window.navigator.userAgent
-//   const isExplorer = (exp) => {
-//     return ua.indexOf(exp) > -1
-//   }
-//   if (isExplorer('MSIE')) return 'IE'
-//   else if (isExplorer('Firefox')) return 'Firefox'
-//   else if (isExplorer('Chrome')) return 'Chrome'
-//   else if (isExplorer('Opera')) return 'Opera'
-//   else if (isExplorer('Safari')) return 'Safari'
-// }
-
-// console.log("is_mobi:"+is_mobi)
-// console.log("getExplorer:"+getExplorer())
-var _default = {
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
+{
   /**
-                  * @description 默认页面标题
-                  */
+   * @description 默认页面标题
+   */
   title: 'webApp',
   /**
                     * @description 是否app 运行环境
@@ -8791,7 +8803,7 @@ var _default = {
                      * @description api请求基础路径 http://120.78.91.203:8082/clerp-app-api/swagger-ui.html
                      */
   baseUrl: {
-    dev: 'http://120.78.91.203:8083',
+    dev: 'http://192.168.168.156:8080', //http://120.78.91.203:8083
     pro: 'http://120.78.91.203:8083' },
 
 
@@ -16876,108 +16888,19 @@ var spScanOrder = function spScanOrder(_ref) {var BarCodeStr = _ref.BarCodeStr,S
 
 /***/ }),
 
-/***/ 31:
-/*!************************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/paperOB.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperOB = __webpack_require__(/*! @/api/paperOB */ 32);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
-var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "执行失败，请稍后再试！";var _default =
-
-
-{
-  state: {},
-
-
-  mutations: {},
-
-
-  actions: {
-    spGetSPaperStoreForPDAAction: function spGetSPaperStoreForPDAAction(_ref, params) {var commit = _ref.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperOB.spGetSPaperStoreForPDA)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    }, aspExeuteSPaperSimpleAutoScanAction: function aspExeuteSPaperSimpleAutoScanAction(_ref2, params) {var commit = _ref2.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperOB.aspExeuteSPaperSimpleAutoScan)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    }, spSPaperStoreQueryForPDAAction: function spSPaperStoreQueryForPDAAction(_ref3, params) {var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperOB.spSPaperStoreQueryForPDA)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              resolve(data.data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            console.error(JSON.stringify(err));
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    } } };exports.default = _default;
-
-/***/ }),
-
-/***/ 316:
+/***/ 300:
 /*!**********************************************************!*\
   !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
   \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! regenerator-runtime */ 317);
+module.exports = __webpack_require__(/*! regenerator-runtime */ 301);
 
 
 /***/ }),
 
-/***/ 317:
+/***/ 301:
 /*!************************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime-module.js ***!
   \************************************************************/
@@ -17008,7 +16931,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(/*! ./runtime */ 318);
+module.exports = __webpack_require__(/*! ./runtime */ 302);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -17025,7 +16948,7 @@ if (hadRuntime) {
 
 /***/ }),
 
-/***/ 318:
+/***/ 302:
 /*!*****************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime.js ***!
   \*****************************************************/
@@ -17757,6 +17680,95 @@ if (hadRuntime) {
 
 /***/ }),
 
+/***/ 31:
+/*!************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/paperOB.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperOB = __webpack_require__(/*! @/api/paperOB */ 32);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {},
+
+
+  mutations: {},
+
+
+  actions: {
+    spGetSPaperStoreForPDAAction: function spGetSPaperStoreForPDAAction(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperOB.spGetSPaperStoreForPDA)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    }, aspExeuteSPaperSimpleAutoScanAction: function aspExeuteSPaperSimpleAutoScanAction(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperOB.aspExeuteSPaperSimpleAutoScan)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    }, spSPaperStoreQueryForPDAAction: function spSPaperStoreQueryForPDAAction(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperOB.spSPaperStoreQueryForPDA)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              resolve(data.data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            console.error(JSON.stringify(err));
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+
+/***/ }),
+
 /***/ 32:
 /*!***************************************!*\
   !*** E:/cl_vue/erpApp/api/paperOB.js ***!
@@ -18375,7 +18387,1346 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
 
 /***/ }),
 
-/***/ 357:
+/***/ 36:
+/*!****************************************!*\
+  !*** E:/cl_vue/erpApp/api/qutation.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getQutation_lb = exports.getQutation_paperParts = exports.getQutation_paperQuality = exports.getQutation_basePaper = exports.getQutation_products = exports.getQutation_boxArea = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+
+
+
+/**
+* @description  纸箱纸质面积报价
+* 搜索条件：
+*	bp_CustID(客户编号)
+*	bi_ArtID(纸质)
+* @params { bp_CustID,bi_ArtID }
+* 返回值：
+	(bp_CustID)客户编号
+	(ct_Desc)客户名称
+	(bi_SalerPrice)生效日期
+	(bi_ArtID)纸质
+	(h_Name)坑别
+	(bi_SalerPrice)报价
+*/
+var getQutation_boxArea = function getQutation_boxArea(_ref) {var bp_CustID = _ref.bp_CustID,bi_ArtID = _ref.bi_ArtID,size = _ref.size,current = _ref.current;
+  //参数
+  var data = {
+    bp_CustID: bp_CustID,
+    bi_ArtID: bi_ArtID, size: size, current: current };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/select_T_BoxArtPriceMain/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  纸箱产品报价
+   * /common/select_T_UnionProductPrice/findList
+   *   up_CustID(客户类型)
+   * 	ui_UPNo(产品编号)
+   * 	ui_UPName(产品名称)
+   * @params { up_CustID,ui_UPNo,ui_UPName }
+   * 返回值：
+   	(up_CustID)客户编号
+   	(ct_Desc)客户名称
+   	(ui_UPNo)产品编号
+   	(ui_UPName)产品名称
+   	(ui_Price)报价
+   	(up_StartDate)生效日期
+   	(Csize)规格
+   */exports.getQutation_boxArea = getQutation_boxArea;
+var getQutation_products = function getQutation_products(_ref2) {var up_CustID = _ref2.up_CustID,ui_UPNo = _ref2.ui_UPNo,ui_UPName = _ref2.ui_UPName,size = _ref2.size,current = _ref2.current;
+  //参数
+  var data = {
+    up_CustID: up_CustID, ui_UPNo: ui_UPNo, ui_UPName: ui_UPName, size: size, current: current };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/select_T_UnionProductPrice/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+//=======================end=============================
+/**
+* @description  原纸报价 纸质报价 配纸加价 楞别加价
+* @params { userId }
+*/exports.getQutation_products = getQutation_products;
+var getQutation_basePaper = function getQutation_basePaper(_ref3) {var ct_ID = _ref3.ct_ID;
+  console.log('getQutation_basePaper ct_ID:' + ct_ID);
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/basePaper"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 纸质报价
+   * @params { userId }
+   */exports.getQutation_basePaper = getQutation_basePaper;
+var getQutation_paperQuality = function getQutation_paperQuality(_ref4) {var ct_ID = _ref4.ct_ID;
+  //debugger
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/paperQuality"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 配纸加价
+   * @params { userId }
+   */exports.getQutation_paperQuality = getQutation_paperQuality;
+var getQutation_paperParts = function getQutation_paperParts(_ref5) {var ct_ID = _ref5.ct_ID;
+  //debugger
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/paperParts"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description 楞别加价
+   * @params { userId }
+   */exports.getQutation_paperParts = getQutation_paperParts;
+var getQutation_lb = function getQutation_lb(_ref6) {var ct_ID = _ref6.ct_ID;
+  //debugger
+  //参数
+  var data = {
+    ct_ID: ct_ID };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/qutation/lb"),
+    data: data,
+    method: 'POST' });
+
+};exports.getQutation_lb = getQutation_lb;
+
+/***/ }),
+
+/***/ 37:
+/*!***************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/paperboard.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperboard = __webpack_require__(/*! @/api/paperboard */ 38);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {
+    //纸板进度列表
+    progressList: uni.getStorageSync("progressList") == '' ? '' : JSON.parse(uni.getStorageSync("progressList")) },
+
+  getters: {
+    //纸板进度列表
+    progressList_getters: function progressList_getters(state, getters) {
+      return state.progressList;
+    } },
+
+
+  mutations: {
+    //纸板进度列表
+    set_progressList: function set_progressList(state, data) {
+      state.progressList = data;
+      uni.setStorageSync("progressList", JSON.stringify(data));
+    } },
+
+
+
+  actions: {
+    /**
+             * @description 纸板进度查询
+             * @params { ct_ID }
+             */
+    getProgress_action: function getProgress_action(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperboard.getProgress)(params).then(function (res) {
+            //debugger
+            var data = _config.default.isRunApp ? res : res.data;
+            if (data.success)
+            {
+              commit('set_progressList', data.data.records);
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 纸板进度详细
+       * @params { coNo }
+       */
+    getProgressDetail_action: function getProgressDetail_action(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperboard.getProgressDetail)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data;
+            if (data.success)
+            {
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 38:
+/*!******************************************!*\
+  !*** E:/cl_vue/erpApp/api/paperboard.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getProgressDetail = exports.getProgress = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+
+/**
+* @description  纸板订单进度查询 /common/sp_PhoneInfoCONew/findList
+搜索条件：
+	DateFr(起始日期)
+	DateTo (起始日期)
+	Spec (规格，未填写的时候，传入空字符串， 格式为 宽*长)
+	Qty (数量, 未填写的时候，传入空字符串)
+	PO (客户PO, 未填写的时候，传入空字符串)
+	NoDeli (0:全部，1:已完成,2:未完成)
+	SizeL (纸长)
+	SizeW (纸宽)
+	ArtID (纸质)
+返回值：
+	(up_CustID)客户编号
+	(ct_Desc)客户名称
+	(ui_UPNo)产品编号
+	(ui_UPName)产品名称
+	(ui_Price)报价
+	(up_StartDate)生效日期
+	(Csize)规格
+*/
+var getProgress = function getProgress(_ref) {var DateFr = _ref.DateFr,DateTo = _ref.DateTo,Spec = _ref.Spec,Qty = _ref.Qty,PO = _ref.PO,NoDeli = _ref.NoDeli,SizeL = _ref.SizeL,SizeW = _ref.SizeW,ArtID = _ref.ArtID,size = _ref.size,current = _ref.current;
+  //参数
+  var data = {
+    DateFr: DateFr, DateTo: DateTo, Qty: Qty, PO: PO, NoDeli: NoDeli, SizeL: SizeL, SizeW: SizeW, ArtID: ArtID,
+    size: size, current: current };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/sp_PhoneInfoCONew/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  纸板进度详细 BY ID
+   * 搜索条件：
+   *   coNo(订单号)
+     返回值：
+   	(List)进度信息
+   */exports.getProgress = getProgress;
+var getProgressDetail = function getProgressDetail(_ref2) {var coNo = _ref2.coNo,size = _ref2.size,current = _ref2.current;
+  //参数
+  var data = {
+    coNo: coNo, size: size, current: current };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/detailSysOrder/get"),
+    data: data,
+    method: 'POST' });
+
+};exports.getProgressDetail = getProgressDetail;
+
+/***/ }),
+
+/***/ 39:
+/*!*************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/paperBox.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperBox = __webpack_require__(/*! @/api/paperBox */ 40);
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+
+{
+  state: {
+    //纸箱进度列表
+    paperBoxProgressList: uni.getStorageSync("paperBoxProgressList") == '' ? '' : JSON.parse(uni.getStorageSync("paperBoxProgressList")) },
+
+  getters: {
+    //纸箱进度列表
+    paperBoxProgressList_getters: function paperBoxProgressList_getters(state, getters) {
+      return state.paperBoxProgressList;
+    } },
+
+
+  mutations: {
+    //纸箱进度列表
+    set_paperBoxProgressList: function set_paperBoxProgressList(state, data) {
+      state.paperBoxProgressList = data;
+      uni.setStorageSync("paperBoxProgressList", JSON.stringify(data));
+    } },
+
+
+
+  actions: {
+    /**
+             * @description 纸箱进度列表
+             * @params { ct_ID }
+             */
+    getPaperBoxProgress_action: function getPaperBoxProgress_action(_ref, params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperBox.getPaperBoxProgress)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              commit('set_paperBoxProgressList', data);
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 纸箱订单汇总-
+       * @params { mode,cList,ct_SalerId,sFrom,sTo }
+       */
+    getPaperBoxOrderSummary_action: function getPaperBoxOrderSummary_action(_ref2, params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperBox.getPaperBoxOrderSummary)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              //commit('set_paperBoxProgressList',data)
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    /**
+       * @description 纸箱送货汇总
+       * @params { ct_ID }
+       */
+    getPaperBoxDeliverySummary_action: function getPaperBoxDeliverySummary_action(_ref3, params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _paperBox.getPaperBoxDeliverySummary)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success)
+            {
+              // commit('set_paperBoxProgressList',data)
+              resolve(data);
+            } else
+
+            {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 4:
+/*!***********************************!*\
+  !*** E:/cl_vue/erpApp/pages.json ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/***/ }),
+
+/***/ 40:
+/*!****************************************!*\
+  !*** E:/cl_vue/erpApp/api/paperBox.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getPaperBoxDeliverySummary = exports.getPaperBoxOrderSummary = exports.getPaperBoxProgressDetail = exports.getPaperBoxProgress = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+//import Qs from 'qs'
+var apiPath = '/clerp-app-api'; //正式环境
+
+/**
+* @description  纸箱进度查询
+* @params {  DateFr,DateTo,Spec,Qty,PO,NoDeli,SizeL,SizeW,ArtID,size,current }
+*/
+var getPaperBoxProgress = function getPaperBoxProgress(_ref) {var DateFr = _ref.DateFr,DateTo = _ref.DateTo,Spec = _ref.Spec,Qty = _ref.Qty,PO = _ref.PO,NoDeli = _ref.NoDeli,SizeL = _ref.SizeL,SizeW = _ref.SizeW,ArtID = _ref.ArtID,size = _ref.size,current = _ref.current;
+  //参数
+  var data = {
+    DateFr: DateFr, DateTo: DateTo, Spec: Spec, Qty: Qty, PO: PO, NoDeli: NoDeli, SizeL: SizeL, SizeW: SizeW, ArtID: ArtID, size: size, current: current };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/paperBox/progress"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  纸箱进度详细 BY ID
+   * @params { ct_ID }
+   */exports.getPaperBoxProgress = getPaperBoxProgress;
+var getPaperBoxProgressDetail = function getPaperBoxProgressDetail(_ref2) {var ct_ID = _ref2.ct_ID;
+  //参数
+  var data = {
+    //ct_ID
+  };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/paperBox/progress_detail"),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  纸箱订单汇总 
+   *
+   * 搜索条件：
+   	mode (0:客户 | 1:业务员)
+   	cList (客户编号)
+   	ct_SalerId(业务员ID)
+   	sFrom (开始时间)
+   	sTo (结束时间)
+    返回值：
+   	(ct_Desc|w_Name)(客户|业务员)名称
+   	(co_Qty)数量
+   	(BMoney)金额
+   	(Aarea)面积
+   	(Acube)体积
+   	(AmtB)金额点比
+   */exports.getPaperBoxProgressDetail = getPaperBoxProgressDetail;
+var getPaperBoxOrderSummary = function getPaperBoxOrderSummary(_ref3) {var mode = _ref3.mode,cList = _ref3.cList,ct_SalerId = _ref3.ct_SalerId,sFrom = _ref3.sFrom,sTo = _ref3.sTo;
+  //参数
+  var data = {};
+  if (mode == 0) {
+    data =
+    {
+      mode: mode, cList: cList, sFrom: sFrom, sTo: sTo };
+
+  } else {
+    data =
+    {
+      mode: mode, ct_SalerId: ct_SalerId, sFrom: sFrom, sTo: sTo };
+
+  }
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/aspBoxCOAnalyzerAPP/findList"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  纸箱送货汇总
+   *
+   * 搜索条件：
+   	mode (0:客户 | 1:业务员)
+   	cList (客户编号)
+   	ct_SalerId(业务员ID)
+   	sFrom (开始时间)
+   	sTo (结束时间)
+     返回值：
+   	(ct_Desc|w_Name)(客户|业务员)名称
+   	(bi_Qty)数量
+   	(BMoney)金额
+   	(Aarea)面积
+   	(Acube)体积
+   	(AmtB)金额点比 Delivery summary
+   */exports.getPaperBoxOrderSummary = getPaperBoxOrderSummary;
+var getPaperBoxDeliverySummary = function getPaperBoxDeliverySummary(_ref4) {var mode = _ref4.mode,cList = _ref4.cList,ct_SalerId = _ref4.ct_SalerId,sFrom = _ref4.sFrom,sTo = _ref4.sTo;
+  //参数
+  var data = {};
+  if (mode == 0) {
+    data =
+    {
+      mode: mode, cList: cList, sFrom: sFrom, sTo: sTo };
+
+  } else {
+    data =
+    {
+      mode: mode, ct_SalerId: ct_SalerId, sFrom: sFrom, sTo: sTo };
+
+  }
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/common/aspBoxDeliAnalyzerAPP/findList"),
+    data: data,
+    method: 'POST' });
+
+};exports.getPaperBoxDeliverySummary = getPaperBoxDeliverySummary;
+
+/***/ }),
+
+/***/ 41:
+/*!**************************************************!*\
+  !*** E:/cl_vue/erpApp/store/module/cardBoard.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _cardBoard = __webpack_require__(/*! @/api/cardBoard */ 42);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
+var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+
+
+var serverBusyTips = "执行失败，请稍后再试！";var _default =
+
+{
+  state: {},
+
+
+  mutations: {},
+
+
+  actions: {
+    ///查询班别列表 下拉框
+    getClassBanListAction: function getClassBanListAction(_ref,
+
+    params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getClassBanList)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    ///查询线别列表 下拉框
+    getLineSeparationListAction: function getLineSeparationListAction(_ref2,
+
+    params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getLineSeparationList)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //查询车牌列表 下拉框 
+    getLicensePlateListAction: function getLicensePlateListAction(_ref3,
+
+    params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getLicensePlateList)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //查询 司机 列表 下拉框
+    getDriverListAction: function getDriverListAction(_ref4,
+
+    params) {var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getDriverList)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //查询 装车单号 列表 下拉框 
+    getEntruckingListAction: function getEntruckingListAction(_ref5,
+
+    params) {var commit = _ref5.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getEntruckingList)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //纸板明细清单
+    getPaperBoardDetailAction: function getPaperBoardDetailAction(_ref6,
+
+    params) {var commit = _ref6.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getPaperBoardDetail)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //获取装车清单下拉列表
+    getExecuteDropDownAction: function getExecuteDropDownAction(_ref7,
+
+    params) {var commit = _ref7.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getExecuteDropDown)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //获取装车清单详细
+    getExecuteDropDownDetailsAction: function getExecuteDropDownDetailsAction(_ref8,
+
+    params) {var commit = _ref8.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getExecuteDropDownDetails)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //本单清单详情
+    getBoardDetailsAction: function getBoardDetailsAction(_ref9,
+
+    params) {var commit = _ref9.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getBoardDetails)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //获取卡板号
+    getMoveBoardNumbeAction: function getMoveBoardNumbeAction(_ref10,
+
+    params) {var commit = _ref10.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getMoveBoardNumbe)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //库位扫描卡板号
+    getWarehouseBoardNumbeAction: function getWarehouseBoardNumbeAction(_ref11,
+
+    params) {var commit = _ref11.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getWarehouseBoardNumbe)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //获取纸板入库卡板号id 
+    getWorkNumbeAction: function getWorkNumbeAction(_ref12,
+
+    params) {var commit = _ref12.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getWorkNumbe)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //获取二维码工单号相关信息并新增到数据库
+    getWorkOrderDetailsAction: function getWorkOrderDetailsAction(_ref13,
+
+    params) {var commit = _ref13.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getWorkOrderDetails)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //保存出仓
+    setWarehousesAction: function setWarehousesAction(_ref14,
+
+    params) {var commit = _ref14.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.setWarehouses)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //查询 发货员 列表 下拉框
+    getSendGoodsListAction: function getSendGoodsListAction(_ref15,
+
+    params) {var commit = _ref15.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getSendGoodsList)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    // 修改卡板号数据 根据卡板号 批量修改
+    setBoardNumberAction: function setBoardNumberAction(_ref16,
+
+    params) {var commit = _ref16.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.setBoardNumber)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    // 修改卡板号数据 根据卡板号 可能批量修改
+    setCardBoardNumberAction: function setCardBoardNumberAction(_ref17,
+
+    params) {var commit = _ref17.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.setCardBoardNumber)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    // 修改库位
+    setStationNoAction: function setStationNoAction(_ref18,
+
+    params) {var commit = _ref18.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.setStationNo)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    } } };exports.default = _default;
+
+/***/ }),
+
+/***/ 42:
+/*!*****************************************!*\
+  !*** E:/cl_vue/erpApp/api/cardBoard.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.setStationNo = exports.setCardBoardNumber = exports.setBoardNumber = exports.getSendGoodsList = exports.setWarehouses = exports.getWorkOrderDetails = exports.getWorkNumbe = exports.getWarehouseBoardNumbe = exports.getMoveBoardNumbe = exports.getBoardDetails = exports.getExecuteDropDownDetails = exports.getExecuteDropDown = exports.getPaperBoardDetail = exports.getEntruckingList = exports.getDriverList = exports.getLicensePlateList = exports.getLineSeparationList = exports.getClassBanList = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectDestructuringEmpty(obj) {if (obj == null) throw new TypeError("Cannot destructure undefined");}
+var apiPath = '/clerp-app-api'; //正式环境
+
+///查询班别列表 下拉框
+var getClassBanList = function getClassBanList(_ref) {_objectDestructuringEmpty(_ref);
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/classBan"),
+    data: data,
+    method: 'POST' });
+
+};
+
+///查询线别列表 下拉框
+exports.getClassBanList = getClassBanList;var getLineSeparationList = function getLineSeparationList(_ref2) {_objectDestructuringEmpty(_ref2);
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/lineSeparation"),
+    data: data,
+    method: 'POST' });
+
+};
+
+///查询车牌列表 下拉框 
+exports.getLineSeparationList = getLineSeparationList;var getLicensePlateList = function getLicensePlateList(_ref3) {_objectDestructuringEmpty(_ref3);
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/LicensePlate"),
+    data: data,
+    method: 'POST' });
+
+};
+
+///查询 司机 列表 下拉框 
+exports.getLicensePlateList = getLicensePlateList;var getDriverList = function getDriverList(_ref4) {_objectDestructuringEmpty(_ref4);
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/drivere"),
+    data: data,
+    method: 'POST' });
+
+};
+
+///查询 装车单号 列表 下拉框 
+exports.getDriverList = getDriverList;var getEntruckingList = function getEntruckingList(_ref5) {_objectDestructuringEmpty(_ref5);
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/entrucking"),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  纸板明细清单 
+   * 搜索条件：
+   *  procName,params (存储过程名称) 其它参数
+     返回值：
+   	(List)
+   */exports.getEntruckingList = getEntruckingList;
+var getPaperBoardDetail = function getPaperBoardDetail(_ref6) {var procName = _ref6.procName,params = _ref6.params;
+  //参数
+  var data = {
+    params: params };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/execute/").concat(procName),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  获取装车清单下拉列表  
+   * 搜索条件：
+   *   procName,params (存储过程名称) 其它参数
+     返回值：
+   	(List)
+   */exports.getPaperBoardDetail = getPaperBoardDetail;
+var getExecuteDropDown = function getExecuteDropDown(_ref7) {var procName = _ref7.procName,params = _ref7.params;
+  //参数
+  var data = {
+    params: params };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/executeDropDown/").concat(procName),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  获取装车清单详细 
+   * 搜索条件：
+   *   procName,params (存储过程名称) 其它参数
+     返回值：
+   	(List)
+   */exports.getExecuteDropDown = getExecuteDropDown;
+var getExecuteDropDownDetails = function getExecuteDropDownDetails(_ref8) {var procName = _ref8.procName,params = _ref8.params;
+  //参数
+  var data = {
+    params: params };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/executeDropDownDetails/").concat(procName),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  本单清单详情  
+   * 搜索条件：
+   *   procName,params (存储过程名称) 其它参数
+     返回值：
+   	(List)
+   */exports.getExecuteDropDownDetails = getExecuteDropDownDetails;
+var getBoardDetails = function getBoardDetails(_ref9) {var procName = _ref9.procName,params = _ref9.params;
+  //参数
+  var data = {
+    params: params };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/getBoardDetails/").concat(procName),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  获取卡板号 
+   * 搜索条件：
+   *   id (id) 
+     返回值：
+   	(List)
+   */exports.getBoardDetails = getBoardDetails;
+var getMoveBoardNumbe = function getMoveBoardNumbe(_ref10) {var id = _ref10.id;
+  //参数
+  var data = {
+    id: id };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/getMoveBoardNumbe"),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  库位扫描卡板号 
+   * 搜索条件：
+   *   id (字符串) 
+     返回值：
+   	(List)
+   */exports.getMoveBoardNumbe = getMoveBoardNumbe;
+var getWarehouseBoardNumbe = function getWarehouseBoardNumbe(_ref11) {var id = _ref11.id;
+  //参数
+  var data = {
+    id: id };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/getWarehouseBoardNumbe"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  获取纸板入库卡板号id 
+   * 搜索条件：
+   *   id (字符串) 
+     返回值：
+   	(List)
+   */exports.getWarehouseBoardNumbe = getWarehouseBoardNumbe;
+var getWorkNumbe = function getWorkNumbe(_ref12) {var id = _ref12.id;
+  //参数
+  var data = {
+    id: id };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/getWorkNumbe"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  获取二维码工单号相关信息并新增到数据库
+   * 搜索条件：
+   *   map (对象) 
+     返回值：
+   	(List)
+   */exports.getWorkNumbe = getWorkNumbe;
+var getWorkOrderDetails = function getWorkOrderDetails(_ref13) {var map = _ref13.map;
+  //参数
+  var data = {
+    map: map };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/getWorkOrderDetails"),
+    data: data,
+    method: 'POST' });
+
+};
+
+/**
+   * @description  保存出仓  
+   * 搜索条件：
+   *   procName,params (存储过程名称) 其它参数
+     返回值：
+   	(List)
+   */exports.getWorkOrderDetails = getWorkOrderDetails;
+var setWarehouses = function setWarehouses(_ref14) {var procName = _ref14.procName,params = _ref14.params;
+  //参数
+  var data = {
+    params: params };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/saveWarehouses/").concat(procName),
+    data: data,
+    method: 'POST' });
+
+};
+///查询 发货员 列表 下拉框
+exports.setWarehouses = setWarehouses;var getSendGoodsList = function getSendGoodsList(_ref15) {_objectDestructuringEmpty(_ref15);
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/sendGoods"),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  修改卡板号数据 根据卡板号 批量修改
+   * 搜索条件：
+   *   map (对象) 
+     返回值：
+   	(List)
+   */exports.getSendGoodsList = getSendGoodsList;
+var setBoardNumber = function setBoardNumber(_ref16) {var map = _ref16.map;
+  //参数
+  var data = {
+    map: map };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/updateBoardNumber"),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  修改卡板号数据 根据卡板号 可能批量修改
+   * 搜索条件：
+   *   map (对象) 
+     返回值：
+   	(List)
+   */exports.setBoardNumber = setBoardNumber;
+var setCardBoardNumber = function setCardBoardNumber(_ref17) {var map = _ref17.map;
+  //参数
+  var data = {
+    map: map };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/updateCardBoardNumber"),
+    data: data,
+    method: 'POST' });
+
+};
+
+
+/**
+   * @description  修改库位
+   * 搜索条件：
+   *   newStationNo,StationNo (字符串) 
+     返回值：
+   	(List)
+   */exports.setCardBoardNumber = setCardBoardNumber;
+var setStationNo = function setStationNo(_ref18) {var newStationNo = _ref18.newStationNo,StationNo = _ref18.StationNo;
+  //参数
+  var data = {
+    newStationNo: newStationNo, StationNo: StationNo };
+
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/updateStationNo"),
+    data: data,
+    method: 'POST' });
+
+};exports.setStationNo = setStationNo;
+
+/***/ }),
+
+/***/ 433:
 /*!******************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/province.js ***!
   \******************************************************************/
@@ -18525,7 +19876,7 @@ provinceData;exports.default = _default;
 
 /***/ }),
 
-/***/ 358:
+/***/ 434:
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/city.js ***!
   \**************************************************************/
@@ -20039,7 +21390,7 @@ cityData;exports.default = _default;
 
 /***/ }),
 
-/***/ 359:
+/***/ 435:
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/area.js ***!
   \**************************************************************/
@@ -32592,154 +33943,7 @@ areaData;exports.default = _default;
 
 /***/ }),
 
-/***/ 36:
-/*!****************************************!*\
-  !*** E:/cl_vue/erpApp/api/qutation.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getQutation_lb = exports.getQutation_paperParts = exports.getQutation_paperQuality = exports.getQutation_basePaper = exports.getQutation_products = exports.getQutation_boxArea = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-//import Qs from 'qs'
-var apiPath = '/clerp-app-api'; //正式环境
-
-
-
-/**
-* @description  纸箱纸质面积报价
-* 搜索条件：
-*	bp_CustID(客户编号)
-*	bi_ArtID(纸质)
-* @params { bp_CustID,bi_ArtID }
-* 返回值：
-	(bp_CustID)客户编号
-	(ct_Desc)客户名称
-	(bi_SalerPrice)生效日期
-	(bi_ArtID)纸质
-	(h_Name)坑别
-	(bi_SalerPrice)报价
-*/
-var getQutation_boxArea = function getQutation_boxArea(_ref) {var bp_CustID = _ref.bp_CustID,bi_ArtID = _ref.bi_ArtID;
-  //参数
-  var data = {
-    bp_CustID: bp_CustID,
-    bi_ArtID: bi_ArtID
-    // size:-1,
-    // current:-1
-  };
-  return _api.default.request({
-    url: "".concat(apiPath, "/common/select_T_BoxArtPriceMain/findList"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description  纸箱产品报价
-   * /common/select_T_UnionProductPrice/findList
-   *   up_CustID(客户类型)
-   * 	ui_UPNo(产品编号)
-   * 	ui_UPName(产品名称)
-   * @params { up_CustID,ui_UPNo,ui_UPName }
-   * 返回值：
-   	(up_CustID)客户编号
-   	(ct_Desc)客户名称
-   	(ui_UPNo)产品编号
-   	(ui_UPName)产品名称
-   	(ui_Price)报价
-   	(up_StartDate)生效日期
-   	(Csize)规格
-   */exports.getQutation_boxArea = getQutation_boxArea;
-var getQutation_products = function getQutation_products(_ref2) {var up_CustID = _ref2.up_CustID,ui_UPNo = _ref2.ui_UPNo,ui_UPName = _ref2.ui_UPName;
-  //参数
-  var data = {
-    up_CustID: up_CustID, ui_UPNo: ui_UPNo, ui_UPName: ui_UPName };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/common/select_T_UnionProductPrice/findList"),
-    data: data,
-    method: 'POST' });
-
-};
-//=======================end=============================
-/**
-* @description  原纸报价 纸质报价 配纸加价 楞别加价
-* @params { userId }
-*/exports.getQutation_products = getQutation_products;
-var getQutation_basePaper = function getQutation_basePaper(_ref3) {var ct_ID = _ref3.ct_ID;
-  console.log('getQutation_basePaper ct_ID:' + ct_ID);
-  //参数
-  var data = {
-    ct_ID: ct_ID };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/qutation/basePaper"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description 纸质报价
-   * @params { userId }
-   */exports.getQutation_basePaper = getQutation_basePaper;
-var getQutation_paperQuality = function getQutation_paperQuality(_ref4) {var ct_ID = _ref4.ct_ID;
-  //debugger
-  //参数
-  var data = {
-    ct_ID: ct_ID };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/qutation/paperQuality"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description 配纸加价
-   * @params { userId }
-   */exports.getQutation_paperQuality = getQutation_paperQuality;
-var getQutation_paperParts = function getQutation_paperParts(_ref5) {var ct_ID = _ref5.ct_ID;
-  //debugger
-  //参数
-  var data = {
-    ct_ID: ct_ID };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/qutation/paperParts"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description 楞别加价
-   * @params { userId }
-   */exports.getQutation_paperParts = getQutation_paperParts;
-var getQutation_lb = function getQutation_lb(_ref6) {var ct_ID = _ref6.ct_ID;
-  //debugger
-  //参数
-  var data = {
-    ct_ID: ct_ID };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/qutation/lb"),
-    data: data,
-    method: 'POST' });
-
-};exports.getQutation_lb = getQutation_lb;
-
-/***/ }),
-
-/***/ 360:
+/***/ 436:
 /*!********************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/w-picker.js ***!
   \********************************************************/
@@ -33252,426 +34456,7 @@ initPicker;exports.default = _default;
 
 /***/ }),
 
-/***/ 37:
-/*!***************************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/paperboard.js ***!
-  \***************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperboard = __webpack_require__(/*! @/api/paperboard */ 38);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
-var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "执行失败，请稍后再试！";var _default =
-
-
-{
-  state: {
-    //纸板进度列表
-    progressList: uni.getStorageSync("progressList") == '' ? '' : JSON.parse(uni.getStorageSync("progressList")) },
-
-  getters: {
-    //纸板进度列表
-    progressList_getters: function progressList_getters(state, getters) {
-      return state.progressList;
-    } },
-
-
-  mutations: {
-    //纸板进度列表
-    set_progressList: function set_progressList(state, data) {
-      state.progressList = data;
-      uni.setStorageSync("progressList", JSON.stringify(data));
-    } },
-
-
-
-  actions: {
-    /**
-             * @description 纸板进度查询
-             * @params { ct_ID }
-             */
-    getProgress_action: function getProgress_action(_ref, params) {var commit = _ref.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperboard.getProgress)(params).then(function (res) {
-            //debugger
-            var data = _config.default.isRunApp ? res : res.data;
-            if (data.success)
-            {
-              commit('set_progressList', data.data.records);
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    /**
-       * @description 纸板进度详细
-       * @params { coNo }
-       */
-    getProgressDetail_action: function getProgressDetail_action(_ref2, params) {var commit = _ref2.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperboard.getProgressDetail)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data;
-            if (data.success)
-            {
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    } } };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 38:
-/*!******************************************!*\
-  !*** E:/cl_vue/erpApp/api/paperboard.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getProgressDetail = exports.getProgress = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-//import Qs from 'qs'
-var apiPath = '/clerp-app-api'; //正式环境
-
-/**
-* @description  纸板订单进度查询 /common/sp_PhoneInfoCONew/findList
-搜索条件：
-	DateFr(起始日期)
-	DateTo (起始日期)
-	Spec (规格，未填写的时候，传入空字符串， 格式为 宽*长)
-	Qty (数量, 未填写的时候，传入空字符串)
-	PO (客户PO, 未填写的时候，传入空字符串)
-	NoDeli (0:全部，1:已完成,2:未完成)
-	SizeL (纸长)
-	SizeW (纸宽)
-	ArtID (纸质)
-返回值：
-	(up_CustID)客户编号
-	(ct_Desc)客户名称
-	(ui_UPNo)产品编号
-	(ui_UPName)产品名称
-	(ui_Price)报价
-	(up_StartDate)生效日期
-	(Csize)规格
-*/
-var getProgress = function getProgress(_ref) {var DateFr = _ref.DateFr,DateTo = _ref.DateTo,Spec = _ref.Spec,Qty = _ref.Qty,PO = _ref.PO,NoDeli = _ref.NoDeli,SizeL = _ref.SizeL,SizeW = _ref.SizeW,ArtID = _ref.ArtID;
-  //参数
-  var data = {
-    DateFr: DateFr, DateTo: DateTo, Qty: Qty, PO: PO, NoDeli: NoDeli, SizeL: SizeL, SizeW: SizeW, ArtID: ArtID };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/common/sp_PhoneInfoCONew/findList"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description  纸板进度详细 BY ID
-   * 搜索条件：
-   *   coNo(订单号)
-     返回值：
-   	(List)进度信息
-   */exports.getProgress = getProgress;
-var getProgressDetail = function getProgressDetail(_ref2) {var coNo = _ref2.coNo;
-  //参数
-  var data = {
-    coNo: coNo };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/common/detailSysOrder/get"),
-    data: data,
-    method: 'POST' });
-
-};exports.getProgressDetail = getProgressDetail;
-
-/***/ }),
-
-/***/ 39:
-/*!*************************************************!*\
-  !*** E:/cl_vue/erpApp/store/module/paperBox.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _paperBox = __webpack_require__(/*! @/api/paperBox */ 40);
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
-var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-var serverBusyTips = "执行失败，请稍后再试！";var _default =
-
-
-{
-  state: {
-    //纸箱进度列表
-    paperBoxProgressList: uni.getStorageSync("paperBoxProgressList") == '' ? '' : JSON.parse(uni.getStorageSync("paperBoxProgressList")) },
-
-  getters: {
-    //纸箱进度列表
-    paperBoxProgressList_getters: function paperBoxProgressList_getters(state, getters) {
-      return state.paperBoxProgressList;
-    } },
-
-
-  mutations: {
-    //纸箱进度列表
-    set_paperBoxProgressList: function set_paperBoxProgressList(state, data) {
-      state.paperBoxProgressList = data;
-      uni.setStorageSync("paperBoxProgressList", JSON.stringify(data));
-    } },
-
-
-
-  actions: {
-    /**
-             * @description 纸箱进度列表
-             * @params { ct_ID }
-             */
-    getPaperBoxProgress_action: function getPaperBoxProgress_action(_ref, params) {var commit = _ref.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperBox.getPaperBoxProgress)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              commit('set_paperBoxProgressList', data);
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    /**
-       * @description 纸箱订单汇总-
-       * @params { mode,cList,ct_SalerId,sFrom,sTo }
-       */
-    getPaperBoxOrderSummary_action: function getPaperBoxOrderSummary_action(_ref2, params) {var commit = _ref2.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperBox.getPaperBoxOrderSummary)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              //commit('set_paperBoxProgressList',data)
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
-    /**
-       * @description 纸箱送货汇总
-       * @params { ct_ID }
-       */
-    getPaperBoxDeliverySummary_action: function getPaperBoxDeliverySummary_action(_ref3, params) {var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _paperBox.getPaperBoxDeliverySummary)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success)
-            {
-              // commit('set_paperBoxProgressList',data)
-              resolve(data);
-            } else
-
-            {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    } } };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 4:
-/*!***********************************!*\
-  !*** E:/cl_vue/erpApp/pages.json ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/***/ }),
-
-/***/ 40:
-/*!****************************************!*\
-  !*** E:/cl_vue/erpApp/api/paperBox.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getPaperBoxDeliverySummary = exports.getPaperBoxOrderSummary = exports.getPaperBoxProgressDetail = exports.getPaperBoxProgress = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-//import Qs from 'qs'
-var apiPath = '/clerp-app-api'; //正式环境
-
-/**
-* @description  纸箱进度查询
-* @params { ct_ID }
-*/
-var getPaperBoxProgress = function getPaperBoxProgress(_ref) {var ct_ID = _ref.ct_ID;
-  //参数
-  var data = {
-    //ct_IDP
-  };
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/paperBox/progress"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description  纸箱进度详细 BY ID
-   * @params { ct_ID }
-   */exports.getPaperBoxProgress = getPaperBoxProgress;
-var getPaperBoxProgressDetail = function getPaperBoxProgressDetail(_ref2) {var ct_ID = _ref2.ct_ID;
-  //参数
-  var data = {
-    //ct_ID
-  };
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/paperBox/progress_detail"),
-    data: data,
-    method: 'POST' });
-
-};
-
-
-/**
-   * @description  纸箱订单汇总 
-   *
-   * 搜索条件：
-   	mode (0:客户 | 1:业务员)
-   	cList (客户编号)
-   	ct_SalerId(业务员ID)
-   	sFrom (开始时间)
-   	sTo (结束时间)
-    返回值：
-   	(ct_Desc|w_Name)(客户|业务员)名称
-   	(co_Qty)数量
-   	(BMoney)金额
-   	(Aarea)面积
-   	(Acube)体积
-   	(AmtB)金额点比
-   */exports.getPaperBoxProgressDetail = getPaperBoxProgressDetail;
-var getPaperBoxOrderSummary = function getPaperBoxOrderSummary(_ref3) {var mode = _ref3.mode,cList = _ref3.cList,ct_SalerId = _ref3.ct_SalerId,sFrom = _ref3.sFrom,sTo = _ref3.sTo;
-  //参数
-  var data = {};
-  if (mode == 0) {
-    data =
-    {
-      mode: mode, cList: cList, sFrom: sFrom, sTo: sTo };
-
-  } else {
-    data =
-    {
-      mode: mode, ct_SalerId: ct_SalerId, sFrom: sFrom, sTo: sTo };
-
-  }
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/common/aspBoxCOAnalyzerAPP/findList"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description  纸箱送货汇总
-   *
-   * 搜索条件：
-   	mode (0:客户 | 1:业务员)
-   	cList (客户编号)
-   	ct_SalerId(业务员ID)
-   	sFrom (开始时间)
-   	sTo (结束时间)
-     返回值：
-   	(ct_Desc|w_Name)(客户|业务员)名称
-   	(bi_Qty)数量
-   	(BMoney)金额
-   	(Aarea)面积
-   	(Acube)体积
-   	(AmtB)金额点比 Delivery summary
-   */exports.getPaperBoxOrderSummary = getPaperBoxOrderSummary;
-var getPaperBoxDeliverySummary = function getPaperBoxDeliverySummary(_ref4) {var mode = _ref4.mode,cList = _ref4.cList,ct_SalerId = _ref4.ct_SalerId,sFrom = _ref4.sFrom,sTo = _ref4.sTo;
-  //参数
-  var data = {};
-  if (mode == 0) {
-    data =
-    {
-      mode: mode, cList: cList, sFrom: sFrom, sTo: sTo };
-
-  } else {
-    data =
-    {
-      mode: mode, ct_SalerId: ct_SalerId, sFrom: sFrom, sTo: sTo };
-
-  }
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/common/aspBoxDeliAnalyzerAPP/findList"),
-    data: data,
-    method: 'POST' });
-
-};exports.getPaperBoxDeliverySummary = getPaperBoxDeliverySummary;
-
-/***/ }),
-
-/***/ 47:
+/***/ 49:
 /*!****************************************!*\
   !*** E:/cl_vue/erpApp/mixins/index.js ***!
   \****************************************/
@@ -33691,7 +34476,13 @@ var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));fu
                                                                                                                                                          * @description 所有.vue 公共方法
                                                                                                                                                          * @action .vue 中 添加mixin:[name]
                                                                                                                                                          *
-                                                                                                                                                         */var _default = { name: 'mixin-base', data: function data() {return { pageTitle: '',
+                                                                                                                                                         */var _default = { name: 'mixin-base', data: function data() {return { //分页参数设置
+      pageSetting: {
+        current: 1,
+        pageSize: 15,
+        total: 0 },
+
+      pageTitle: '',
       otherHeight: 0,
       leftContentHeight: 0 };
 
@@ -33704,13 +34495,19 @@ var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));fu
 
   methods: {
     //获取指定内容占用高度,计算剩余高度 单位:PX
-    getOtherContentHeight: function getOtherContentHeight() {var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'bodyContentHeight';
-      var _self = this;
-      var info = uni.createSelectorQuery().select("." + className);
-      info.boundingClientRect(function (data) {//data - 各种参数
-        console.log('other Height:' + data.height); // 获取元素宽度
-        _self.otherHeight = data.height;
-      }).exec();
+    getOtherContentHeight: function getOtherContentHeight() {var _this = this;var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'bodyContentHeight';
+      return new Promise(function (resolve, reject) {
+        var eleHeight = 0;
+        var _self = _this;
+        var info = uni.createSelectorQuery().select("." + className);
+        info.boundingClientRect(function (data) {//data - 各种参数
+          console.log('other Height:' + data.height); // 获取元素宽度		
+          _self.otherHeight = data.height;
+          eleHeight = data.height;
+          resolve(data.height);
+        }).exec(function (res) {
+        });
+      });
     },
     //计算设置表格高度
     setTableHeight: function setTableHeight() {var needOtherHeight = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
@@ -33719,12 +34516,13 @@ var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));fu
         this.otherHeight = 0;
       }
       try {
+        //debugger
         var res = uni.getSystemInfoSync();
-        console.log('windowHeight:' + res.windowHeight);
+        // console.log('windowHeight:'+res.windowHeight);
         console.log('CustomBar:' + this.CustomBar);
-        console.log('bodyContentHeight:' + this.otherHeight);
+        // console.log('bodyContentHeight:'+this.otherHeight);
         this.leftContentHeight = res.windowHeight - this.CustomBar - this.otherHeight - 10;
-        console.log('tableHeight:' + this.leftContentHeight);
+        //console.log('tableHeight:'+this.leftContentHeight);
         return this.leftContentHeight;
       } catch (e) {
         // error
@@ -33765,7 +34563,7 @@ var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));fu
     checkLogin: function checkLogin() {
       // console.warn("menuList:"+this.menuList)
       var currentLoginToken = uni.getStorageSync('TOKEN');
-      console.warn('mixins=check==>Token：' + currentLoginToken);
+      //console.warn('mixins=check==>Token：' + currentLoginToken)
       if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0) {
         // 关闭当前页面，跳转到应用内的某个页面。
         //debugger
@@ -34686,7 +35484,7 @@ main();
 
 /***/ }),
 
-/***/ 56:
+/***/ 58:
 /*!*******************************************************!*\
   !*** E:/cl_vue/erpApp/node_modules/js-md5/src/md5.js ***!
   \*******************************************************/
@@ -34720,7 +35518,7 @@ main();
     root = self;
   }
   var COMMON_JS = !root.JS_MD5_NO_COMMON_JS && typeof module === 'object' && module.exports;
-  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 59);
+  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 61);
   var ARRAY_BUFFER = !root.JS_MD5_NO_ARRAY_BUFFER && typeof ArrayBuffer !== 'undefined';
   var HEX_CHARS = '0123456789abcdef'.split('');
   var EXTRA = [128, 32768, 8388608, -2147483648];
@@ -35378,11 +36176,11 @@ main();
     }
   }
 })();
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 57), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 59), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
 
 /***/ }),
 
-/***/ 57:
+/***/ 59:
 /*!********************************************************!*\
   !*** ./node_modules/node-libs-browser/mock/process.js ***!
   \********************************************************/
@@ -35409,7 +36207,7 @@ exports.binding = function (name) {
     var path;
     exports.cwd = function () { return cwd };
     exports.chdir = function (dir) {
-        if (!path) path = __webpack_require__(/*! path */ 58);
+        if (!path) path = __webpack_require__(/*! path */ 60);
         cwd = path.resolve(dir, cwd);
     };
 })();
@@ -35423,7 +36221,18 @@ exports.features = {};
 
 /***/ }),
 
-/***/ 58:
+/***/ 6:
+/*!******************************************************!*\
+  !*** ./node_modules/@dcloudio/uni-stat/package.json ***!
+  \******************************************************/
+/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
+/***/ (function(module) {
+
+module.exports = {"_from":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","_id":"@dcloudio/uni-stat@2.0.0-v3-24020191018001","_inBundle":false,"_integrity":"sha512-nYBm5pRrYzrj2dKMqucWSF2PwInUMnn3MLHM/ik3gnLUEKSW61rzcY1RPlUwaH7c+Snm6N+bAJzmj3GvlrlVXA==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"^2.0.0-alpha-24420191128001","saveSpec":null,"fetchSpec":"^2.0.0-alpha-24420191128001"},"_requiredBy":["/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-v3-24020191018001.tgz","_shasum":"6ef04326cc0b945726413eebe442ab8f47c7536c","_spec":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","_where":"/Users/guoshengqiang/Documents/dcloud-plugins/alpha/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"197e8df53cc9d4c3f6eb722b918ccf51672b5cfe","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-v3-24020191018001"};
+
+/***/ }),
+
+/***/ 60:
 /*!***********************************************!*\
   !*** ./node_modules/path-browserify/index.js ***!
   \***********************************************/
@@ -35655,11 +36464,11 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 57)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 59)))
 
 /***/ }),
 
-/***/ 59:
+/***/ 61:
 /*!****************************************!*\
   !*** (webpack)/buildin/amd-options.js ***!
   \****************************************/
@@ -35673,18 +36482,19 @@ module.exports = __webpack_amd_options__;
 
 /***/ }),
 
-/***/ 6:
-/*!******************************************************!*\
-  !*** ./node_modules/@dcloudio/uni-stat/package.json ***!
-  \******************************************************/
-/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
-/***/ (function(module) {
+/***/ 7:
+/*!****************************************************!*\
+  !*** E:/cl_vue/erpApp/pages.json?{"type":"style"} ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.0.0-23720191024001","_inBundle":false,"_integrity":"sha512-vJEk493Vdb8KueNzR2otzDi23rfyRcQBo/t1R41MwNGPk+AUB94gh10+HVLo98DRcvMzkuVofz3KXTAfEx24iw==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"@dcloudio/uni-stat@next","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"next","saveSpec":null,"fetchSpec":"next"},"_requiredBy":["#USER","/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-23720191024001.tgz","_shasum":"18272814446a9bc6053bc92666ec7064a1767588","_spec":"@dcloudio/uni-stat@next","_where":"/Users/fxy/Documents/DCloud/HbuilderX-plugins/release/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"a725c04ef762e5df78a9a69d140c2666e0de05fc","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-23720191024001"};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "navigationStyle": "custom" }, "pages/login/login": { "navigationBarTitleText": "用户登陆", "navigationStyle": "custom" }, "pages/function/function": { "navigationBarTitleText": "功能", "navigationStyle": "custom" }, "pages/my/my": { "navigationBarTitleText": "关于我", "navigationStyle": "custom" }, "pages/report/report": { "navigationBarTitleText": "报表", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bargainPrice": { "navigationBarTitleText": "特价审批", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bpDetail": { "navigationBarTitleText": "特价详细", "navigationStyle": "custom" }, "pages/verify/originalPaper/originalPaper": { "navigationBarTitleText": "原纸审批", "navigationStyle": "custom" }, "pages/verify/originalPaper/opDetail": { "navigationBarTitleText": "原纸详细", "navigationStyle": "custom" }, "pages/verify/material/material": { "navigationBarTitleText": "辅料审批", "navigationStyle": "custom" }, "pages/verify/material/mtDetail": { "navigationBarTitleText": "辅料详细", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxApproval": { "navigationBarTitleText": "纸箱审批", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxDetail": { "navigationBarTitleText": "纸箱详细", "navigationStyle": "custom" }, "pages/report/deliveryquery/deliveryquery": { "navigationBarTitleText": "送货查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/compfactorykanban": { "navigationBarTitleText": "全厂综合查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/comFactoryCharts": { "navigationBarTitleText": "全厂综合-图表展示", "navigationStyle": "custom" }, "pages/report/paperorderquery/paperorderquery": { "navigationBarTitleText": "订单查询", "navigationStyle": "custom" }, "pages/report/sumofcustarrears/sumofcustarrears": { "navigationBarTitleText": "客户欠款", "navigationStyle": "custom" }, "pages/warehouse/boxIn/boxIn": { "navigationBarTitleText": "纸箱出入库", "navigationStyle": "custom" }, "pages/warehouse/paperIn/paperIn": { "navigationBarTitleText": "纸板出入口", "navigationStyle": "custom" }, "pages/warehouse/paperOB/paperOB": { "navigationBarTitleText": "原纸出退仓", "navigationStyle": "custom" }, "components/list-select/list-select": { "navigationBarTitleText": "数据列表选择", "navigationStyle": "custom" }, "pages/quotation/area": { "navigationBarTitleText": "纸箱纸质面积报价", "navigationStyle": "custom" }, "pages/quotation/boxProduct": { "navigationBarTitleText": "纸箱纸质产品报价", "navigationStyle": "custom" }, "pages/quotation/boxArea": { "navigationBarTitleText": "纸箱报价", "navigationStyle": "custom" }, "pages/paperboard/progress/progress": { "navigationBarTitleText": "纸板进度查询", "navigationStyle": "custom" }, "pages/paperboard/progress/progressDetail": { "navigationBarTitleText": "纸板进度详细", "navigationStyle": "custom" }, "pages/paperBox/progress/progress": { "navigationBarTitleText": "纸箱进度查询", "navigationStyle": "custom" }, "pages/paperBox/progress/progressDetail": { "navigationBarTitleText": "纸箱进度详细", "navigationStyle": "custom" }, "pages/paperBox/deliveryquery/deliveryquery": { "navigationBarTitleText": "纸箱送货汇总", "navigationStyle": "custom" }, "pages/paperBox/paperorderquery/paperorderquery": { "navigationBarTitleText": "纸箱订单汇总", "navigationStyle": "custom" }, "pages/cardBoard/inStorage/inStorage": { "navigationBarTitleText": "纸板入库卡板、工单扫描", "navigationStyle": "custom" }, "pages/cardBoard/inStorage/inStorageDetail": { "navigationBarTitleText": "卡板详细清单", "navigationStyle": "custom" }, "pages/cardBoard/bindStorage/bindStorage": { "navigationBarTitleText": "卡板指定库位扫描", "navigationStyle": "custom" }, "pages/cardBoard/moveStorage/moveStorage": { "navigationBarTitleText": "卡板挪库位扫描", "navigationStyle": "custom" }, "pages/cardBoard/outStorage/outStorage": { "navigationBarTitleText": "APP备货出仓", "navigationStyle": "custom" }, "pages/cardBoard/outStorage/outStorageDetail": { "navigationBarTitleText": "工单装车及库位详细", "navigationStyle": "custom" }, "pages/cardBoard/outStorage/outStorageEdit": { "navigationBarTitleText": "出仓界面", "navigationStyle": "custom" }, "pages/cardBoard/arrangeStorage/arrangeStorage": { "navigationBarTitleText": "仓库货物整理", "navigationStyle": "custom" } }, "globalStyle": { "navigationBarTextStyle": "white", "navigationBarTitleText": "晨龙ERP", "navigationBarBackgroundColor": "#0081ff", "backgroundColor": "#FFFFFF" } };exports.default = _default;
 
 /***/ }),
 
-/***/ 68:
+/***/ 70:
 /*!*********************************************!*\
   !*** E:/cl_vue/erpApp/libs/eventBusType.js ***!
   \*********************************************/
@@ -35695,18 +36505,6 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 Object.defineProperty(exports, "__esModule", { value: true });exports.ReLoadData = exports.BackToPage_Refresh = void 0; //页面数据重新加载 刷新 ReLoadData
 var BackToPage_Refresh = 'BACKTOPAGE_REFRESH';exports.BackToPage_Refresh = BackToPage_Refresh;
 var ReLoadData = 'ReLoadData';exports.ReLoadData = ReLoadData;
-
-/***/ }),
-
-/***/ 7:
-/*!****************************************************!*\
-  !*** E:/cl_vue/erpApp/pages.json?{"type":"style"} ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "navigationStyle": "custom" }, "pages/login/login": { "navigationBarTitleText": "用户登陆", "navigationStyle": "custom" }, "pages/function/function": { "navigationBarTitleText": "功能", "navigationStyle": "custom" }, "pages/my/my": { "navigationBarTitleText": "关于我", "navigationStyle": "custom" }, "pages/report/report": { "navigationBarTitleText": "报表", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bargainPrice": { "navigationBarTitleText": "特价审批", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bpDetail": { "navigationBarTitleText": "特价详细", "navigationStyle": "custom" }, "pages/verify/originalPaper/originalPaper": { "navigationBarTitleText": "原纸审批", "navigationStyle": "custom" }, "pages/verify/originalPaper/opDetail": { "navigationBarTitleText": "原纸详细", "navigationStyle": "custom" }, "pages/verify/material/material": { "navigationBarTitleText": "辅料审批", "navigationStyle": "custom" }, "pages/verify/material/mtDetail": { "navigationBarTitleText": "辅料详细", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxApproval": { "navigationBarTitleText": "纸箱审批", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxDetail": { "navigationBarTitleText": "纸箱详细", "navigationStyle": "custom" }, "pages/report/deliveryquery/deliveryquery": { "navigationBarTitleText": "送货查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/compfactorykanban": { "navigationBarTitleText": "全厂综合查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/comFactoryCharts": { "navigationBarTitleText": "全厂综合-图表展示", "navigationStyle": "custom" }, "pages/report/paperorderquery/paperorderquery": { "navigationBarTitleText": "订单查询", "navigationStyle": "custom" }, "pages/report/sumofcustarrears/sumofcustarrears": { "navigationBarTitleText": "客户欠款", "navigationStyle": "custom" }, "pages/warehouse/boxIn/boxIn": { "navigationBarTitleText": "纸箱出入库", "navigationStyle": "custom" }, "pages/warehouse/paperIn/paperIn": { "navigationBarTitleText": "纸板出入口", "navigationStyle": "custom" }, "pages/warehouse/paperOB/paperOB": { "navigationBarTitleText": "原纸出退仓", "navigationStyle": "custom" }, "components/list-select/list-select": { "navigationBarTitleText": "数据列表选择", "navigationStyle": "custom" }, "pages/quotation/area": { "navigationBarTitleText": "纸箱纸质面积报价", "navigationStyle": "custom" }, "pages/quotation/boxProduct": { "navigationBarTitleText": "纸箱纸质产品报价", "navigationStyle": "custom" }, "pages/quotation/boxArea": { "navigationBarTitleText": "纸箱报价", "navigationStyle": "custom" }, "pages/paperboard/progress/progress": { "navigationBarTitleText": "纸板进度查询", "navigationStyle": "custom" }, "pages/paperboard/progress/progressDetail": { "navigationBarTitleText": "纸板进度详细", "navigationStyle": "custom" }, "pages/paperBox/progress/progress": { "navigationBarTitleText": "纸箱进度查询", "navigationStyle": "custom" }, "pages/paperBox/progress/progressDetail": { "navigationBarTitleText": "纸箱进度详细", "navigationStyle": "custom" }, "pages/paperBox/deliveryquery/deliveryquery": { "navigationBarTitleText": "纸箱送货汇总", "navigationStyle": "custom" }, "pages/paperBox/paperorderquery/paperorderquery": { "navigationBarTitleText": "纸箱订单汇总", "navigationStyle": "custom" } }, "globalStyle": { "navigationBarTextStyle": "white", "navigationBarTitleText": "晨龙ERP", "navigationBarBackgroundColor": "#0081ff", "backgroundColor": "#FFFFFF" } };exports.default = _default;
 
 /***/ }),
 

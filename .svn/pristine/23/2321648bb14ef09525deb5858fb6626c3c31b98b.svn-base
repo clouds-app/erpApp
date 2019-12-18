@@ -1,0 +1,62 @@
+import axios from '@/libs/api.request'
+import config from '@/config'
+//import Qs from 'qs'
+ let apiPath= '/clerp-app-api'  //正式环境
+
+/**
+* @description  纸板订单进度查询 /common/sp_PhoneInfoCONew/findList
+搜索条件：
+	DateFr(起始日期)
+	DateTo (起始日期)
+	Spec (规格，未填写的时候，传入空字符串， 格式为 宽*长)
+	Qty (数量, 未填写的时候，传入空字符串)
+	PO (客户PO, 未填写的时候，传入空字符串)
+	NoDeli (0:全部，1:已完成,2:未完成)
+	SizeL (纸长)
+	SizeW (纸宽)
+	ArtID (纸质)
+返回值：
+	(up_CustID)客户编号
+	(ct_Desc)客户名称
+	(ui_UPNo)产品编号
+	(ui_UPName)产品名称
+	(ui_Price)报价
+	(up_StartDate)生效日期
+	(Csize)规格
+*/
+export const getProgress = ({ DateFr,DateTo,Spec,Qty,PO,NoDeli,SizeL,SizeW,ArtID }) => {
+  //参数
+  let data = {
+    DateFr,DateTo,Qty,PO,NoDeli,SizeL,SizeW,ArtID
+   }
+   
+ return axios.request({
+    url: `${apiPath}/common/sp_PhoneInfoCONew/findList`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  纸板进度详细 BY ID
+* 搜索条件：
+*   coNo(订单号)
+  返回值：
+	(List)进度信息
+*/
+export const getProgressDetail = ({ coNo }) => {
+  //参数
+  let data = {
+    coNo
+   }
+   
+ return axios.request({
+    url: `${apiPath}/common/detailSysOrder/get`,
+    data,
+    method: 'POST',
+  })
+}
+
+
+
+

@@ -4,8 +4,7 @@
 	line-height: 84rpx;
 	border-radius: 44rpx;
 	font-size: 32rpx;
-	background: -webkit-gradient(linear, left top, right top, from(#0081ff), to(#1cbbb4));
-	background: -o-linear-gradient(left, #0081ff, #1cbbb4);
+	background: -webkit-linear-gradient(left, #0081ff, #1cbbb4);
 	background: linear-gradient(left, #0081ff, #1cbbb4);
 }
 .login-btn {
@@ -49,16 +48,14 @@
 	background: #fff;
 	border-radius: 12rpx;
 	padding: 10rpx 25rpx 40rpx;
-	-webkit-box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.12);
-	        box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.12);
+	box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.12);
 	position: relative;
 	margin-top: 380rpx;
 }
 .login-bg {
 	height: 500rpx;
 	padding: 25rpx;
-	background: -webkit-gradient(linear, left top, left bottom, from(#0081ff), to(#1cbbb4));
-	background: -o-linear-gradient(#0081ff, #1cbbb4);
+	background: -webkit-linear-gradient(#0081ff, #1cbbb4);
 	background: linear-gradient(#0081ff, #1cbbb4);
 	border-radius: 0 0 10% 10%;
 }

@@ -7,4 +7,4 @@
         })
     },
     [['components/uni-icon/uni-icon-create-component']]
-]);                
+]);

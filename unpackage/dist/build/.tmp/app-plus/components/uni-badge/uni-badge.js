@@ -7,4 +7,4 @@
         })
     },
     [['components/uni-badge/uni-badge-create-component']]
-]);                
+]);

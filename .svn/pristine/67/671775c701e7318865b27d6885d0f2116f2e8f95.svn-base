@@ -1,0 +1,259 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+		   "path" : "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle":"custom"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "用户登陆",
+				"navigationStyle":"custom"
+			}
+		}
+        ,{
+            "path" : "pages/function/function",
+            "style" : {
+				"navigationBarTitleText": "功能",
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/my/my",
+            "style" : {
+				"navigationBarTitleText": "关于我",
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/report/report",
+            "style" : {
+				"navigationBarTitleText": "报表",
+				"navigationStyle":"custom"
+			}
+        } ,{
+            "path" : "pages/verify/bargainPrice/bargainPrice",
+            "style" : {
+				"navigationBarTitleText": "特价审批",
+				"navigationStyle":"custom"
+			}
+        } ,{
+            "path" : "pages/verify/bargainPrice/bpDetail",
+            "style" : {
+				"navigationBarTitleText": "特价详细",
+				"navigationStyle":"custom"
+			}
+        },{
+            "path" : "pages/verify/originalPaper/originalPaper",
+            "style" : {
+				"navigationBarTitleText": "原纸审批",
+				"navigationStyle":"custom"
+			}
+        },
+		{
+		    "path" : "pages/verify/originalPaper/opDetail",
+		    "style" : {
+				"navigationBarTitleText": "原纸详细",
+				"navigationStyle":"custom"
+			}
+		},
+		{
+		    "path" : "pages/verify/material/material",
+		    "style" : {
+				"navigationBarTitleText": "辅料审批",
+				"navigationStyle":"custom"
+			}
+		},
+		{
+		    "path" : "pages/verify/material/mtDetail",
+		    "style" : {
+				"navigationBarTitleText": "辅料详细",
+				"navigationStyle":"custom"
+			}
+		} 
+		,{
+            "path" : "pages/verify/boxApproval/boxApproval",
+			   "style" : {
+				"navigationBarTitleText": "纸箱审批",
+				"navigationStyle":"custom"
+			   }
+        }
+		,{
+		    "path" : "pages/verify/boxApproval/boxDetail",
+			   "style" : {
+				"navigationBarTitleText": "纸箱详细",
+				"navigationStyle":"custom"
+			   }
+		}
+        ,{
+            "path" : "pages/report/deliveryquery/deliveryquery",
+            "style" : {
+				"navigationBarTitleText": "送货查询",
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/report/compfactorykanban/compfactorykanban",
+            "style" : {
+				"navigationBarTitleText": "全厂综合查询",
+				"navigationStyle":"custom"
+			}
+        }
+		,{
+		    "path" : "pages/report/compfactorykanban/comFactoryCharts",
+		    "style" : {
+				"navigationBarTitleText": "全厂综合-图表展示",
+				"navigationStyle":"custom"
+			}
+		}
+        ,{
+            "path" : "pages/report/paperorderquery/paperorderquery",
+            "style" : {
+				"navigationBarTitleText": "订单查询",
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/report/sumofcustarrears/sumofcustarrears",
+            "style" : {
+				"navigationBarTitleText": "客户欠款",
+				"navigationStyle":"custom"
+			}
+        }
+        ,{
+            "path" : "pages/warehouse/boxIn/boxIn",
+           "style" : {
+           	"navigationBarTitleText": "纸箱出入库",
+           	"navigationStyle":"custom"
+           }
+        }
+        ,{
+            "path" : "pages/warehouse/paperIn/paperIn",
+           "style" : {
+           	"navigationBarTitleText": "纸板出入口",
+           	"navigationStyle":"custom"
+           }
+        }
+        ,{
+            "path" : "pages/warehouse/paperOB/paperOB",
+          "style" : {
+          	"navigationBarTitleText": "原纸出退仓",
+          	"navigationStyle":"custom"
+          }
+        }
+        ,{
+            "path" : "components/list-select/list-select",
+          "style" : {
+          	"navigationBarTitleText": "数据列表选择",
+          	"navigationStyle":"custom"
+          }
+        }
+
+        ,{
+            "path" : "pages/quotation/area",
+            "style" : {
+            	"navigationBarTitleText": "纸箱纸质面积报价",
+            	"navigationStyle":"custom"
+            }
+        },
+		{
+		    "path" : "pages/quotation/boxProduct",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱纸质产品报价",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/quotation/boxArea",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱报价",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperboard/progress/progress",
+		   "style" : {
+		   	"navigationBarTitleText": "纸板进度查询",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperboard/progress/progressDetail",
+		   "style" : {
+		   	"navigationBarTitleText": "纸板进度详细",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperBox/progress/progress",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱进度查询",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperBox/progress/progressDetail",
+		   "style" : {
+		   	"navigationBarTitleText": "纸箱进度详细",
+		   	"navigationStyle":"custom"
+		   }
+		},
+		{
+		    "path" : "pages/paperBox/deliveryquery/deliveryquery",
+		    "style" : {
+				"navigationBarTitleText": "纸箱送货汇总",
+				"navigationStyle":"custom"
+			}
+		},
+		{
+		    "path" : "pages/paperBox/paperorderquery/paperorderquery",
+		    "style" : {
+				"navigationBarTitleText": "纸箱订单汇总",
+				"navigationStyle":"custom"
+			}
+		}
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "晨龙ERP",
+		"navigationBarBackgroundColor": "#0081ff",
+		"backgroundColor": "#FFFFFF",
+		"app-plus":{
+			"scrollIndicator":"none",
+			"compatible": {  
+			    "ignoreVersion": true //true表示忽略版本检查提示框，HBuilderX1.9.0及以上版本支持  
+			}
+		}
+		//"navigationStyle":""
+	},
+	"tabBar":{
+		"color":"#000000",
+		"selectedColor":"#0081FF",
+		"backgroundColor":"#FFFFFF",
+		"position":"bottom",
+		"list":[{
+			"pagePath":"pages/index/index",
+			"text":"首页",
+			"iconPath":"static/index-unChecked.png",
+			"selectedIconPath":"static/index-checked.png"
+		},{
+			"pagePath":"pages/function/function",
+			"text":"功能",
+			"iconPath":"static/function-unChecked.png",
+			"selectedIconPath":"static/funtion-checked.png"
+		},{
+			"pagePath":"pages/report/report",
+			"text":"报表",
+			"iconPath":"static/count-unChecked.png",
+			"selectedIconPath":"static/count-checked.png"
+		},{
+			"pagePath":"pages/my/my",
+			"text":"我的",
+			"iconPath":"static/my-unChecked.png",
+			"selectedIconPath":"static/my-checked.png"
+		}]
+	}
+}

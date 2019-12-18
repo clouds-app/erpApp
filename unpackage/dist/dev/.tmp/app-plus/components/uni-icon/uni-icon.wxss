@@ -16,12 +16,10 @@
 	line-height: 1;
 	display: -webkit-box;
 	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	/* justify-content: center; */
 	-webkit-box-align: center;
 	-webkit-align-items: center;
-	    -ms-flex-align: center;
 	        align-items: center;
 	text-decoration: none;
 	-webkit-font-smoothing: antialiased;

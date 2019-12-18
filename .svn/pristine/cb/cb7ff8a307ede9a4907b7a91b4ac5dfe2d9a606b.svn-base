@@ -1,0 +1,169 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">卡板指定库位扫描</block>
+		</cu-custom>
+		<!-- ===卡板指定库位扫描=== -->
+		<form>
+		    <view ref="elForm" class="elForm" >
+		   	<view  class="cu-form-group border-top">
+		   		<view class="title">卡板号:</view>
+		   		<input v-model="formItem.cardBoardNo" @blur="getCardBoardNoInfo" placeholder="请输入或扫描卡板号" name="input"></input>
+		   		<button @click="turnOnScanCode('cardBoardNo')" class='cu-btn bg-green shadow'>扫描</button>
+		   	</view>
+		   	<view class="cu-form-group border-top">
+		   		<view class="title">库位:</view>
+		   		<input ref="kuWeiInput" v-model="formItem.kuNo" @blur="getWorkNoInfo" placeholder="请输入或扫描库位" name="input"></input>
+		   		<button @click="turnOnScanCode('workNo')" class='cu-btn bg-green shadow'>扫描</button>
+		   	</view>
+			<view class="cu-form-group border-top">
+				<view class="cl-tableDesc">纸板明细清单</view>
+			</view>
+		   </view>
+		</form>
+		<view class="bingStorage-zTable">
+			<zTable :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="paperOutTableDataItems" :columns="findGoodsColumns"></zTable>
+		</view>
+		
+	</view>
+</template>
+
+<script>
+	import zTable from "@/components/z-table/z-table.vue"
+	import uniIcon from "@/components/uni-icon/uni-icon.vue"
+	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
+	//纸板入库卡板、工单扫描
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	export default {
+		name:'inStorage',//纸板入库卡板、工单扫描
+		mixins:[baseMixin],
+		components:{zTable,searchForm,uniPopup,uniIcon},
+		data() {
+			return {
+				currentSelect:'line',// 当前选择线别/班别
+				classBanList:[],// 当前班别数据列表,
+				lineSeparationList:[],// 当前线别数据列表
+				customerList:[],// 客户搜索列表
+				TabCur: 0,
+				scanType:'',//当前扫描类型
+				scrollLeft: 0,
+				tableHeight:400,//表格高度
+				errorContent:'暂无数据',//数据加载中...
+				paperOutTableDataItems:[],
+				findGoodsColumns: [{
+					key: 'OrderNo',
+					title: '工单号',
+					width: 200
+				}, 
+				{
+					key: 'Station',
+					title: '纸质',
+					width: 200
+				}, 
+				{
+					key: 'FNum',
+					title: '规格',
+					width: 200
+				}, 
+				{
+					key: 'State',
+					title: '数量',
+					width: 145
+				},
+				{
+					key: 'State',
+					title: '客户',
+					width: 145
+				}],
+				postData:{ 
+					 ap_CardNo:"",//卡板号
+					 ap_OrderNo:"",//工单号
+					 ap_Qty:1,//
+					 ap_Line:"",//线别
+					 ap_ClassNo:"",//班别
+					 ap_CustID:"",//用户编号
+					 },
+				formItem:{
+					cardBoardNo:'',//卡板号
+					kuNo:''//库位号
+				}
+			}
+		},
+		// #ifdef H5
+		mounted () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		// #endif
+		methods: {
+			 async getTableHeight(){
+			 			  let _self=this
+			 			  let tempHeight =  _self.setTableHeight()
+			 			  let otherHeight= await _self.getOtherContentHeight("elForm") 
+			 			 
+			 			  if(otherHeight!=null){
+			 			  	
+			 			  	_self.tableHeight =tempHeight-otherHeight
+			 			  }
+			 		
+			 			},
+				//映射方法
+			...mapActions(['getClassBanListAction']),
+				//页面通讯,事件注册
+				messageRegister(){
+				  // 初始化数据
+				},
+
+			   //===打开扫描===
+				turnOnScanCode(type){
+					this.scanType =type
+					let _self =this
+					// 调起条码扫描
+					uni.scanCode({
+					    scanType: 'barCode', // 固定条形码
+					    success: function (res) {
+					        console.log('条码内容：' + res.result);
+							switch (type){
+								case 'cardBoardNo': 
+								    //卡板号
+								    this.formItem.cardBoardNo = res.result
+									//_self.getCardBoardNoInfo() //工单号验证查询
+									break;
+								case 'kuNo': 
+									    //库位号
+									    this.formItem.kuNo = res.result
+										//_self.getWorkNoInfo() //工单号验证查询
+										break;
+								default:
+									break;
+							}
+						
+					    }
+					});
+				},
+			
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

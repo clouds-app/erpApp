@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "纸箱进度查询",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom",
+    "search-form": "/components/searchForm/paperboardSF",
+    "z-table": "/components/z-table/z-table"
+  }
+}

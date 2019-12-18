@@ -30,7 +30,15 @@
     "pages/paperBox/progress/progress",
     "pages/paperBox/progress/progressDetail",
     "pages/paperBox/deliveryquery/deliveryquery",
-    "pages/paperBox/paperorderquery/paperorderquery"
+    "pages/paperBox/paperorderquery/paperorderquery",
+    "pages/cardBoard/inStorage/inStorage",
+    "pages/cardBoard/inStorage/inStorageDetail",
+    "pages/cardBoard/bindStorage/bindStorage",
+    "pages/cardBoard/moveStorage/moveStorage",
+    "pages/cardBoard/outStorage/outStorage",
+    "pages/cardBoard/outStorage/outStorageDetail",
+    "pages/cardBoard/outStorage/outStorageEdit",
+    "pages/cardBoard/arrangeStorage/arrangeStorage"
   ],
   "subPackages": [],
   "window": {

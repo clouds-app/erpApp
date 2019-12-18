@@ -1,0 +1,80 @@
+<script>
+	import Vue from 'vue'
+	export default {
+		// 当uni-app 初始化完成时触发（全局只触发一次）
+		onLaunch: function() {
+			//plus.screen.lockOrientation('portrait-primary'); //锁定
+			uni.getSystemInfo({
+				success: function(e) {
+					// #ifndef MP
+					Vue.prototype.StatusBar = e.statusBarHeight;
+					if (e.platform == 'android') {
+						Vue.prototype.CustomBar = e.statusBarHeight + 50;
+					} else {
+						Vue.prototype.CustomBar = e.statusBarHeight + 45;
+					};
+					// #endif
+			
+					// #ifdef MP-WEIXIN
+					Vue.prototype.StatusBar = e.statusBarHeight;
+					let custom = wx.getMenuButtonBoundingClientRect();
+					Vue.prototype.Custom = custom;
+					Vue.prototype.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
+					// #endif		
+			
+					// #ifdef MP-ALIPAY
+					Vue.prototype.StatusBar = e.statusBarHeight;
+					Vue.prototype.CustomBar = e.statusBarHeight + e.titleBarHeight;
+					// #endif
+				}
+			});
+		},
+		//当 uni-app 启动，或从后台进入前台显示
+		onShow: function() {
+			console.warn('App Show process.env.NODE_ENV：'+process.env.NODE_ENV)
+			//console.log(Vue);
+
+		},
+		//当 uni-app 从前台进入后台
+		onHide: function() {
+			console.log('App Hide')
+			//console.log(Vue);
+		},
+		//由于 onError 并不是完整意义的生命周期，所以只提供一个捕获错误的方法，在 app 的根组件上添加名为 onError 的回调函数即可
+		 onError (err) {
+			   //debugger
+		       console.error('ERP App onError...:'+err)
+		   }
+	}
+</script>
+
+<style>
+	/*每个页面公共css */
+	@import "common/grid.css";
+	@import "colorui/main.css";
+	@import "colorui/icon.css";
+	@import "common/uni.css";
+	/* @import "common/grid.css"; */
+	/* //重置样式 */
+	.cu-form-group {
+		min-height: 39px;
+	}
+	.cu-form-group uni-input {
+		    font-size: 12px;
+	}
+	.cu-form-group .title{
+		font-size: 12px;
+		height: 24px;
+	    line-height: 24px; 
+		    /* text-align: justify;
+		    padding-right: 12px;
+		    font-size: 12px;
+		    position: relative;
+		    height: 24px;
+		    line-height: 24px; */
+	}
+	/*界面===主色*/
+	.color-main-cl{
+		color:#2fb3ff !important;
+	}
+</style>

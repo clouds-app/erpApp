@@ -1,0 +1,181 @@
+<template>
+	<view>
+		<cu-custom @searchEvent="openSearchEventForm" bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">纸箱产品报价</block>
+				<block slot="right">查询</block>
+		</cu-custom>
+		
+		<!-- ===纸箱产品报价=== -->
+		<form v-show="0==TabCur">
+			<zTable :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="TableData_boxProduct" :columns="Columns_boxProduct"></zTable>
+		</form>
+		
+	<searchForm :isBoxProduct="true" @comfirmEvent="searchComfirmEvent" ref='searchForm'></searchForm>	
+	</view>
+</template>
+
+<script>
+	import searchForm from '@/components/searchForm/quotationSF.vue'
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import dayjs from 'dayjs'
+	import zTable from "@/components/z-table/z-table.vue"
+	export default {
+		name:'paperIn',
+		mixins:[baseMixin],
+		components:{searchForm,zTable},
+		data() {
+			return {
+				searchParams:{  //初始化查询参数
+				    ctCode:'',
+				    up_CustID:'',//(客户类型)
+				    ui_UPNo:'',//(产品编号)
+				    ui_UPName:'',//(产品名称)
+				},
+				TabCur: '0',
+				scrollLeft: 0,
+				errorContent:'暂无数据',//数据加载中...
+				tableHeight:0,//表格高度
+				TableData_boxProduct: [],
+				//产品编号、名称、规格：（箱型、纸质、规格（l*w*h））、报价、生效日期
+				Columns_boxProduct:[
+			 //    {
+				// 	key: 'up_CustID',
+				// 	title: '客户编号',
+				// 	width: 200
+				// },
+				{
+					key: 'ct_Desc',
+					title: '客户名称',
+					width: 200
+				}, 
+				{
+					key: 'ui_UPNo',
+					title: '产品编号',
+					width: 200
+				}, 
+				{
+					key: 'ui_UPName',
+					title: '产品名称',
+					width: 400
+				}, 
+				{
+					key: 'ui_Price',
+					title: '报价',
+					width: 200
+				},
+				{
+					key: 'up_StartDate',
+					title: '生效日期',
+					width: 200
+				}, 
+				{
+					key: 'Csize',
+					title: '规格',
+					width: 400
+				},
+				
+				],
+			
+			}
+		},
+		// #ifdef H5
+		mounted () {
+			this.getDataSource()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			
+		},
+		// #endif
+		methods: {
+			//切换TAB查询数据
+			tabSelect(e) {
+				this.TabCur = e.currentTarget.dataset.id;
+				this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+				this.$nextTick(()=>{
+					setTimeout(()=>{
+						//验证执行,方便个别小程序兼容
+						let tempHeight =  this.setTableHeight()
+						this.tableHeight =tempHeight-50 //特别处理
+					},200)
+				})
+				this.getDataSource()
+			},
+			//打开客户信息搜索框
+			openSearchEventForm(){
+				this.$refs.searchForm.isShowSearchForm =true
+			},
+			//确认查询
+			searchComfirmEvent(params){
+				//debugger
+				this.searchParams =Object.assign(this.searchParams,params)
+				
+				if(this.searchParams.ctCode==null){
+					this.searchParams.ctCode=''
+				}
+				if(this.searchParams.up_CustID==null){
+					this.searchParams.up_CustID=''
+				}
+				if(this.searchParams.ui_UPNo==null){
+					this.searchParams.ui_UPNo=''
+				}
+				if(this.searchParams.ui_UPName==null){
+					this.searchParams.ui_UPName=''
+				}
+				//debugger
+				this.getDataSource()
+			},
+			//查询数据
+			getDataSource(){
+				switch (this.TabCur){
+					case '0':
+					//原纸报价--查询
+					this.getQutation_boxProduct()
+					break;
+					default:
+					//原纸报价--查询
+					this.getQutation_boxProduct()
+						break;
+				}
+			},
+			//原纸报价--查询
+			getQutation_boxProduct(){
+				// if(this.TableData_boxProduct.length!=0){
+				// 	return
+				// }
+				let params = {
+					up_CustID:this.searchParams.ctCode,//(客户类型)
+					ui_UPNo:this.searchParams.ui_UPNo,//(产品编号)
+					ui_UPName:this.searchParams.ui_UPName,//(产品名称)
+				}
+				//debugger
+				this.$store.dispatch('getQutation_products_action',params).then(res=>{
+					this.TableData_boxProduct = res.data.records
+				}).catch(err=>{
+					uni.showToast({
+						title:'错误:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+		
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>
