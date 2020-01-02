@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "工单装车及库位详细",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom",
+    "z-table": "/components/z-table/z-table",
+    "search-form": "/components/searchForm/searchDataList.vue",
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "uni-icon": "/components/uni-icon/uni-icon"
+  }
+}

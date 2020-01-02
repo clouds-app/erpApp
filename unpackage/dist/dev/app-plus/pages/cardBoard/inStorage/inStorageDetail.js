@@ -1,1 +1,2 @@
+setCssToHead([".",[1],"cu-form-group .",[1],"title { min-width: calc(4em + 15px); }\n",],undefined,{path:"./pages/cardBoard/inStorage/inStorageDetail.wxss"})();
 document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./pages/cardBoard/inStorage/inStorageDetail.wxml') } }));

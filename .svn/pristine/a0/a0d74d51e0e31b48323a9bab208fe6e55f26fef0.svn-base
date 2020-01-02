@@ -1,0 +1,404 @@
+import axios from '@/libs/api.request'
+import config from '@/config'
+ let apiPath= '/clerp-app-api'  //正式环境
+import qs from 'qs'
+
+///货物整理 更改库位
+export const updateStorehouseArrange = ({map}) => {
+  //参数
+  let data = {
+    map
+  }
+ return axios.request({
+   'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/updateStorehouse`,
+    data,
+    method: 'POST',
+  })
+}
+///货物整理 工单号扫描
+export const scanJobNoArrange = ({Identification}) => {
+  //参数
+  let data = {
+    Identification
+  }
+ return axios.request({
+   'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/scanJobNo`,
+    data,
+    method: 'GET',
+  })
+}
+///货物整理 卡板扫描
+export const scanCardArrange = ({ap_CardNo}) => {
+  //参数
+  let data = {
+    ap_CardNo
+  }
+ return axios.request({
+   'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/scanCard`,
+    data,
+    method: 'GET',
+  })
+}
+
+///删除备货出仓
+export const delateStockUpDetailed = ({id}) => {
+  //参数
+  let data = {
+    id
+  }
+ return axios.request({
+   'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/delateStockUpDetailed`,
+    data,
+    method: 'POST',
+  })
+}
+
+///纸板明细清单 挪位详情 
+export const setCardBoardNorway = ({ap_CardNo}) => {
+  //参数
+  let data = {
+    ap_CardNo
+  }
+ return axios.request({
+    url: `${apiPath}/scan/cardBoardNorway`,
+    data,
+    method: 'GET',
+  })
+}
+
+///查询车牌 列表 
+export const getCardNumbeInfoList = ({ap_CardNo}) => {
+  //参数
+  let data = {
+    ap_CardNo
+  }
+ return axios.request({
+    url: `${apiPath}/scan/getCardNumbe`,
+    data,
+    method: 'GET',
+  })
+}
+
+///查询车牌 列表 
+export const getLicensePlateList = ({}) => {
+  //参数
+  let data = {}
+   
+ return axios.request({
+    url: `${apiPath}/scan/LicensePlate`,
+    data,
+    method: 'POST',
+  })
+}
+///查询班别下拉框
+export const getClassBanList = ({}) => {
+  //参数
+  let data = {}
+   
+ return axios.request({
+    url: `${apiPath}/scan/classBan`,
+    data,
+    method: 'POST',
+  })
+}
+
+///查询 司机 列表 下拉框 
+export const getDriverList = ({}) => {
+  //参数
+  let data = {}
+   
+ return axios.request({
+    url: `${apiPath}/scan/driver`,
+    data,
+    method: 'POST',
+  })
+}
+
+
+///装车单号 列表 查询  
+export const getEntruckingList = ({}) => {
+  //参数
+  let data = {}
+   
+ return axios.request({
+    url: `${apiPath}/scan/entrucking`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  纸板明细清单 
+* 搜索条件：
+*  procName,params (存储过程名称) 其它参数
+  返回值：
+	(List)
+*/
+export const getDataListByProcName = ({ procName,params }) => {
+  //参数
+  let data = params
+   
+ return axios.request({
+	'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/s2can/execute/${procName}`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  获取装车清单下拉列表  
+* 搜索条件：
+*   procName,params (存储过程名称) 其它参数
+  返回值：
+	(List)
+*/
+export const getExecuteDropDown = ({ procName,params }) => {
+  //参数
+  let data = params
+   
+ return axios.request({
+	'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/executeDropDown/${procName}`,
+    data,
+    method: 'POST',
+  })
+}
+
+
+/**
+* @description  获取装车清单详细 
+* 搜索条件：
+*   procName,params (存储过程名称) 其它参数
+  返回值：
+	(List)
+*/
+export const getExecuteDropDownDetails = ({ procName,params }) => {
+  //参数
+  let data = params
+   
+ return axios.request({
+	'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/executeDropDownDetails/${procName}`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  本单清单详情  
+* 搜索条件：
+*   procName,params (存储过程名称) 其它参数
+* @ApiOperation(value = "procName=spGetPaperCOInfoForAPP  ;params={OrderNo:'P191028253'}", notes = "本单清单详情 ")
+  返回值：
+	(List)
+*/
+export const getBoardDetails = ({ procName,params }) => {
+  //参数
+  let data = params
+ return axios.request({
+	'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/getBoardDetails/${procName}`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  提交卡板工单信息列表
+* 搜索条件：
+*   map (对象) 
+  返回值：
+	(List)
+*/
+export const setWorkOrderDetails = ({map}) => {
+  //参数
+  let data ={
+	  map
+  }
+  //let arrayBuffer = new Uint8Array(map).buffer;
+ return axios.request({
+	'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/getWorkOrderDetails`,
+    data,
+    method: 'POST',
+  })
+}
+
+///查询线别列表 下拉框
+export const getLineSeparationList = ({}) => {
+  //参数
+  let data = {}
+   
+ return axios.request({
+    url: `${apiPath}/scan/lineSeparation`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  保存出仓  
+* 搜索条件：
+*   procName,params (存储过程名称) 其它参数
+  返回值：
+	(List)
+*/
+export const setWarehouses = ({ procName,params }) => {
+  //参数
+  let data = params
+   
+ return axios.request({
+   'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/saveWarehouses/${procName}`,
+    data,
+    method: 'POST',
+  })
+}
+///查询 发货员 列表 下拉框
+export const getSendGoodsList = ({}) => {
+  //参数
+  let data = {}
+   
+ return axios.request({
+    url: `${apiPath}/scan/sendGoods`,
+    data,
+    method: 'POST',
+  })
+}
+
+
+/**
+* @description  修改卡板号数据 根据卡板号 批量修改
+* 搜索条件：
+*   map (对象) 
+  返回值：
+	(List)
+*/
+export const setBoardNumber = ({ map }) => {
+  //参数
+  let data = {
+    map
+   }
+   
+ return axios.request({
+	'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/updateBoardNumber`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  修改卡板号数据 根据卡板号 可能批量修改
+* 搜索条件：
+*   map (对象) 
+  返回值：
+	(List)
+*/
+export const setCardBoardNumber = ({ map }) => {
+  //参数
+  let data = {
+    map
+   }
+   
+ return axios.request({
+    url: `${apiPath}/scan/updateCardBoardNumber`,
+    data,
+    method: 'POST',
+  })
+}
+
+
+/**
+* @description  修改库位
+* 搜索条件：
+*   newStationNo,StationNo (字符串) 
+  返回值：
+	(List)
+*/
+export const setStationNo = ({ newStationNo,StationNo }) => {
+  //参数
+  let data = {
+    newStationNo,StationNo
+   }
+   
+ return axios.request({
+   'Content-Type': 'application/json;charset=UTF-8',
+    url: `${apiPath}/scan/updateStationNo`,
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+* @description  获取卡板号 
+* 搜索条件：
+*   id (id) 
+  返回值：
+	(List)
+*/
+// export const getMoveBoardNumbe = ({ id }) => {
+//   //参数
+//   let data = {
+//     id
+//    }
+   
+//  return axios.request({
+//     url: `${apiPath}/scan/getMoveBoardNumbe`,
+//     data,
+//     method: 'POST',
+//   })
+// }
+
+
+/**
+* @description  库位扫描卡板号 
+* 搜索条件：
+*   id (字符串) 
+  返回值：
+	(List)
+*/
+// export const getWarehouseBoardNumbe = ({ id }) => {
+//   //参数
+//   let data = {
+//     id
+//    }
+   
+//  return axios.request({
+//     url: `${apiPath}/scan/getWarehouseBoardNumbe`,
+//     data,
+//     method: 'POST',
+//   })
+// }
+
+/**
+* @description  获取纸板入库卡板号id 
+* 搜索条件：
+*   id (字符串) 
+  返回值：
+	(List)
+*/
+// export const getWorkNumbe = ({ id }) => {
+//   //参数
+//   let data = {
+//     id
+//    }
+   
+//  return axios.request({
+//     url: `${apiPath}/scan/getWorkNumbe`,
+//     data,
+//     method: 'POST',
+//   })
+// }
+
+
+
+
+
+
+

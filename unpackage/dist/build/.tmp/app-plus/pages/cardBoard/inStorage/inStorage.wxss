@@ -1,4 +1,7 @@
 
+.orderText {
+	    font-size: 12px;
+}
 .margin-text-center{
 		text-align: center;
 		margin: 20rpx;

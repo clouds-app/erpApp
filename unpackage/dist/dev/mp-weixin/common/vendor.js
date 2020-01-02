@@ -734,7 +734,7 @@ function initData(vueOptions, context) {
     try {
       data = data.call(context); // 支持 Vue.prototype 上挂的数据
     } catch (e) {
-      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.warn('根据 Vue 的 data 函数初始化小程序 data 失败，请尽量确保 data 函数中不访问 vm 对象，否则可能影响首次数据渲染速度。', data);
       }
     }
@@ -1683,7 +1683,958 @@ new _vuex.default.Store({
 
 /***/ }),
 
-/***/ 155:
+/***/ 16:
+/*!********************************************!*\
+  !*** ./node_modules/vuex/dist/vuex.esm.js ***!
+  \********************************************/
+/*! exports provided: Store, install, mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Store", function() { return Store; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "install", function() { return install; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapState", function() { return mapState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapMutations", function() { return mapMutations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapGetters", function() { return mapGetters; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapActions", function() { return mapActions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createNamespacedHelpers", function() { return createNamespacedHelpers; });
+/**
+ * vuex v3.0.1
+ * (c) 2017 Evan You
+ * @license MIT
+ */
+var applyMixin = function (Vue) {
+  var version = Number(Vue.version.split('.')[0]);
+
+  if (version >= 2) {
+    Vue.mixin({ beforeCreate: vuexInit });
+  } else {
+    // override init and inject vuex init procedure
+    // for 1.x backwards compatibility.
+    var _init = Vue.prototype._init;
+    Vue.prototype._init = function (options) {
+      if ( options === void 0 ) options = {};
+
+      options.init = options.init
+        ? [vuexInit].concat(options.init)
+        : vuexInit;
+      _init.call(this, options);
+    };
+  }
+
+  /**
+   * Vuex init hook, injected into each instances init hooks list.
+   */
+
+  function vuexInit () {
+    var options = this.$options;
+    // store injection
+    if (options.store) {
+      this.$store = typeof options.store === 'function'
+        ? options.store()
+        : options.store;
+    } else if (options.parent && options.parent.$store) {
+      this.$store = options.parent.$store;
+    }
+  }
+};
+
+var devtoolHook =
+  typeof window !== 'undefined' &&
+  window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
+
+function devtoolPlugin (store) {
+  if (!devtoolHook) { return }
+
+  store._devtoolHook = devtoolHook;
+
+  devtoolHook.emit('vuex:init', store);
+
+  devtoolHook.on('vuex:travel-to-state', function (targetState) {
+    store.replaceState(targetState);
+  });
+
+  store.subscribe(function (mutation, state) {
+    devtoolHook.emit('vuex:mutation', mutation, state);
+  });
+}
+
+/**
+ * Get the first item that pass the test
+ * by second argument function
+ *
+ * @param {Array} list
+ * @param {Function} f
+ * @return {*}
+ */
+/**
+ * Deep copy the given object considering circular structure.
+ * This function caches all nested objects and its copies.
+ * If it detects circular structure, use cached copy to avoid infinite loop.
+ *
+ * @param {*} obj
+ * @param {Array<Object>} cache
+ * @return {*}
+ */
+
+
+/**
+ * forEach for object
+ */
+function forEachValue (obj, fn) {
+  Object.keys(obj).forEach(function (key) { return fn(obj[key], key); });
+}
+
+function isObject (obj) {
+  return obj !== null && typeof obj === 'object'
+}
+
+function isPromise (val) {
+  return val && typeof val.then === 'function'
+}
+
+function assert (condition, msg) {
+  if (!condition) { throw new Error(("[vuex] " + msg)) }
+}
+
+var Module = function Module (rawModule, runtime) {
+  this.runtime = runtime;
+  this._children = Object.create(null);
+  this._rawModule = rawModule;
+  var rawState = rawModule.state;
+  this.state = (typeof rawState === 'function' ? rawState() : rawState) || {};
+};
+
+var prototypeAccessors$1 = { namespaced: { configurable: true } };
+
+prototypeAccessors$1.namespaced.get = function () {
+  return !!this._rawModule.namespaced
+};
+
+Module.prototype.addChild = function addChild (key, module) {
+  this._children[key] = module;
+};
+
+Module.prototype.removeChild = function removeChild (key) {
+  delete this._children[key];
+};
+
+Module.prototype.getChild = function getChild (key) {
+  return this._children[key]
+};
+
+Module.prototype.update = function update (rawModule) {
+  this._rawModule.namespaced = rawModule.namespaced;
+  if (rawModule.actions) {
+    this._rawModule.actions = rawModule.actions;
+  }
+  if (rawModule.mutations) {
+    this._rawModule.mutations = rawModule.mutations;
+  }
+  if (rawModule.getters) {
+    this._rawModule.getters = rawModule.getters;
+  }
+};
+
+Module.prototype.forEachChild = function forEachChild (fn) {
+  forEachValue(this._children, fn);
+};
+
+Module.prototype.forEachGetter = function forEachGetter (fn) {
+  if (this._rawModule.getters) {
+    forEachValue(this._rawModule.getters, fn);
+  }
+};
+
+Module.prototype.forEachAction = function forEachAction (fn) {
+  if (this._rawModule.actions) {
+    forEachValue(this._rawModule.actions, fn);
+  }
+};
+
+Module.prototype.forEachMutation = function forEachMutation (fn) {
+  if (this._rawModule.mutations) {
+    forEachValue(this._rawModule.mutations, fn);
+  }
+};
+
+Object.defineProperties( Module.prototype, prototypeAccessors$1 );
+
+var ModuleCollection = function ModuleCollection (rawRootModule) {
+  // register root module (Vuex.Store options)
+  this.register([], rawRootModule, false);
+};
+
+ModuleCollection.prototype.get = function get (path) {
+  return path.reduce(function (module, key) {
+    return module.getChild(key)
+  }, this.root)
+};
+
+ModuleCollection.prototype.getNamespace = function getNamespace (path) {
+  var module = this.root;
+  return path.reduce(function (namespace, key) {
+    module = module.getChild(key);
+    return namespace + (module.namespaced ? key + '/' : '')
+  }, '')
+};
+
+ModuleCollection.prototype.update = function update$1 (rawRootModule) {
+  update([], this.root, rawRootModule);
+};
+
+ModuleCollection.prototype.register = function register (path, rawModule, runtime) {
+    var this$1 = this;
+    if ( runtime === void 0 ) runtime = true;
+
+  if (true) {
+    assertRawModule(path, rawModule);
+  }
+
+  var newModule = new Module(rawModule, runtime);
+  if (path.length === 0) {
+    this.root = newModule;
+  } else {
+    var parent = this.get(path.slice(0, -1));
+    parent.addChild(path[path.length - 1], newModule);
+  }
+
+  // register nested modules
+  if (rawModule.modules) {
+    forEachValue(rawModule.modules, function (rawChildModule, key) {
+      this$1.register(path.concat(key), rawChildModule, runtime);
+    });
+  }
+};
+
+ModuleCollection.prototype.unregister = function unregister (path) {
+  var parent = this.get(path.slice(0, -1));
+  var key = path[path.length - 1];
+  if (!parent.getChild(key).runtime) { return }
+
+  parent.removeChild(key);
+};
+
+function update (path, targetModule, newModule) {
+  if (true) {
+    assertRawModule(path, newModule);
+  }
+
+  // update target module
+  targetModule.update(newModule);
+
+  // update nested modules
+  if (newModule.modules) {
+    for (var key in newModule.modules) {
+      if (!targetModule.getChild(key)) {
+        if (true) {
+          console.warn(
+            "[vuex] trying to add a new module '" + key + "' on hot reloading, " +
+            'manual reload is needed'
+          );
+        }
+        return
+      }
+      update(
+        path.concat(key),
+        targetModule.getChild(key),
+        newModule.modules[key]
+      );
+    }
+  }
+}
+
+var functionAssert = {
+  assert: function (value) { return typeof value === 'function'; },
+  expected: 'function'
+};
+
+var objectAssert = {
+  assert: function (value) { return typeof value === 'function' ||
+    (typeof value === 'object' && typeof value.handler === 'function'); },
+  expected: 'function or object with "handler" function'
+};
+
+var assertTypes = {
+  getters: functionAssert,
+  mutations: functionAssert,
+  actions: objectAssert
+};
+
+function assertRawModule (path, rawModule) {
+  Object.keys(assertTypes).forEach(function (key) {
+    if (!rawModule[key]) { return }
+
+    var assertOptions = assertTypes[key];
+
+    forEachValue(rawModule[key], function (value, type) {
+      assert(
+        assertOptions.assert(value),
+        makeAssertionMessage(path, key, type, value, assertOptions.expected)
+      );
+    });
+  });
+}
+
+function makeAssertionMessage (path, key, type, value, expected) {
+  var buf = key + " should be " + expected + " but \"" + key + "." + type + "\"";
+  if (path.length > 0) {
+    buf += " in module \"" + (path.join('.')) + "\"";
+  }
+  buf += " is " + (JSON.stringify(value)) + ".";
+  return buf
+}
+
+var Vue; // bind on install
+
+var Store = function Store (options) {
+  var this$1 = this;
+  if ( options === void 0 ) options = {};
+
+  // Auto install if it is not done yet and `window` has `Vue`.
+  // To allow users to avoid auto-installation in some cases,
+  // this code should be placed here. See #731
+  if (!Vue && typeof window !== 'undefined' && window.Vue) {
+    install(window.Vue);
+  }
+
+  if (true) {
+    assert(Vue, "must call Vue.use(Vuex) before creating a store instance.");
+    assert(typeof Promise !== 'undefined', "vuex requires a Promise polyfill in this browser.");
+    assert(this instanceof Store, "Store must be called with the new operator.");
+  }
+
+  var plugins = options.plugins; if ( plugins === void 0 ) plugins = [];
+  var strict = options.strict; if ( strict === void 0 ) strict = false;
+
+  var state = options.state; if ( state === void 0 ) state = {};
+  if (typeof state === 'function') {
+    state = state() || {};
+  }
+
+  // store internal state
+  this._committing = false;
+  this._actions = Object.create(null);
+  this._actionSubscribers = [];
+  this._mutations = Object.create(null);
+  this._wrappedGetters = Object.create(null);
+  this._modules = new ModuleCollection(options);
+  this._modulesNamespaceMap = Object.create(null);
+  this._subscribers = [];
+  this._watcherVM = new Vue();
+
+  // bind commit and dispatch to self
+  var store = this;
+  var ref = this;
+  var dispatch = ref.dispatch;
+  var commit = ref.commit;
+  this.dispatch = function boundDispatch (type, payload) {
+    return dispatch.call(store, type, payload)
+  };
+  this.commit = function boundCommit (type, payload, options) {
+    return commit.call(store, type, payload, options)
+  };
+
+  // strict mode
+  this.strict = strict;
+
+  // init root module.
+  // this also recursively registers all sub-modules
+  // and collects all module getters inside this._wrappedGetters
+  installModule(this, state, [], this._modules.root);
+
+  // initialize the store vm, which is responsible for the reactivity
+  // (also registers _wrappedGetters as computed properties)
+  resetStoreVM(this, state);
+
+  // apply plugins
+  plugins.forEach(function (plugin) { return plugin(this$1); });
+
+  if (Vue.config.devtools) {
+    devtoolPlugin(this);
+  }
+};
+
+var prototypeAccessors = { state: { configurable: true } };
+
+prototypeAccessors.state.get = function () {
+  return this._vm._data.$$state
+};
+
+prototypeAccessors.state.set = function (v) {
+  if (true) {
+    assert(false, "Use store.replaceState() to explicit replace store state.");
+  }
+};
+
+Store.prototype.commit = function commit (_type, _payload, _options) {
+    var this$1 = this;
+
+  // check object-style commit
+  var ref = unifyObjectStyle(_type, _payload, _options);
+    var type = ref.type;
+    var payload = ref.payload;
+    var options = ref.options;
+
+  var mutation = { type: type, payload: payload };
+  var entry = this._mutations[type];
+  if (!entry) {
+    if (true) {
+      console.error(("[vuex] unknown mutation type: " + type));
+    }
+    return
+  }
+  this._withCommit(function () {
+    entry.forEach(function commitIterator (handler) {
+      handler(payload);
+    });
+  });
+  this._subscribers.forEach(function (sub) { return sub(mutation, this$1.state); });
+
+  if (
+     true &&
+    options && options.silent
+  ) {
+    console.warn(
+      "[vuex] mutation type: " + type + ". Silent option has been removed. " +
+      'Use the filter functionality in the vue-devtools'
+    );
+  }
+};
+
+Store.prototype.dispatch = function dispatch (_type, _payload) {
+    var this$1 = this;
+
+  // check object-style dispatch
+  var ref = unifyObjectStyle(_type, _payload);
+    var type = ref.type;
+    var payload = ref.payload;
+
+  var action = { type: type, payload: payload };
+  var entry = this._actions[type];
+  if (!entry) {
+    if (true) {
+      console.error(("[vuex] unknown action type: " + type));
+    }
+    return
+  }
+
+  this._actionSubscribers.forEach(function (sub) { return sub(action, this$1.state); });
+
+  return entry.length > 1
+    ? Promise.all(entry.map(function (handler) { return handler(payload); }))
+    : entry[0](payload)
+};
+
+Store.prototype.subscribe = function subscribe (fn) {
+  return genericSubscribe(fn, this._subscribers)
+};
+
+Store.prototype.subscribeAction = function subscribeAction (fn) {
+  return genericSubscribe(fn, this._actionSubscribers)
+};
+
+Store.prototype.watch = function watch (getter, cb, options) {
+    var this$1 = this;
+
+  if (true) {
+    assert(typeof getter === 'function', "store.watch only accepts a function.");
+  }
+  return this._watcherVM.$watch(function () { return getter(this$1.state, this$1.getters); }, cb, options)
+};
+
+Store.prototype.replaceState = function replaceState (state) {
+    var this$1 = this;
+
+  this._withCommit(function () {
+    this$1._vm._data.$$state = state;
+  });
+};
+
+Store.prototype.registerModule = function registerModule (path, rawModule, options) {
+    if ( options === void 0 ) options = {};
+
+  if (typeof path === 'string') { path = [path]; }
+
+  if (true) {
+    assert(Array.isArray(path), "module path must be a string or an Array.");
+    assert(path.length > 0, 'cannot register the root module by using registerModule.');
+  }
+
+  this._modules.register(path, rawModule);
+  installModule(this, this.state, path, this._modules.get(path), options.preserveState);
+  // reset store to update getters...
+  resetStoreVM(this, this.state);
+};
+
+Store.prototype.unregisterModule = function unregisterModule (path) {
+    var this$1 = this;
+
+  if (typeof path === 'string') { path = [path]; }
+
+  if (true) {
+    assert(Array.isArray(path), "module path must be a string or an Array.");
+  }
+
+  this._modules.unregister(path);
+  this._withCommit(function () {
+    var parentState = getNestedState(this$1.state, path.slice(0, -1));
+    Vue.delete(parentState, path[path.length - 1]);
+  });
+  resetStore(this);
+};
+
+Store.prototype.hotUpdate = function hotUpdate (newOptions) {
+  this._modules.update(newOptions);
+  resetStore(this, true);
+};
+
+Store.prototype._withCommit = function _withCommit (fn) {
+  var committing = this._committing;
+  this._committing = true;
+  fn();
+  this._committing = committing;
+};
+
+Object.defineProperties( Store.prototype, prototypeAccessors );
+
+function genericSubscribe (fn, subs) {
+  if (subs.indexOf(fn) < 0) {
+    subs.push(fn);
+  }
+  return function () {
+    var i = subs.indexOf(fn);
+    if (i > -1) {
+      subs.splice(i, 1);
+    }
+  }
+}
+
+function resetStore (store, hot) {
+  store._actions = Object.create(null);
+  store._mutations = Object.create(null);
+  store._wrappedGetters = Object.create(null);
+  store._modulesNamespaceMap = Object.create(null);
+  var state = store.state;
+  // init all modules
+  installModule(store, state, [], store._modules.root, true);
+  // reset vm
+  resetStoreVM(store, state, hot);
+}
+
+function resetStoreVM (store, state, hot) {
+  var oldVm = store._vm;
+
+  // bind store public getters
+  store.getters = {};
+  var wrappedGetters = store._wrappedGetters;
+  var computed = {};
+  forEachValue(wrappedGetters, function (fn, key) {
+    // use computed to leverage its lazy-caching mechanism
+    computed[key] = function () { return fn(store); };
+    Object.defineProperty(store.getters, key, {
+      get: function () { return store._vm[key]; },
+      enumerable: true // for local getters
+    });
+  });
+
+  // use a Vue instance to store the state tree
+  // suppress warnings just in case the user has added
+  // some funky global mixins
+  var silent = Vue.config.silent;
+  Vue.config.silent = true;
+  store._vm = new Vue({
+    data: {
+      $$state: state
+    },
+    computed: computed
+  });
+  Vue.config.silent = silent;
+
+  // enable strict mode for new vm
+  if (store.strict) {
+    enableStrictMode(store);
+  }
+
+  if (oldVm) {
+    if (hot) {
+      // dispatch changes in all subscribed watchers
+      // to force getter re-evaluation for hot reloading.
+      store._withCommit(function () {
+        oldVm._data.$$state = null;
+      });
+    }
+    Vue.nextTick(function () { return oldVm.$destroy(); });
+  }
+}
+
+function installModule (store, rootState, path, module, hot) {
+  var isRoot = !path.length;
+  var namespace = store._modules.getNamespace(path);
+
+  // register in namespace map
+  if (module.namespaced) {
+    store._modulesNamespaceMap[namespace] = module;
+  }
+
+  // set state
+  if (!isRoot && !hot) {
+    var parentState = getNestedState(rootState, path.slice(0, -1));
+    var moduleName = path[path.length - 1];
+    store._withCommit(function () {
+      Vue.set(parentState, moduleName, module.state);
+    });
+  }
+
+  var local = module.context = makeLocalContext(store, namespace, path);
+
+  module.forEachMutation(function (mutation, key) {
+    var namespacedType = namespace + key;
+    registerMutation(store, namespacedType, mutation, local);
+  });
+
+  module.forEachAction(function (action, key) {
+    var type = action.root ? key : namespace + key;
+    var handler = action.handler || action;
+    registerAction(store, type, handler, local);
+  });
+
+  module.forEachGetter(function (getter, key) {
+    var namespacedType = namespace + key;
+    registerGetter(store, namespacedType, getter, local);
+  });
+
+  module.forEachChild(function (child, key) {
+    installModule(store, rootState, path.concat(key), child, hot);
+  });
+}
+
+/**
+ * make localized dispatch, commit, getters and state
+ * if there is no namespace, just use root ones
+ */
+function makeLocalContext (store, namespace, path) {
+  var noNamespace = namespace === '';
+
+  var local = {
+    dispatch: noNamespace ? store.dispatch : function (_type, _payload, _options) {
+      var args = unifyObjectStyle(_type, _payload, _options);
+      var payload = args.payload;
+      var options = args.options;
+      var type = args.type;
+
+      if (!options || !options.root) {
+        type = namespace + type;
+        if ( true && !store._actions[type]) {
+          console.error(("[vuex] unknown local action type: " + (args.type) + ", global type: " + type));
+          return
+        }
+      }
+
+      return store.dispatch(type, payload)
+    },
+
+    commit: noNamespace ? store.commit : function (_type, _payload, _options) {
+      var args = unifyObjectStyle(_type, _payload, _options);
+      var payload = args.payload;
+      var options = args.options;
+      var type = args.type;
+
+      if (!options || !options.root) {
+        type = namespace + type;
+        if ( true && !store._mutations[type]) {
+          console.error(("[vuex] unknown local mutation type: " + (args.type) + ", global type: " + type));
+          return
+        }
+      }
+
+      store.commit(type, payload, options);
+    }
+  };
+
+  // getters and state object must be gotten lazily
+  // because they will be changed by vm update
+  Object.defineProperties(local, {
+    getters: {
+      get: noNamespace
+        ? function () { return store.getters; }
+        : function () { return makeLocalGetters(store, namespace); }
+    },
+    state: {
+      get: function () { return getNestedState(store.state, path); }
+    }
+  });
+
+  return local
+}
+
+function makeLocalGetters (store, namespace) {
+  var gettersProxy = {};
+
+  var splitPos = namespace.length;
+  Object.keys(store.getters).forEach(function (type) {
+    // skip if the target getter is not match this namespace
+    if (type.slice(0, splitPos) !== namespace) { return }
+
+    // extract local getter type
+    var localType = type.slice(splitPos);
+
+    // Add a port to the getters proxy.
+    // Define as getter property because
+    // we do not want to evaluate the getters in this time.
+    Object.defineProperty(gettersProxy, localType, {
+      get: function () { return store.getters[type]; },
+      enumerable: true
+    });
+  });
+
+  return gettersProxy
+}
+
+function registerMutation (store, type, handler, local) {
+  var entry = store._mutations[type] || (store._mutations[type] = []);
+  entry.push(function wrappedMutationHandler (payload) {
+    handler.call(store, local.state, payload);
+  });
+}
+
+function registerAction (store, type, handler, local) {
+  var entry = store._actions[type] || (store._actions[type] = []);
+  entry.push(function wrappedActionHandler (payload, cb) {
+    var res = handler.call(store, {
+      dispatch: local.dispatch,
+      commit: local.commit,
+      getters: local.getters,
+      state: local.state,
+      rootGetters: store.getters,
+      rootState: store.state
+    }, payload, cb);
+    if (!isPromise(res)) {
+      res = Promise.resolve(res);
+    }
+    if (store._devtoolHook) {
+      return res.catch(function (err) {
+        store._devtoolHook.emit('vuex:error', err);
+        throw err
+      })
+    } else {
+      return res
+    }
+  });
+}
+
+function registerGetter (store, type, rawGetter, local) {
+  if (store._wrappedGetters[type]) {
+    if (true) {
+      console.error(("[vuex] duplicate getter key: " + type));
+    }
+    return
+  }
+  store._wrappedGetters[type] = function wrappedGetter (store) {
+    return rawGetter(
+      local.state, // local state
+      local.getters, // local getters
+      store.state, // root state
+      store.getters // root getters
+    )
+  };
+}
+
+function enableStrictMode (store) {
+  store._vm.$watch(function () { return this._data.$$state }, function () {
+    if (true) {
+      assert(store._committing, "Do not mutate vuex store state outside mutation handlers.");
+    }
+  }, { deep: true, sync: true });
+}
+
+function getNestedState (state, path) {
+  return path.length
+    ? path.reduce(function (state, key) { return state[key]; }, state)
+    : state
+}
+
+function unifyObjectStyle (type, payload, options) {
+  if (isObject(type) && type.type) {
+    options = payload;
+    payload = type;
+    type = type.type;
+  }
+
+  if (true) {
+    assert(typeof type === 'string', ("Expects string as the type, but found " + (typeof type) + "."));
+  }
+
+  return { type: type, payload: payload, options: options }
+}
+
+function install (_Vue) {
+  if (Vue && _Vue === Vue) {
+    if (true) {
+      console.error(
+        '[vuex] already installed. Vue.use(Vuex) should be called only once.'
+      );
+    }
+    return
+  }
+  Vue = _Vue;
+  applyMixin(Vue);
+}
+
+var mapState = normalizeNamespace(function (namespace, states) {
+  var res = {};
+  normalizeMap(states).forEach(function (ref) {
+    var key = ref.key;
+    var val = ref.val;
+
+    res[key] = function mappedState () {
+      var state = this.$store.state;
+      var getters = this.$store.getters;
+      if (namespace) {
+        var module = getModuleByNamespace(this.$store, 'mapState', namespace);
+        if (!module) {
+          return
+        }
+        state = module.context.state;
+        getters = module.context.getters;
+      }
+      return typeof val === 'function'
+        ? val.call(this, state, getters)
+        : state[val]
+    };
+    // mark vuex getter for devtools
+    res[key].vuex = true;
+  });
+  return res
+});
+
+var mapMutations = normalizeNamespace(function (namespace, mutations) {
+  var res = {};
+  normalizeMap(mutations).forEach(function (ref) {
+    var key = ref.key;
+    var val = ref.val;
+
+    res[key] = function mappedMutation () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      var commit = this.$store.commit;
+      if (namespace) {
+        var module = getModuleByNamespace(this.$store, 'mapMutations', namespace);
+        if (!module) {
+          return
+        }
+        commit = module.context.commit;
+      }
+      return typeof val === 'function'
+        ? val.apply(this, [commit].concat(args))
+        : commit.apply(this.$store, [val].concat(args))
+    };
+  });
+  return res
+});
+
+var mapGetters = normalizeNamespace(function (namespace, getters) {
+  var res = {};
+  normalizeMap(getters).forEach(function (ref) {
+    var key = ref.key;
+    var val = ref.val;
+
+    val = namespace + val;
+    res[key] = function mappedGetter () {
+      if (namespace && !getModuleByNamespace(this.$store, 'mapGetters', namespace)) {
+        return
+      }
+      if ( true && !(val in this.$store.getters)) {
+        console.error(("[vuex] unknown getter: " + val));
+        return
+      }
+      return this.$store.getters[val]
+    };
+    // mark vuex getter for devtools
+    res[key].vuex = true;
+  });
+  return res
+});
+
+var mapActions = normalizeNamespace(function (namespace, actions) {
+  var res = {};
+  normalizeMap(actions).forEach(function (ref) {
+    var key = ref.key;
+    var val = ref.val;
+
+    res[key] = function mappedAction () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      var dispatch = this.$store.dispatch;
+      if (namespace) {
+        var module = getModuleByNamespace(this.$store, 'mapActions', namespace);
+        if (!module) {
+          return
+        }
+        dispatch = module.context.dispatch;
+      }
+      return typeof val === 'function'
+        ? val.apply(this, [dispatch].concat(args))
+        : dispatch.apply(this.$store, [val].concat(args))
+    };
+  });
+  return res
+});
+
+var createNamespacedHelpers = function (namespace) { return ({
+  mapState: mapState.bind(null, namespace),
+  mapGetters: mapGetters.bind(null, namespace),
+  mapMutations: mapMutations.bind(null, namespace),
+  mapActions: mapActions.bind(null, namespace)
+}); };
+
+function normalizeMap (map) {
+  return Array.isArray(map)
+    ? map.map(function (key) { return ({ key: key, val: key }); })
+    : Object.keys(map).map(function (key) { return ({ key: key, val: map[key] }); })
+}
+
+function normalizeNamespace (fn) {
+  return function (namespace, map) {
+    if (typeof namespace !== 'string') {
+      map = namespace;
+      namespace = '';
+    } else if (namespace.charAt(namespace.length - 1) !== '/') {
+      namespace += '/';
+    }
+    return fn(namespace, map)
+  }
+}
+
+function getModuleByNamespace (store, helper, namespace) {
+  var module = store._modulesNamespaceMap[namespace];
+  if ( true && !module) {
+    console.error(("[vuex] module namespace not found in " + helper + "(): " + namespace));
+  }
+  return module
+}
+
+var index_esm = {
+  Store: Store,
+  install: install,
+  version: '3.0.1',
+  mapState: mapState,
+  mapMutations: mapMutations,
+  mapGetters: mapGetters,
+  mapActions: mapActions,
+  createNamespacedHelpers: createNamespacedHelpers
+};
+
+
+/* harmony default export */ __webpack_exports__["default"] = (index_esm);
+
+
+/***/ }),
+
+/***/ 160:
 /*!**********************************************************************!*\
   !*** E:/cl_vue/erpApp/node_modules/_dayjs@1.8.16@dayjs/dayjs.min.js ***!
   \**********************************************************************/
@@ -1695,7 +2646,7 @@ new _vuex.default.Store({
 
 /***/ }),
 
-/***/ 156:
+/***/ 161:
 /*!********************************************************!*\
   !*** E:/cl_vue/erpApp/components/u-charts/u-charts.js ***!
   \********************************************************/
@@ -7170,7 +8121,7 @@ if ( true && typeof module.exports === "object") {
 
 /***/ }),
 
-/***/ 157:
+/***/ 162:
 /*!******************************************!*\
   !*** E:/cl_vue/erpApp/common/checker.js ***!
   \******************************************/
@@ -7202,7 +8153,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 158:
+/***/ 163:
 /*!**************************************!*\
   !*** E:/cl_vue/erpApp/mock/index.js ***!
   \**************************************/
@@ -7242,957 +8193,6 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
       100,
       44,
       68] }] } };exports.default = _default;
-
-/***/ }),
-
-/***/ 16:
-/*!********************************************!*\
-  !*** ./node_modules/vuex/dist/vuex.esm.js ***!
-  \********************************************/
-/*! exports provided: Store, install, mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Store", function() { return Store; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "install", function() { return install; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapState", function() { return mapState; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapMutations", function() { return mapMutations; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapGetters", function() { return mapGetters; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapActions", function() { return mapActions; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createNamespacedHelpers", function() { return createNamespacedHelpers; });
-/**
- * vuex v3.0.1
- * (c) 2017 Evan You
- * @license MIT
- */
-var applyMixin = function (Vue) {
-  var version = Number(Vue.version.split('.')[0]);
-
-  if (version >= 2) {
-    Vue.mixin({ beforeCreate: vuexInit });
-  } else {
-    // override init and inject vuex init procedure
-    // for 1.x backwards compatibility.
-    var _init = Vue.prototype._init;
-    Vue.prototype._init = function (options) {
-      if ( options === void 0 ) options = {};
-
-      options.init = options.init
-        ? [vuexInit].concat(options.init)
-        : vuexInit;
-      _init.call(this, options);
-    };
-  }
-
-  /**
-   * Vuex init hook, injected into each instances init hooks list.
-   */
-
-  function vuexInit () {
-    var options = this.$options;
-    // store injection
-    if (options.store) {
-      this.$store = typeof options.store === 'function'
-        ? options.store()
-        : options.store;
-    } else if (options.parent && options.parent.$store) {
-      this.$store = options.parent.$store;
-    }
-  }
-};
-
-var devtoolHook =
-  typeof window !== 'undefined' &&
-  window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
-
-function devtoolPlugin (store) {
-  if (!devtoolHook) { return }
-
-  store._devtoolHook = devtoolHook;
-
-  devtoolHook.emit('vuex:init', store);
-
-  devtoolHook.on('vuex:travel-to-state', function (targetState) {
-    store.replaceState(targetState);
-  });
-
-  store.subscribe(function (mutation, state) {
-    devtoolHook.emit('vuex:mutation', mutation, state);
-  });
-}
-
-/**
- * Get the first item that pass the test
- * by second argument function
- *
- * @param {Array} list
- * @param {Function} f
- * @return {*}
- */
-/**
- * Deep copy the given object considering circular structure.
- * This function caches all nested objects and its copies.
- * If it detects circular structure, use cached copy to avoid infinite loop.
- *
- * @param {*} obj
- * @param {Array<Object>} cache
- * @return {*}
- */
-
-
-/**
- * forEach for object
- */
-function forEachValue (obj, fn) {
-  Object.keys(obj).forEach(function (key) { return fn(obj[key], key); });
-}
-
-function isObject (obj) {
-  return obj !== null && typeof obj === 'object'
-}
-
-function isPromise (val) {
-  return val && typeof val.then === 'function'
-}
-
-function assert (condition, msg) {
-  if (!condition) { throw new Error(("[vuex] " + msg)) }
-}
-
-var Module = function Module (rawModule, runtime) {
-  this.runtime = runtime;
-  this._children = Object.create(null);
-  this._rawModule = rawModule;
-  var rawState = rawModule.state;
-  this.state = (typeof rawState === 'function' ? rawState() : rawState) || {};
-};
-
-var prototypeAccessors$1 = { namespaced: { configurable: true } };
-
-prototypeAccessors$1.namespaced.get = function () {
-  return !!this._rawModule.namespaced
-};
-
-Module.prototype.addChild = function addChild (key, module) {
-  this._children[key] = module;
-};
-
-Module.prototype.removeChild = function removeChild (key) {
-  delete this._children[key];
-};
-
-Module.prototype.getChild = function getChild (key) {
-  return this._children[key]
-};
-
-Module.prototype.update = function update (rawModule) {
-  this._rawModule.namespaced = rawModule.namespaced;
-  if (rawModule.actions) {
-    this._rawModule.actions = rawModule.actions;
-  }
-  if (rawModule.mutations) {
-    this._rawModule.mutations = rawModule.mutations;
-  }
-  if (rawModule.getters) {
-    this._rawModule.getters = rawModule.getters;
-  }
-};
-
-Module.prototype.forEachChild = function forEachChild (fn) {
-  forEachValue(this._children, fn);
-};
-
-Module.prototype.forEachGetter = function forEachGetter (fn) {
-  if (this._rawModule.getters) {
-    forEachValue(this._rawModule.getters, fn);
-  }
-};
-
-Module.prototype.forEachAction = function forEachAction (fn) {
-  if (this._rawModule.actions) {
-    forEachValue(this._rawModule.actions, fn);
-  }
-};
-
-Module.prototype.forEachMutation = function forEachMutation (fn) {
-  if (this._rawModule.mutations) {
-    forEachValue(this._rawModule.mutations, fn);
-  }
-};
-
-Object.defineProperties( Module.prototype, prototypeAccessors$1 );
-
-var ModuleCollection = function ModuleCollection (rawRootModule) {
-  // register root module (Vuex.Store options)
-  this.register([], rawRootModule, false);
-};
-
-ModuleCollection.prototype.get = function get (path) {
-  return path.reduce(function (module, key) {
-    return module.getChild(key)
-  }, this.root)
-};
-
-ModuleCollection.prototype.getNamespace = function getNamespace (path) {
-  var module = this.root;
-  return path.reduce(function (namespace, key) {
-    module = module.getChild(key);
-    return namespace + (module.namespaced ? key + '/' : '')
-  }, '')
-};
-
-ModuleCollection.prototype.update = function update$1 (rawRootModule) {
-  update([], this.root, rawRootModule);
-};
-
-ModuleCollection.prototype.register = function register (path, rawModule, runtime) {
-    var this$1 = this;
-    if ( runtime === void 0 ) runtime = true;
-
-  if (true) {
-    assertRawModule(path, rawModule);
-  }
-
-  var newModule = new Module(rawModule, runtime);
-  if (path.length === 0) {
-    this.root = newModule;
-  } else {
-    var parent = this.get(path.slice(0, -1));
-    parent.addChild(path[path.length - 1], newModule);
-  }
-
-  // register nested modules
-  if (rawModule.modules) {
-    forEachValue(rawModule.modules, function (rawChildModule, key) {
-      this$1.register(path.concat(key), rawChildModule, runtime);
-    });
-  }
-};
-
-ModuleCollection.prototype.unregister = function unregister (path) {
-  var parent = this.get(path.slice(0, -1));
-  var key = path[path.length - 1];
-  if (!parent.getChild(key).runtime) { return }
-
-  parent.removeChild(key);
-};
-
-function update (path, targetModule, newModule) {
-  if (true) {
-    assertRawModule(path, newModule);
-  }
-
-  // update target module
-  targetModule.update(newModule);
-
-  // update nested modules
-  if (newModule.modules) {
-    for (var key in newModule.modules) {
-      if (!targetModule.getChild(key)) {
-        if (true) {
-          console.warn(
-            "[vuex] trying to add a new module '" + key + "' on hot reloading, " +
-            'manual reload is needed'
-          );
-        }
-        return
-      }
-      update(
-        path.concat(key),
-        targetModule.getChild(key),
-        newModule.modules[key]
-      );
-    }
-  }
-}
-
-var functionAssert = {
-  assert: function (value) { return typeof value === 'function'; },
-  expected: 'function'
-};
-
-var objectAssert = {
-  assert: function (value) { return typeof value === 'function' ||
-    (typeof value === 'object' && typeof value.handler === 'function'); },
-  expected: 'function or object with "handler" function'
-};
-
-var assertTypes = {
-  getters: functionAssert,
-  mutations: functionAssert,
-  actions: objectAssert
-};
-
-function assertRawModule (path, rawModule) {
-  Object.keys(assertTypes).forEach(function (key) {
-    if (!rawModule[key]) { return }
-
-    var assertOptions = assertTypes[key];
-
-    forEachValue(rawModule[key], function (value, type) {
-      assert(
-        assertOptions.assert(value),
-        makeAssertionMessage(path, key, type, value, assertOptions.expected)
-      );
-    });
-  });
-}
-
-function makeAssertionMessage (path, key, type, value, expected) {
-  var buf = key + " should be " + expected + " but \"" + key + "." + type + "\"";
-  if (path.length > 0) {
-    buf += " in module \"" + (path.join('.')) + "\"";
-  }
-  buf += " is " + (JSON.stringify(value)) + ".";
-  return buf
-}
-
-var Vue; // bind on install
-
-var Store = function Store (options) {
-  var this$1 = this;
-  if ( options === void 0 ) options = {};
-
-  // Auto install if it is not done yet and `window` has `Vue`.
-  // To allow users to avoid auto-installation in some cases,
-  // this code should be placed here. See #731
-  if (!Vue && typeof window !== 'undefined' && window.Vue) {
-    install(window.Vue);
-  }
-
-  if (true) {
-    assert(Vue, "must call Vue.use(Vuex) before creating a store instance.");
-    assert(typeof Promise !== 'undefined', "vuex requires a Promise polyfill in this browser.");
-    assert(this instanceof Store, "Store must be called with the new operator.");
-  }
-
-  var plugins = options.plugins; if ( plugins === void 0 ) plugins = [];
-  var strict = options.strict; if ( strict === void 0 ) strict = false;
-
-  var state = options.state; if ( state === void 0 ) state = {};
-  if (typeof state === 'function') {
-    state = state() || {};
-  }
-
-  // store internal state
-  this._committing = false;
-  this._actions = Object.create(null);
-  this._actionSubscribers = [];
-  this._mutations = Object.create(null);
-  this._wrappedGetters = Object.create(null);
-  this._modules = new ModuleCollection(options);
-  this._modulesNamespaceMap = Object.create(null);
-  this._subscribers = [];
-  this._watcherVM = new Vue();
-
-  // bind commit and dispatch to self
-  var store = this;
-  var ref = this;
-  var dispatch = ref.dispatch;
-  var commit = ref.commit;
-  this.dispatch = function boundDispatch (type, payload) {
-    return dispatch.call(store, type, payload)
-  };
-  this.commit = function boundCommit (type, payload, options) {
-    return commit.call(store, type, payload, options)
-  };
-
-  // strict mode
-  this.strict = strict;
-
-  // init root module.
-  // this also recursively registers all sub-modules
-  // and collects all module getters inside this._wrappedGetters
-  installModule(this, state, [], this._modules.root);
-
-  // initialize the store vm, which is responsible for the reactivity
-  // (also registers _wrappedGetters as computed properties)
-  resetStoreVM(this, state);
-
-  // apply plugins
-  plugins.forEach(function (plugin) { return plugin(this$1); });
-
-  if (Vue.config.devtools) {
-    devtoolPlugin(this);
-  }
-};
-
-var prototypeAccessors = { state: { configurable: true } };
-
-prototypeAccessors.state.get = function () {
-  return this._vm._data.$$state
-};
-
-prototypeAccessors.state.set = function (v) {
-  if (true) {
-    assert(false, "Use store.replaceState() to explicit replace store state.");
-  }
-};
-
-Store.prototype.commit = function commit (_type, _payload, _options) {
-    var this$1 = this;
-
-  // check object-style commit
-  var ref = unifyObjectStyle(_type, _payload, _options);
-    var type = ref.type;
-    var payload = ref.payload;
-    var options = ref.options;
-
-  var mutation = { type: type, payload: payload };
-  var entry = this._mutations[type];
-  if (!entry) {
-    if (true) {
-      console.error(("[vuex] unknown mutation type: " + type));
-    }
-    return
-  }
-  this._withCommit(function () {
-    entry.forEach(function commitIterator (handler) {
-      handler(payload);
-    });
-  });
-  this._subscribers.forEach(function (sub) { return sub(mutation, this$1.state); });
-
-  if (
-     true &&
-    options && options.silent
-  ) {
-    console.warn(
-      "[vuex] mutation type: " + type + ". Silent option has been removed. " +
-      'Use the filter functionality in the vue-devtools'
-    );
-  }
-};
-
-Store.prototype.dispatch = function dispatch (_type, _payload) {
-    var this$1 = this;
-
-  // check object-style dispatch
-  var ref = unifyObjectStyle(_type, _payload);
-    var type = ref.type;
-    var payload = ref.payload;
-
-  var action = { type: type, payload: payload };
-  var entry = this._actions[type];
-  if (!entry) {
-    if (true) {
-      console.error(("[vuex] unknown action type: " + type));
-    }
-    return
-  }
-
-  this._actionSubscribers.forEach(function (sub) { return sub(action, this$1.state); });
-
-  return entry.length > 1
-    ? Promise.all(entry.map(function (handler) { return handler(payload); }))
-    : entry[0](payload)
-};
-
-Store.prototype.subscribe = function subscribe (fn) {
-  return genericSubscribe(fn, this._subscribers)
-};
-
-Store.prototype.subscribeAction = function subscribeAction (fn) {
-  return genericSubscribe(fn, this._actionSubscribers)
-};
-
-Store.prototype.watch = function watch (getter, cb, options) {
-    var this$1 = this;
-
-  if (true) {
-    assert(typeof getter === 'function', "store.watch only accepts a function.");
-  }
-  return this._watcherVM.$watch(function () { return getter(this$1.state, this$1.getters); }, cb, options)
-};
-
-Store.prototype.replaceState = function replaceState (state) {
-    var this$1 = this;
-
-  this._withCommit(function () {
-    this$1._vm._data.$$state = state;
-  });
-};
-
-Store.prototype.registerModule = function registerModule (path, rawModule, options) {
-    if ( options === void 0 ) options = {};
-
-  if (typeof path === 'string') { path = [path]; }
-
-  if (true) {
-    assert(Array.isArray(path), "module path must be a string or an Array.");
-    assert(path.length > 0, 'cannot register the root module by using registerModule.');
-  }
-
-  this._modules.register(path, rawModule);
-  installModule(this, this.state, path, this._modules.get(path), options.preserveState);
-  // reset store to update getters...
-  resetStoreVM(this, this.state);
-};
-
-Store.prototype.unregisterModule = function unregisterModule (path) {
-    var this$1 = this;
-
-  if (typeof path === 'string') { path = [path]; }
-
-  if (true) {
-    assert(Array.isArray(path), "module path must be a string or an Array.");
-  }
-
-  this._modules.unregister(path);
-  this._withCommit(function () {
-    var parentState = getNestedState(this$1.state, path.slice(0, -1));
-    Vue.delete(parentState, path[path.length - 1]);
-  });
-  resetStore(this);
-};
-
-Store.prototype.hotUpdate = function hotUpdate (newOptions) {
-  this._modules.update(newOptions);
-  resetStore(this, true);
-};
-
-Store.prototype._withCommit = function _withCommit (fn) {
-  var committing = this._committing;
-  this._committing = true;
-  fn();
-  this._committing = committing;
-};
-
-Object.defineProperties( Store.prototype, prototypeAccessors );
-
-function genericSubscribe (fn, subs) {
-  if (subs.indexOf(fn) < 0) {
-    subs.push(fn);
-  }
-  return function () {
-    var i = subs.indexOf(fn);
-    if (i > -1) {
-      subs.splice(i, 1);
-    }
-  }
-}
-
-function resetStore (store, hot) {
-  store._actions = Object.create(null);
-  store._mutations = Object.create(null);
-  store._wrappedGetters = Object.create(null);
-  store._modulesNamespaceMap = Object.create(null);
-  var state = store.state;
-  // init all modules
-  installModule(store, state, [], store._modules.root, true);
-  // reset vm
-  resetStoreVM(store, state, hot);
-}
-
-function resetStoreVM (store, state, hot) {
-  var oldVm = store._vm;
-
-  // bind store public getters
-  store.getters = {};
-  var wrappedGetters = store._wrappedGetters;
-  var computed = {};
-  forEachValue(wrappedGetters, function (fn, key) {
-    // use computed to leverage its lazy-caching mechanism
-    computed[key] = function () { return fn(store); };
-    Object.defineProperty(store.getters, key, {
-      get: function () { return store._vm[key]; },
-      enumerable: true // for local getters
-    });
-  });
-
-  // use a Vue instance to store the state tree
-  // suppress warnings just in case the user has added
-  // some funky global mixins
-  var silent = Vue.config.silent;
-  Vue.config.silent = true;
-  store._vm = new Vue({
-    data: {
-      $$state: state
-    },
-    computed: computed
-  });
-  Vue.config.silent = silent;
-
-  // enable strict mode for new vm
-  if (store.strict) {
-    enableStrictMode(store);
-  }
-
-  if (oldVm) {
-    if (hot) {
-      // dispatch changes in all subscribed watchers
-      // to force getter re-evaluation for hot reloading.
-      store._withCommit(function () {
-        oldVm._data.$$state = null;
-      });
-    }
-    Vue.nextTick(function () { return oldVm.$destroy(); });
-  }
-}
-
-function installModule (store, rootState, path, module, hot) {
-  var isRoot = !path.length;
-  var namespace = store._modules.getNamespace(path);
-
-  // register in namespace map
-  if (module.namespaced) {
-    store._modulesNamespaceMap[namespace] = module;
-  }
-
-  // set state
-  if (!isRoot && !hot) {
-    var parentState = getNestedState(rootState, path.slice(0, -1));
-    var moduleName = path[path.length - 1];
-    store._withCommit(function () {
-      Vue.set(parentState, moduleName, module.state);
-    });
-  }
-
-  var local = module.context = makeLocalContext(store, namespace, path);
-
-  module.forEachMutation(function (mutation, key) {
-    var namespacedType = namespace + key;
-    registerMutation(store, namespacedType, mutation, local);
-  });
-
-  module.forEachAction(function (action, key) {
-    var type = action.root ? key : namespace + key;
-    var handler = action.handler || action;
-    registerAction(store, type, handler, local);
-  });
-
-  module.forEachGetter(function (getter, key) {
-    var namespacedType = namespace + key;
-    registerGetter(store, namespacedType, getter, local);
-  });
-
-  module.forEachChild(function (child, key) {
-    installModule(store, rootState, path.concat(key), child, hot);
-  });
-}
-
-/**
- * make localized dispatch, commit, getters and state
- * if there is no namespace, just use root ones
- */
-function makeLocalContext (store, namespace, path) {
-  var noNamespace = namespace === '';
-
-  var local = {
-    dispatch: noNamespace ? store.dispatch : function (_type, _payload, _options) {
-      var args = unifyObjectStyle(_type, _payload, _options);
-      var payload = args.payload;
-      var options = args.options;
-      var type = args.type;
-
-      if (!options || !options.root) {
-        type = namespace + type;
-        if ( true && !store._actions[type]) {
-          console.error(("[vuex] unknown local action type: " + (args.type) + ", global type: " + type));
-          return
-        }
-      }
-
-      return store.dispatch(type, payload)
-    },
-
-    commit: noNamespace ? store.commit : function (_type, _payload, _options) {
-      var args = unifyObjectStyle(_type, _payload, _options);
-      var payload = args.payload;
-      var options = args.options;
-      var type = args.type;
-
-      if (!options || !options.root) {
-        type = namespace + type;
-        if ( true && !store._mutations[type]) {
-          console.error(("[vuex] unknown local mutation type: " + (args.type) + ", global type: " + type));
-          return
-        }
-      }
-
-      store.commit(type, payload, options);
-    }
-  };
-
-  // getters and state object must be gotten lazily
-  // because they will be changed by vm update
-  Object.defineProperties(local, {
-    getters: {
-      get: noNamespace
-        ? function () { return store.getters; }
-        : function () { return makeLocalGetters(store, namespace); }
-    },
-    state: {
-      get: function () { return getNestedState(store.state, path); }
-    }
-  });
-
-  return local
-}
-
-function makeLocalGetters (store, namespace) {
-  var gettersProxy = {};
-
-  var splitPos = namespace.length;
-  Object.keys(store.getters).forEach(function (type) {
-    // skip if the target getter is not match this namespace
-    if (type.slice(0, splitPos) !== namespace) { return }
-
-    // extract local getter type
-    var localType = type.slice(splitPos);
-
-    // Add a port to the getters proxy.
-    // Define as getter property because
-    // we do not want to evaluate the getters in this time.
-    Object.defineProperty(gettersProxy, localType, {
-      get: function () { return store.getters[type]; },
-      enumerable: true
-    });
-  });
-
-  return gettersProxy
-}
-
-function registerMutation (store, type, handler, local) {
-  var entry = store._mutations[type] || (store._mutations[type] = []);
-  entry.push(function wrappedMutationHandler (payload) {
-    handler.call(store, local.state, payload);
-  });
-}
-
-function registerAction (store, type, handler, local) {
-  var entry = store._actions[type] || (store._actions[type] = []);
-  entry.push(function wrappedActionHandler (payload, cb) {
-    var res = handler.call(store, {
-      dispatch: local.dispatch,
-      commit: local.commit,
-      getters: local.getters,
-      state: local.state,
-      rootGetters: store.getters,
-      rootState: store.state
-    }, payload, cb);
-    if (!isPromise(res)) {
-      res = Promise.resolve(res);
-    }
-    if (store._devtoolHook) {
-      return res.catch(function (err) {
-        store._devtoolHook.emit('vuex:error', err);
-        throw err
-      })
-    } else {
-      return res
-    }
-  });
-}
-
-function registerGetter (store, type, rawGetter, local) {
-  if (store._wrappedGetters[type]) {
-    if (true) {
-      console.error(("[vuex] duplicate getter key: " + type));
-    }
-    return
-  }
-  store._wrappedGetters[type] = function wrappedGetter (store) {
-    return rawGetter(
-      local.state, // local state
-      local.getters, // local getters
-      store.state, // root state
-      store.getters // root getters
-    )
-  };
-}
-
-function enableStrictMode (store) {
-  store._vm.$watch(function () { return this._data.$$state }, function () {
-    if (true) {
-      assert(store._committing, "Do not mutate vuex store state outside mutation handlers.");
-    }
-  }, { deep: true, sync: true });
-}
-
-function getNestedState (state, path) {
-  return path.length
-    ? path.reduce(function (state, key) { return state[key]; }, state)
-    : state
-}
-
-function unifyObjectStyle (type, payload, options) {
-  if (isObject(type) && type.type) {
-    options = payload;
-    payload = type;
-    type = type.type;
-  }
-
-  if (true) {
-    assert(typeof type === 'string', ("Expects string as the type, but found " + (typeof type) + "."));
-  }
-
-  return { type: type, payload: payload, options: options }
-}
-
-function install (_Vue) {
-  if (Vue && _Vue === Vue) {
-    if (true) {
-      console.error(
-        '[vuex] already installed. Vue.use(Vuex) should be called only once.'
-      );
-    }
-    return
-  }
-  Vue = _Vue;
-  applyMixin(Vue);
-}
-
-var mapState = normalizeNamespace(function (namespace, states) {
-  var res = {};
-  normalizeMap(states).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    res[key] = function mappedState () {
-      var state = this.$store.state;
-      var getters = this.$store.getters;
-      if (namespace) {
-        var module = getModuleByNamespace(this.$store, 'mapState', namespace);
-        if (!module) {
-          return
-        }
-        state = module.context.state;
-        getters = module.context.getters;
-      }
-      return typeof val === 'function'
-        ? val.call(this, state, getters)
-        : state[val]
-    };
-    // mark vuex getter for devtools
-    res[key].vuex = true;
-  });
-  return res
-});
-
-var mapMutations = normalizeNamespace(function (namespace, mutations) {
-  var res = {};
-  normalizeMap(mutations).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    res[key] = function mappedMutation () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      var commit = this.$store.commit;
-      if (namespace) {
-        var module = getModuleByNamespace(this.$store, 'mapMutations', namespace);
-        if (!module) {
-          return
-        }
-        commit = module.context.commit;
-      }
-      return typeof val === 'function'
-        ? val.apply(this, [commit].concat(args))
-        : commit.apply(this.$store, [val].concat(args))
-    };
-  });
-  return res
-});
-
-var mapGetters = normalizeNamespace(function (namespace, getters) {
-  var res = {};
-  normalizeMap(getters).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    val = namespace + val;
-    res[key] = function mappedGetter () {
-      if (namespace && !getModuleByNamespace(this.$store, 'mapGetters', namespace)) {
-        return
-      }
-      if ( true && !(val in this.$store.getters)) {
-        console.error(("[vuex] unknown getter: " + val));
-        return
-      }
-      return this.$store.getters[val]
-    };
-    // mark vuex getter for devtools
-    res[key].vuex = true;
-  });
-  return res
-});
-
-var mapActions = normalizeNamespace(function (namespace, actions) {
-  var res = {};
-  normalizeMap(actions).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    res[key] = function mappedAction () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      var dispatch = this.$store.dispatch;
-      if (namespace) {
-        var module = getModuleByNamespace(this.$store, 'mapActions', namespace);
-        if (!module) {
-          return
-        }
-        dispatch = module.context.dispatch;
-      }
-      return typeof val === 'function'
-        ? val.apply(this, [dispatch].concat(args))
-        : dispatch.apply(this.$store, [val].concat(args))
-    };
-  });
-  return res
-});
-
-var createNamespacedHelpers = function (namespace) { return ({
-  mapState: mapState.bind(null, namespace),
-  mapGetters: mapGetters.bind(null, namespace),
-  mapMutations: mapMutations.bind(null, namespace),
-  mapActions: mapActions.bind(null, namespace)
-}); };
-
-function normalizeMap (map) {
-  return Array.isArray(map)
-    ? map.map(function (key) { return ({ key: key, val: key }); })
-    : Object.keys(map).map(function (key) { return ({ key: key, val: map[key] }); })
-}
-
-function normalizeNamespace (fn) {
-  return function (namespace, map) {
-    if (typeof namespace !== 'string') {
-      map = namespace;
-      namespace = '';
-    } else if (namespace.charAt(namespace.length - 1) !== '/') {
-      namespace += '/';
-    }
-    return fn(namespace, map)
-  }
-}
-
-function getModuleByNamespace (store, helper, namespace) {
-  var module = store._modulesNamespaceMap[namespace];
-  if ( true && !module) {
-    console.error(("[vuex] module namespace not found in " + helper + "(): " + namespace));
-  }
-  return module
-}
-
-var index_esm = {
-  Store: Store,
-  install: install,
-  version: '3.0.1',
-  mapState: mapState,
-  mapMutations: mapMutations,
-  mapGetters: mapGetters,
-  mapActions: mapActions,
-  createNamespacedHelpers: createNamespacedHelpers
-};
-
-
-/* harmony default export */ __webpack_exports__["default"] = (index_esm);
-
 
 /***/ }),
 
@@ -8280,90 +8280,6 @@ var index_esm = {
 
   actions: {} };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 175:
-/*!***************************************!*\
-  !*** E:/cl_vue/erpApp/mock/tableW.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
-[{
-  "Area": 0,
-  "Qty": 0,
-  "Amount": 0,
-  "Long": 0,
-  "Week": "三",
-  "Date": "09/11",
-  "FDate": "2019/09/11" },
-{
-  "Area": 0,
-  "Qty": 0,
-  "Amount": 0,
-  "Long": 0,
-  "Week": "四",
-  "Date": "09/12",
-  "FDate": "2019/09/12" },
-{
-  "Area": 0,
-  "Qty": 0,
-  "Amount": 0,
-  "Long": 0,
-  "Week": "五",
-  "Date": "09/13",
-  "FDate": "2019/09/13" },
-{
-  "Area": 0,
-  "Qty": 0,
-  "Amount": 0,
-  "Long": 0,
-  "Week": "六",
-  "Date": "09/14",
-  "FDate": "2019/09/14" },
-{
-  "Area": 0,
-  "Qty": 0,
-  "Amount": 0,
-  "Long": 0,
-  "Week": "日",
-  "Date": "09/15",
-  "FDate": "2019/09/15" },
-{
-  "Area": 0,
-  "Qty": 0,
-  "Amount": 0,
-  "Long": 0,
-  "Week": "一",
-  "Date": "09/16",
-  "FDate": "2019/09/16" },
-{
-  "Area": 0,
-  "Qty": 0,
-  "Amount": 0,
-  "Long": 0,
-  "Week": "二",
-  "Date": "09/17",
-  "FDate": "2019/09/17" },
-{
-  "Area": null,
-  "Qty": null,
-  "Amount": null,
-  "Long": null,
-  "Week": null,
-  "Date": "月累计",
-  "FDate": null },
-{
-  "Area": null,
-  "Qty": null,
-  "Amount": null,
-  "Long": null,
-  "Week": null,
-  "Date": "月平均",
-  "FDate": null }];exports.default = _default;
 
 /***/ }),
 
@@ -8777,6 +8693,90 @@ var localRead = function localRead(key) {
 
 /***/ }),
 
+/***/ 180:
+/*!***************************************!*\
+  !*** E:/cl_vue/erpApp/mock/tableW.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
+[{
+  "Area": 0,
+  "Qty": 0,
+  "Amount": 0,
+  "Long": 0,
+  "Week": "三",
+  "Date": "09/11",
+  "FDate": "2019/09/11" },
+{
+  "Area": 0,
+  "Qty": 0,
+  "Amount": 0,
+  "Long": 0,
+  "Week": "四",
+  "Date": "09/12",
+  "FDate": "2019/09/12" },
+{
+  "Area": 0,
+  "Qty": 0,
+  "Amount": 0,
+  "Long": 0,
+  "Week": "五",
+  "Date": "09/13",
+  "FDate": "2019/09/13" },
+{
+  "Area": 0,
+  "Qty": 0,
+  "Amount": 0,
+  "Long": 0,
+  "Week": "六",
+  "Date": "09/14",
+  "FDate": "2019/09/14" },
+{
+  "Area": 0,
+  "Qty": 0,
+  "Amount": 0,
+  "Long": 0,
+  "Week": "日",
+  "Date": "09/15",
+  "FDate": "2019/09/15" },
+{
+  "Area": 0,
+  "Qty": 0,
+  "Amount": 0,
+  "Long": 0,
+  "Week": "一",
+  "Date": "09/16",
+  "FDate": "2019/09/16" },
+{
+  "Area": 0,
+  "Qty": 0,
+  "Amount": 0,
+  "Long": 0,
+  "Week": "二",
+  "Date": "09/17",
+  "FDate": "2019/09/17" },
+{
+  "Area": null,
+  "Qty": null,
+  "Amount": null,
+  "Long": null,
+  "Week": null,
+  "Date": "月累计",
+  "FDate": null },
+{
+  "Area": null,
+  "Qty": null,
+  "Amount": null,
+  "Long": null,
+  "Week": null,
+  "Date": "月平均",
+  "FDate": null }];exports.default = _default;
+
+/***/ }),
+
 /***/ 19:
 /*!****************************************!*\
   !*** E:/cl_vue/erpApp/config/index.js ***!
@@ -8803,9 +8803,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
                      * @description api请求基础路径 http://120.78.91.203:8082/clerp-app-api/swagger-ui.html
                      */
   baseUrl: {
-    dev: 'http://192.168.168.156:8080', //http://120.78.91.203:8083
-    pro: 'http://120.78.91.203:8083' },
-
+    dev: 'http://192.168.168.156:8080', //http://192.168.168.156:8080
+    pro: 'http://192.168.168.156:8080' //http://120.78.91.203:8083
+  },
 
   baseImgUrl: 'http://120.78.91.203:8083/clerp-app-api',
 
@@ -14307,7 +14307,7 @@ function type(obj) {
 
 function flushCallbacks$1(vm) {
     if (vm.__next_tick_callbacks && vm.__next_tick_callbacks.length) {
-        if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+        if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:flushCallbacks[' + vm.__next_tick_callbacks.length + ']');
@@ -14328,14 +14328,14 @@ function nextTick$1(vm, cb) {
     //1.nextTick 之前 已 setData 且 setData 还未回调完成
     //2.nextTick 之前存在 render watcher
     if (!vm.__next_tick_pending && !hasRenderWatcher(vm)) {
-        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:nextVueTick');
         }
         return nextTick(cb, vm)
     }else{
-        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance$1 = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance$1.is || mpInstance$1.route) + '][' + vm._uid +
                 ']:nextMPTick');
@@ -14411,7 +14411,7 @@ var patch = function(oldVnode, vnode) {
     });
     var diffData = diff(data, mpData);
     if (Object.keys(diffData).length) {
-      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + this._uid +
           ']差量更新',
           JSON.stringify(diffData));
@@ -15408,6 +15408,7 @@ var getValidatorToken = function getValidatorToken(_ref) {var userId = _ref.user
 
 
   return _api.default.request({
+    //'Content-Type': 'application/x-www-form-urlencoded',
     url: "".concat(apiPath, "/user/validatorToken"),
     data: data,
     method: 'POST' });
@@ -15548,7 +15549,11 @@ axios.interceptor.request(function (config, cancel) {/* 请求之前拦截器 */
   config.header = _objectSpread({},
   config.header);
 
-
+  //debugger
+  // 特殊情况 重写 Content-Type
+  if (config['Content-Type'] != null) {
+    config.header['Content-Type'] = config['Content-Type'];
+  }
   currentToken = uni.getStorageSync("TOKEN") == '' ? '' : JSON.parse(uni.getStorageSync("TOKEN")) || '';
   console.warn('请求之前拦截器==Token===' + currentToken);
   config.header.token = currentToken;
@@ -16888,19 +16893,19 @@ var spScanOrder = function spScanOrder(_ref) {var BarCodeStr = _ref.BarCodeStr,S
 
 /***/ }),
 
-/***/ 300:
+/***/ 305:
 /*!**********************************************************!*\
   !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
   \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! regenerator-runtime */ 301);
+module.exports = __webpack_require__(/*! regenerator-runtime */ 306);
 
 
 /***/ }),
 
-/***/ 301:
+/***/ 306:
 /*!************************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime-module.js ***!
   \************************************************************/
@@ -16931,7 +16936,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(/*! ./runtime */ 302);
+module.exports = __webpack_require__(/*! ./runtime */ 307);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -16948,7 +16953,7 @@ if (hadRuntime) {
 
 /***/ }),
 
-/***/ 302:
+/***/ 307:
 /*!*****************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime.js ***!
   \*****************************************************/
@@ -18960,7 +18965,13 @@ var getPaperBoxDeliverySummary = function getPaperBoxDeliverySummary(_ref4) {var
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _cardBoard = __webpack_require__(/*! @/api/cardBoard */ 42);
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _cardBoard = __webpack_require__(/*! @/api/cardBoard */ 42);
+
+
+
+
+
+
 
 
 
@@ -18988,17 +18999,159 @@ var _util = __webpack_require__(/*! @/libs/util */ 18);function _interopRequireD
 var serverBusyTips = "执行失败，请稍后再试！";var _default =
 
 {
-  state: {},
+  state: {
+    executeDropDownDetailsList: uni.getStorageSync("executeDropDownDetailsList") == '' ? '' : JSON.parse(uni.getStorageSync("executeDropDownDetailsList")) },
 
+  getters: {
+    executeDropDownDetailsList_getters: function executeDropDownDetailsList_getters(state, getters) {
+      return state.executeDropDownDetailsList;
+    } },
 
-  mutations: {},
-
+  mutations: {
+    //当前选择功能下标
+    setExecuteDropDownDetailsList: function setExecuteDropDownDetailsList(state, data) {
+      state.executeDropDownDetailsList = data;
+      uni.setStorageSync("executeDropDownDetailsList", JSON.stringify(data));
+    } },
 
   actions: {
-    ///查询班别列表 下拉框
-    getClassBanListAction: function getClassBanListAction(_ref,
+    //仓库货物整理 更改库位
+    updateStorehouseArrangeAction: function updateStorehouseArrangeAction(_ref,
 
     params) {var commit = _ref.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.updateStorehouseArrange)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //仓库货物整理 工单号扫描
+    scanJobNoArrangeAction: function scanJobNoArrangeAction(_ref2,
+
+    params) {var commit = _ref2.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.scanJobNoArrange)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //仓库货物整理 卡板扫描
+    scanCardArrangeAction: function scanCardArrangeAction(_ref3,
+
+    params) {var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.scanCardArrange)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //卡板挪库位
+    delateStockUpDetailedAction: function delateStockUpDetailedAction(_ref4,
+
+    params) {var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.delateStockUpDetailed)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //卡板挪库位
+    setCardBoardNorwayAction: function setCardBoardNorwayAction(_ref5,
+
+    params) {var commit = _ref5.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.setCardBoardNorway)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              commit('setExecuteDropDownDetailsList', data.data);
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    //获取卡板清单列表
+    getCardNumbeInfoListAction: function getCardNumbeInfoListAction(_ref6,
+
+    params) {var commit = _ref6.commit;
+      return new Promise(function (resolve, reject) {
+        try {
+          (0, _cardBoard.getCardNumbeInfoList)(params).then(function (res) {
+            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
+            if (data.success) {
+              resolve(data.data);
+            } else {
+              reject(data.msg);
+            }
+          }).catch(function (err) {
+            //console.error(JSON.stringify(err))
+            reject(serverBusyTips);
+          });
+        } catch (error) {
+          reject(serverBusyTips + error);
+        }
+      });
+    },
+    ///查询班别列表 下拉框
+    getClassBanListAction: function getClassBanListAction(_ref7,
+
+    params) {var commit = _ref7.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getClassBanList)(params).then(function (res) {
@@ -19018,9 +19171,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     ///查询线别列表 下拉框
-    getLineSeparationListAction: function getLineSeparationListAction(_ref2,
+    getLineSeparationListAction: function getLineSeparationListAction(_ref8,
 
-    params) {var commit = _ref2.commit;
+    params) {var commit = _ref8.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getLineSeparationList)(params).then(function (res) {
@@ -19040,9 +19193,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //查询车牌列表 下拉框 
-    getLicensePlateListAction: function getLicensePlateListAction(_ref3,
+    getLicensePlateListAction: function getLicensePlateListAction(_ref9,
 
-    params) {var commit = _ref3.commit;
+    params) {var commit = _ref9.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getLicensePlateList)(params).then(function (res) {
@@ -19062,9 +19215,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //查询 司机 列表 下拉框
-    getDriverListAction: function getDriverListAction(_ref4,
+    getDriverListAction: function getDriverListAction(_ref10,
 
-    params) {var commit = _ref4.commit;
+    params) {var commit = _ref10.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getDriverList)(params).then(function (res) {
@@ -19084,9 +19237,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //查询 装车单号 列表 下拉框 
-    getEntruckingListAction: function getEntruckingListAction(_ref5,
+    getEntruckingListAction: function getEntruckingListAction(_ref11,
 
-    params) {var commit = _ref5.commit;
+    params) {var commit = _ref11.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getEntruckingList)(params).then(function (res) {
@@ -19105,13 +19258,13 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
         }
       });
     },
-    //纸板明细清单
-    getPaperBoardDetailAction: function getPaperBoardDetailAction(_ref6,
+    //获取数据通过存储名称
+    getDataListByProcNameAction: function getDataListByProcNameAction(_ref12,
 
-    params) {var commit = _ref6.commit;
+    params) {var commit = _ref12.commit;
       return new Promise(function (resolve, reject) {
         try {
-          (0, _cardBoard.getPaperBoardDetail)(params).then(function (res) {
+          (0, _cardBoard.getDataListByProcName)(params).then(function (res) {
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
             if (data.success) {
               resolve(data.data);
@@ -19128,9 +19281,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //获取装车清单下拉列表
-    getExecuteDropDownAction: function getExecuteDropDownAction(_ref7,
+    getExecuteDropDownAction: function getExecuteDropDownAction(_ref13,
 
-    params) {var commit = _ref7.commit;
+    params) {var commit = _ref13.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getExecuteDropDown)(params).then(function (res) {
@@ -19150,9 +19303,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //获取装车清单详细
-    getExecuteDropDownDetailsAction: function getExecuteDropDownDetailsAction(_ref8,
+    getExecuteDropDownDetailsAction: function getExecuteDropDownDetailsAction(_ref14,
 
-    params) {var commit = _ref8.commit;
+    params) {var commit = _ref14.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getExecuteDropDownDetails)(params).then(function (res) {
@@ -19172,9 +19325,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //本单清单详情
-    getBoardDetailsAction: function getBoardDetailsAction(_ref9,
+    getBoardDetailsAction: function getBoardDetailsAction(_ref15,
 
-    params) {var commit = _ref9.commit;
+    params) {var commit = _ref15.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getBoardDetails)(params).then(function (res) {
@@ -19193,79 +19346,79 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
         }
       });
     },
-    //获取卡板号
-    getMoveBoardNumbeAction: function getMoveBoardNumbeAction(_ref10,
-
-    params) {var commit = _ref10.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _cardBoard.getMoveBoardNumbe)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
+    // //获取卡板号
+    // getMoveBoardNumbeAction({
+    // 	commit
+    // }, params) {
+    // 	return new Promise((resolve, reject) => {
+    // 		try {
+    // 			getMoveBoardNumbe(params).then(res => {
+    // 				const data = config.isRunApp ? res : res.data //因为web 浏览器 多封装了一层 data 包裹
+    // 				if (data.success) {
+    // 					resolve(data.data)
+    // 				} else {
+    // 					reject(data.msg)
+    // 				}
+    // 			}).catch(err => {
+    // 				//console.error(JSON.stringify(err))
+    // 				reject(serverBusyTips)
+    // 			})
+    // 		} catch (error) {
+    // 			reject(serverBusyTips + error)
+    // 		}
+    // 	})
+    // },
     //库位扫描卡板号
-    getWarehouseBoardNumbeAction: function getWarehouseBoardNumbeAction(_ref11,
-
-    params) {var commit = _ref11.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _cardBoard.getWarehouseBoardNumbe)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
+    // getWarehouseBoardNumbeAction({
+    // 	commit
+    // }, params) {
+    // 	return new Promise((resolve, reject) => {
+    // 		try {
+    // 			getWarehouseBoardNumbe(params).then(res => {
+    // 				const data = config.isRunApp ? res : res.data //因为web 浏览器 多封装了一层 data 包裹
+    // 				if (data.success) {
+    // 					resolve(data.data)
+    // 				} else {
+    // 					reject(data.msg)
+    // 				}
+    // 			}).catch(err => {
+    // 				//console.error(JSON.stringify(err))
+    // 				reject(serverBusyTips)
+    // 			})
+    // 		} catch (error) {
+    // 			reject(serverBusyTips + error)
+    // 		}
+    // 	})
+    // },
     //获取纸板入库卡板号id 
-    getWorkNumbeAction: function getWorkNumbeAction(_ref12,
-
-    params) {var commit = _ref12.commit;
-      return new Promise(function (resolve, reject) {
-        try {
-          (0, _cardBoard.getWorkNumbe)(params).then(function (res) {
-            var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
-            if (data.success) {
-              resolve(data.data);
-            } else {
-              reject(data.msg);
-            }
-          }).catch(function (err) {
-            //console.error(JSON.stringify(err))
-            reject(serverBusyTips);
-          });
-        } catch (error) {
-          reject(serverBusyTips + error);
-        }
-      });
-    },
+    // getWorkNumbeAction({
+    // 	commit
+    // }, params) {
+    // 	return new Promise((resolve, reject) => {
+    // 		try {
+    // 			getWorkNumbe(params).then(res => {
+    // 				const data = config.isRunApp ? res : res.data //因为web 浏览器 多封装了一层 data 包裹
+    // 				if (data.success) {
+    // 					resolve(data.data)
+    // 				} else {
+    // 					reject(data.msg)
+    // 				}
+    // 			}).catch(err => {
+    // 				//console.error(JSON.stringify(err))
+    // 				reject(serverBusyTips)
+    // 			})
+    // 		} catch (error) {
+    // 			reject(serverBusyTips + error)
+    // 		}
+    // 	})
+    // },
     //获取二维码工单号相关信息并新增到数据库
-    getWorkOrderDetailsAction: function getWorkOrderDetailsAction(_ref13,
+    setWorkOrderDetailsAction: function setWorkOrderDetailsAction(_ref16,
 
-    params) {var commit = _ref13.commit;
+    params) {var commit = _ref16.commit;
       return new Promise(function (resolve, reject) {
         try {
-          (0, _cardBoard.getWorkOrderDetails)(params).then(function (res) {
+          (0, _cardBoard.setWorkOrderDetails)(params).then(function (res) {
             var data = _config.default.isRunApp ? res : res.data; //因为web 浏览器 多封装了一层 data 包裹
             if (data.success) {
               resolve(data.data);
@@ -19282,9 +19435,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //保存出仓
-    setWarehousesAction: function setWarehousesAction(_ref14,
+    setWarehousesAction: function setWarehousesAction(_ref17,
 
-    params) {var commit = _ref14.commit;
+    params) {var commit = _ref17.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.setWarehouses)(params).then(function (res) {
@@ -19304,9 +19457,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     //查询 发货员 列表 下拉框
-    getSendGoodsListAction: function getSendGoodsListAction(_ref15,
+    getSendGoodsListAction: function getSendGoodsListAction(_ref18,
 
-    params) {var commit = _ref15.commit;
+    params) {var commit = _ref18.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.getSendGoodsList)(params).then(function (res) {
@@ -19326,9 +19479,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     // 修改卡板号数据 根据卡板号 批量修改
-    setBoardNumberAction: function setBoardNumberAction(_ref16,
+    setBoardNumberAction: function setBoardNumberAction(_ref19,
 
-    params) {var commit = _ref16.commit;
+    params) {var commit = _ref19.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.setBoardNumber)(params).then(function (res) {
@@ -19348,9 +19501,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     // 修改卡板号数据 根据卡板号 可能批量修改
-    setCardBoardNumberAction: function setCardBoardNumberAction(_ref17,
+    setCardBoardNumberAction: function setCardBoardNumberAction(_ref20,
 
-    params) {var commit = _ref17.commit;
+    params) {var commit = _ref20.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.setCardBoardNumber)(params).then(function (res) {
@@ -19370,9 +19523,9 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
       });
     },
     // 修改库位
-    setStationNoAction: function setStationNoAction(_ref18,
+    setStationNoAction: function setStationNoAction(_ref21,
 
-    params) {var commit = _ref18.commit;
+    params) {var commit = _ref21.commit;
       return new Promise(function (resolve, reject) {
         try {
           (0, _cardBoard.setStationNo)(params).then(function (res) {
@@ -19391,6 +19544,7 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
         }
       });
     } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
@@ -19402,12 +19556,103 @@ var serverBusyTips = "执行失败，请稍后再试！";var _default =
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.setStationNo = exports.setCardBoardNumber = exports.setBoardNumber = exports.getSendGoodsList = exports.setWarehouses = exports.getWorkOrderDetails = exports.getWorkNumbe = exports.getWarehouseBoardNumbe = exports.getMoveBoardNumbe = exports.getBoardDetails = exports.getExecuteDropDownDetails = exports.getExecuteDropDown = exports.getPaperBoardDetail = exports.getEntruckingList = exports.getDriverList = exports.getLicensePlateList = exports.getLineSeparationList = exports.getClassBanList = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectDestructuringEmpty(obj) {if (obj == null) throw new TypeError("Cannot destructure undefined");}
-var apiPath = '/clerp-app-api'; //正式环境
+Object.defineProperty(exports, "__esModule", { value: true });exports.setStationNo = exports.setCardBoardNumber = exports.setBoardNumber = exports.getSendGoodsList = exports.setWarehouses = exports.getLineSeparationList = exports.setWorkOrderDetails = exports.getBoardDetails = exports.getExecuteDropDownDetails = exports.getExecuteDropDown = exports.getDataListByProcName = exports.getEntruckingList = exports.getDriverList = exports.getClassBanList = exports.getLicensePlateList = exports.getCardNumbeInfoList = exports.setCardBoardNorway = exports.delateStockUpDetailed = exports.scanCardArrange = exports.scanJobNoArrange = exports.updateStorehouseArrange = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! @/libs/api.request */ 23));
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));
 
-///查询班别列表 下拉框
-var getClassBanList = function getClassBanList(_ref) {_objectDestructuringEmpty(_ref);
+var _qs = _interopRequireDefault(__webpack_require__(/*! qs */ 43));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectDestructuringEmpty(obj) {if (obj == null) throw new TypeError("Cannot destructure undefined");}var apiPath = '/clerp-app-api'; //正式环境
+
+///货物整理 更改库位
+var updateStorehouseArrange = function updateStorehouseArrange(_ref) {var map = _ref.map;
+  //debugger
+  //参数
+  var data = map;
+  return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
+    url: "".concat(apiPath, "/scan/updateStorehouse"),
+    data: data,
+    method: 'POST' });
+
+};
+///货物整理 工单号扫描
+exports.updateStorehouseArrange = updateStorehouseArrange;var scanJobNoArrange = function scanJobNoArrange(_ref2) {var Identification = _ref2.Identification;
+  //参数
+  var data = {
+    Identification: Identification };
+
+  return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
+    url: "".concat(apiPath, "/scan/scanJobNo"),
+    data: data,
+    method: 'GET' });
+
+};
+///货物整理 卡板扫描
+exports.scanJobNoArrange = scanJobNoArrange;var scanCardArrange = function scanCardArrange(_ref3) {var ap_CardNo = _ref3.ap_CardNo;
+  //参数
+  var data = {
+    ap_CardNo: ap_CardNo };
+
+  return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
+    url: "".concat(apiPath, "/scan/scanCard"),
+    data: data,
+    method: 'GET' });
+
+};
+
+///删除备货出仓
+exports.scanCardArrange = scanCardArrange;var delateStockUpDetailed = function delateStockUpDetailed(_ref4) {var id = _ref4.id;
+  //参数
+  var data = {
+    id: id };
+
+  return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
+    url: "".concat(apiPath, "/scan/delateStockUpDetailed"),
+    data: data,
+    method: 'POST' });
+
+};
+
+///纸板明细清单 挪位详情 
+exports.delateStockUpDetailed = delateStockUpDetailed;var setCardBoardNorway = function setCardBoardNorway(_ref5) {var ap_CardNo = _ref5.ap_CardNo;
+  //参数
+  var data = {
+    ap_CardNo: ap_CardNo };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/cardBoardNorway"),
+    data: data,
+    method: 'GET' });
+
+};
+
+///查询车牌 列表 
+exports.setCardBoardNorway = setCardBoardNorway;var getCardNumbeInfoList = function getCardNumbeInfoList(_ref6) {var ap_CardNo = _ref6.ap_CardNo;
+  //参数
+  var data = {
+    ap_CardNo: ap_CardNo };
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/getCardNumbe"),
+    data: data,
+    method: 'GET' });
+
+};
+
+///查询车牌 列表 
+exports.getCardNumbeInfoList = getCardNumbeInfoList;var getLicensePlateList = function getLicensePlateList(_ref7) {_objectDestructuringEmpty(_ref7);
+  //参数
+  var data = {};
+
+  return _api.default.request({
+    url: "".concat(apiPath, "/scan/LicensePlate"),
+    data: data,
+    method: 'POST' });
+
+};
+///查询班别下拉框
+exports.getLicensePlateList = getLicensePlateList;var getClassBanList = function getClassBanList(_ref8) {_objectDestructuringEmpty(_ref8);
   //参数
   var data = {};
 
@@ -19418,44 +19663,21 @@ var getClassBanList = function getClassBanList(_ref) {_objectDestructuringEmpty(
 
 };
 
-///查询线别列表 下拉框
-exports.getClassBanList = getClassBanList;var getLineSeparationList = function getLineSeparationList(_ref2) {_objectDestructuringEmpty(_ref2);
-  //参数
-  var data = {};
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/scan/lineSeparation"),
-    data: data,
-    method: 'POST' });
-
-};
-
-///查询车牌列表 下拉框 
-exports.getLineSeparationList = getLineSeparationList;var getLicensePlateList = function getLicensePlateList(_ref3) {_objectDestructuringEmpty(_ref3);
-  //参数
-  var data = {};
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/scan/LicensePlate"),
-    data: data,
-    method: 'POST' });
-
-};
-
 ///查询 司机 列表 下拉框 
-exports.getLicensePlateList = getLicensePlateList;var getDriverList = function getDriverList(_ref4) {_objectDestructuringEmpty(_ref4);
+exports.getClassBanList = getClassBanList;var getDriverList = function getDriverList(_ref9) {_objectDestructuringEmpty(_ref9);
   //参数
   var data = {};
 
   return _api.default.request({
-    url: "".concat(apiPath, "/scan/drivere"),
+    url: "".concat(apiPath, "/scan/driver"),
     data: data,
     method: 'POST' });
 
 };
 
-///查询 装车单号 列表 下拉框 
-exports.getDriverList = getDriverList;var getEntruckingList = function getEntruckingList(_ref5) {_objectDestructuringEmpty(_ref5);
+
+///装车单号 列表 查询  
+exports.getDriverList = getDriverList;var getEntruckingList = function getEntruckingList(_ref10) {_objectDestructuringEmpty(_ref10);
   //参数
   var data = {};
 
@@ -19466,7 +19688,6 @@ exports.getDriverList = getDriverList;var getEntruckingList = function getEntruc
 
 };
 
-
 /**
    * @description  纸板明细清单 
    * 搜索条件：
@@ -19474,14 +19695,13 @@ exports.getDriverList = getDriverList;var getEntruckingList = function getEntruc
      返回值：
    	(List)
    */exports.getEntruckingList = getEntruckingList;
-var getPaperBoardDetail = function getPaperBoardDetail(_ref6) {var procName = _ref6.procName,params = _ref6.params;
+var getDataListByProcName = function getDataListByProcName(_ref11) {var procName = _ref11.procName,params = _ref11.params;
   //参数
-  var data = {
-    params: params };
-
+  var data = params;
 
   return _api.default.request({
-    url: "".concat(apiPath, "/scan/execute/").concat(procName),
+    'Content-Type': 'application/json;charset=UTF-8',
+    url: "".concat(apiPath, "/s2can/execute/").concat(procName),
     data: data,
     method: 'POST' });
 
@@ -19493,14 +19713,13 @@ var getPaperBoardDetail = function getPaperBoardDetail(_ref6) {var procName = _r
    *   procName,params (存储过程名称) 其它参数
      返回值：
    	(List)
-   */exports.getPaperBoardDetail = getPaperBoardDetail;
-var getExecuteDropDown = function getExecuteDropDown(_ref7) {var procName = _ref7.procName,params = _ref7.params;
+   */exports.getDataListByProcName = getDataListByProcName;
+var getExecuteDropDown = function getExecuteDropDown(_ref12) {var procName = _ref12.procName,params = _ref12.params;
   //参数
-  var data = {
-    params: params };
-
+  var data = params;
 
   return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
     url: "".concat(apiPath, "/scan/executeDropDown/").concat(procName),
     data: data,
     method: 'POST' });
@@ -19515,34 +19734,31 @@ var getExecuteDropDown = function getExecuteDropDown(_ref7) {var procName = _ref
      返回值：
    	(List)
    */exports.getExecuteDropDown = getExecuteDropDown;
-var getExecuteDropDownDetails = function getExecuteDropDownDetails(_ref8) {var procName = _ref8.procName,params = _ref8.params;
+var getExecuteDropDownDetails = function getExecuteDropDownDetails(_ref13) {var procName = _ref13.procName,params = _ref13.params;
   //参数
-  var data = {
-    params: params };
-
+  var data = params;
 
   return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
     url: "".concat(apiPath, "/scan/executeDropDownDetails/").concat(procName),
     data: data,
     method: 'POST' });
 
 };
 
-
 /**
    * @description  本单清单详情  
    * 搜索条件：
    *   procName,params (存储过程名称) 其它参数
+   * @ApiOperation(value = "procName=spGetPaperCOInfoForAPP  ;params={OrderNo:'P191028253'}", notes = "本单清单详情 ")
      返回值：
    	(List)
    */exports.getExecuteDropDownDetails = getExecuteDropDownDetails;
-var getBoardDetails = function getBoardDetails(_ref9) {var procName = _ref9.procName,params = _ref9.params;
+var getBoardDetails = function getBoardDetails(_ref14) {var procName = _ref14.procName,params = _ref14.params;
   //参数
-  var data = {
-    params: params };
-
-
+  var data = params;
   return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
     url: "".concat(apiPath, "/scan/getBoardDetails/").concat(procName),
     data: data,
     method: 'POST' });
@@ -19550,81 +19766,33 @@ var getBoardDetails = function getBoardDetails(_ref9) {var procName = _ref9.proc
 };
 
 /**
-   * @description  获取卡板号 
-   * 搜索条件：
-   *   id (id) 
-     返回值：
-   	(List)
-   */exports.getBoardDetails = getBoardDetails;
-var getMoveBoardNumbe = function getMoveBoardNumbe(_ref10) {var id = _ref10.id;
-  //参数
-  var data = {
-    id: id };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/scan/getMoveBoardNumbe"),
-    data: data,
-    method: 'POST' });
-
-};
-
-
-/**
-   * @description  库位扫描卡板号 
-   * 搜索条件：
-   *   id (字符串) 
-     返回值：
-   	(List)
-   */exports.getMoveBoardNumbe = getMoveBoardNumbe;
-var getWarehouseBoardNumbe = function getWarehouseBoardNumbe(_ref11) {var id = _ref11.id;
-  //参数
-  var data = {
-    id: id };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/scan/getWarehouseBoardNumbe"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description  获取纸板入库卡板号id 
-   * 搜索条件：
-   *   id (字符串) 
-     返回值：
-   	(List)
-   */exports.getWarehouseBoardNumbe = getWarehouseBoardNumbe;
-var getWorkNumbe = function getWorkNumbe(_ref12) {var id = _ref12.id;
-  //参数
-  var data = {
-    id: id };
-
-
-  return _api.default.request({
-    url: "".concat(apiPath, "/scan/getWorkNumbe"),
-    data: data,
-    method: 'POST' });
-
-};
-
-/**
-   * @description  获取二维码工单号相关信息并新增到数据库
+   * @description  提交卡板工单信息列表
    * 搜索条件：
    *   map (对象) 
      返回值：
    	(List)
-   */exports.getWorkNumbe = getWorkNumbe;
-var getWorkOrderDetails = function getWorkOrderDetails(_ref13) {var map = _ref13.map;
+   */exports.getBoardDetails = getBoardDetails;
+var setWorkOrderDetails = function setWorkOrderDetails(_ref15) {var map = _ref15.map;
   //参数
   var data = {
-    map: map };
+    map: map
 
+    //let arrayBuffer = new Uint8Array(map).buffer;
+  };return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
+    url: "".concat(apiPath, "/scan/getWorkOrderDetails"),
+    data: data,
+    method: 'POST' });
+
+};
+
+///查询线别列表 下拉框
+exports.setWorkOrderDetails = setWorkOrderDetails;var getLineSeparationList = function getLineSeparationList(_ref16) {_objectDestructuringEmpty(_ref16);
+  //参数
+  var data = {};
 
   return _api.default.request({
-    url: "".concat(apiPath, "/scan/getWorkOrderDetails"),
+    url: "".concat(apiPath, "/scan/lineSeparation"),
     data: data,
     method: 'POST' });
 
@@ -19636,21 +19804,20 @@ var getWorkOrderDetails = function getWorkOrderDetails(_ref13) {var map = _ref13
    *   procName,params (存储过程名称) 其它参数
      返回值：
    	(List)
-   */exports.getWorkOrderDetails = getWorkOrderDetails;
-var setWarehouses = function setWarehouses(_ref14) {var procName = _ref14.procName,params = _ref14.params;
+   */exports.getLineSeparationList = getLineSeparationList;
+var setWarehouses = function setWarehouses(_ref17) {var procName = _ref17.procName,params = _ref17.params;
   //参数
-  var data = {
-    params: params };
-
+  var data = params;
 
   return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
     url: "".concat(apiPath, "/scan/saveWarehouses/").concat(procName),
     data: data,
     method: 'POST' });
 
 };
 ///查询 发货员 列表 下拉框
-exports.setWarehouses = setWarehouses;var getSendGoodsList = function getSendGoodsList(_ref15) {_objectDestructuringEmpty(_ref15);
+exports.setWarehouses = setWarehouses;var getSendGoodsList = function getSendGoodsList(_ref18) {_objectDestructuringEmpty(_ref18);
   //参数
   var data = {};
 
@@ -19669,19 +19836,19 @@ exports.setWarehouses = setWarehouses;var getSendGoodsList = function getSendGoo
      返回值：
    	(List)
    */exports.getSendGoodsList = getSendGoodsList;
-var setBoardNumber = function setBoardNumber(_ref16) {var map = _ref16.map;
+var setBoardNumber = function setBoardNumber(_ref19) {var map = _ref19.map;
   //参数
   var data = {
     map: map };
 
 
   return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
     url: "".concat(apiPath, "/scan/updateBoardNumber"),
     data: data,
     method: 'POST' });
 
 };
-
 
 /**
    * @description  修改卡板号数据 根据卡板号 可能批量修改
@@ -19690,7 +19857,7 @@ var setBoardNumber = function setBoardNumber(_ref16) {var map = _ref16.map;
      返回值：
    	(List)
    */exports.setBoardNumber = setBoardNumber;
-var setCardBoardNumber = function setCardBoardNumber(_ref17) {var map = _ref17.map;
+var setCardBoardNumber = function setCardBoardNumber(_ref20) {var map = _ref20.map;
   //参数
   var data = {
     map: map };
@@ -19711,22 +19878,330 @@ var setCardBoardNumber = function setCardBoardNumber(_ref17) {var map = _ref17.m
      返回值：
    	(List)
    */exports.setCardBoardNumber = setCardBoardNumber;
-var setStationNo = function setStationNo(_ref18) {var newStationNo = _ref18.newStationNo,StationNo = _ref18.StationNo;
+var setStationNo = function setStationNo(_ref21) {var newStationNo = _ref21.newStationNo,StationNo = _ref21.StationNo;
   //参数
   var data = {
     newStationNo: newStationNo, StationNo: StationNo };
 
 
   return _api.default.request({
+    'Content-Type': 'application/json;charset=UTF-8',
     url: "".concat(apiPath, "/scan/updateStationNo"),
     data: data,
     method: 'POST' });
 
-};exports.setStationNo = setStationNo;
+};
+
+/**
+   * @description  获取卡板号 
+   * 搜索条件：
+   *   id (id) 
+     返回值：
+   	(List)
+   */
+// export const getMoveBoardNumbe = ({ id }) => {
+//   //参数
+//   let data = {
+//     id
+//    }
+
+//  return axios.request({
+//     url: `${apiPath}/scan/getMoveBoardNumbe`,
+//     data,
+//     method: 'POST',
+//   })
+// }
+
+
+/**
+* @description  库位扫描卡板号 
+* 搜索条件：
+*   id (字符串) 
+  返回值：
+	(List)
+*/
+// export const getWarehouseBoardNumbe = ({ id }) => {
+//   //参数
+//   let data = {
+//     id
+//    }
+
+//  return axios.request({
+//     url: `${apiPath}/scan/getWarehouseBoardNumbe`,
+//     data,
+//     method: 'POST',
+//   })
+// }
+
+/**
+* @description  获取纸板入库卡板号id 
+* 搜索条件：
+*   id (字符串) 
+  返回值：
+	(List)
+*/
+// export const getWorkNumbe = ({ id }) => {
+//   //参数
+//   let data = {
+//     id
+//    }
+
+//  return axios.request({
+//     url: `${apiPath}/scan/getWorkNumbe`,
+//     data,
+//     method: 'POST',
+//   })
+// }
+exports.setStationNo = setStationNo;
 
 /***/ }),
 
-/***/ 433:
+/***/ 43:
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var stringify = __webpack_require__(/*! ./stringify */ 44);
+var parse = __webpack_require__(/*! ./parse */ 47);
+var formats = __webpack_require__(/*! ./formats */ 46);
+
+module.exports = {
+    formats: formats,
+    parse: parse,
+    stringify: stringify
+};
+
+
+/***/ }),
+
+/***/ 44:
+/*!******************************************!*\
+  !*** ./node_modules/qs/lib/stringify.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./utils */ 45);
+var formats = __webpack_require__(/*! ./formats */ 46);
+
+var arrayPrefixGenerators = {
+    brackets: function brackets(prefix) { // eslint-disable-line func-name-matching
+        return prefix + '[]';
+    },
+    indices: function indices(prefix, key) { // eslint-disable-line func-name-matching
+        return prefix + '[' + key + ']';
+    },
+    repeat: function repeat(prefix) { // eslint-disable-line func-name-matching
+        return prefix;
+    }
+};
+
+var toISO = Date.prototype.toISOString;
+
+var defaults = {
+    delimiter: '&',
+    encode: true,
+    encoder: utils.encode,
+    encodeValuesOnly: false,
+    serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching
+        return toISO.call(date);
+    },
+    skipNulls: false,
+    strictNullHandling: false
+};
+
+var stringify = function stringify( // eslint-disable-line func-name-matching
+    object,
+    prefix,
+    generateArrayPrefix,
+    strictNullHandling,
+    skipNulls,
+    encoder,
+    filter,
+    sort,
+    allowDots,
+    serializeDate,
+    formatter,
+    encodeValuesOnly
+) {
+    var obj = object;
+    if (typeof filter === 'function') {
+        obj = filter(prefix, obj);
+    } else if (obj instanceof Date) {
+        obj = serializeDate(obj);
+    } else if (obj === null) {
+        if (strictNullHandling) {
+            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder) : prefix;
+        }
+
+        obj = '';
+    }
+
+    if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean' || utils.isBuffer(obj)) {
+        if (encoder) {
+            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder);
+            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder))];
+        }
+        return [formatter(prefix) + '=' + formatter(String(obj))];
+    }
+
+    var values = [];
+
+    if (typeof obj === 'undefined') {
+        return values;
+    }
+
+    var objKeys;
+    if (Array.isArray(filter)) {
+        objKeys = filter;
+    } else {
+        var keys = Object.keys(obj);
+        objKeys = sort ? keys.sort(sort) : keys;
+    }
+
+    for (var i = 0; i < objKeys.length; ++i) {
+        var key = objKeys[i];
+
+        if (skipNulls && obj[key] === null) {
+            continue;
+        }
+
+        if (Array.isArray(obj)) {
+            values = values.concat(stringify(
+                obj[key],
+                generateArrayPrefix(prefix, key),
+                generateArrayPrefix,
+                strictNullHandling,
+                skipNulls,
+                encoder,
+                filter,
+                sort,
+                allowDots,
+                serializeDate,
+                formatter,
+                encodeValuesOnly
+            ));
+        } else {
+            values = values.concat(stringify(
+                obj[key],
+                prefix + (allowDots ? '.' + key : '[' + key + ']'),
+                generateArrayPrefix,
+                strictNullHandling,
+                skipNulls,
+                encoder,
+                filter,
+                sort,
+                allowDots,
+                serializeDate,
+                formatter,
+                encodeValuesOnly
+            ));
+        }
+    }
+
+    return values;
+};
+
+module.exports = function (object, opts) {
+    var obj = object;
+    var options = opts ? utils.assign({}, opts) : {};
+
+    if (options.encoder !== null && options.encoder !== undefined && typeof options.encoder !== 'function') {
+        throw new TypeError('Encoder has to be a function.');
+    }
+
+    var delimiter = typeof options.delimiter === 'undefined' ? defaults.delimiter : options.delimiter;
+    var strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
+    var skipNulls = typeof options.skipNulls === 'boolean' ? options.skipNulls : defaults.skipNulls;
+    var encode = typeof options.encode === 'boolean' ? options.encode : defaults.encode;
+    var encoder = typeof options.encoder === 'function' ? options.encoder : defaults.encoder;
+    var sort = typeof options.sort === 'function' ? options.sort : null;
+    var allowDots = typeof options.allowDots === 'undefined' ? false : options.allowDots;
+    var serializeDate = typeof options.serializeDate === 'function' ? options.serializeDate : defaults.serializeDate;
+    var encodeValuesOnly = typeof options.encodeValuesOnly === 'boolean' ? options.encodeValuesOnly : defaults.encodeValuesOnly;
+    if (typeof options.format === 'undefined') {
+        options.format = formats['default'];
+    } else if (!Object.prototype.hasOwnProperty.call(formats.formatters, options.format)) {
+        throw new TypeError('Unknown format option provided.');
+    }
+    var formatter = formats.formatters[options.format];
+    var objKeys;
+    var filter;
+
+    if (typeof options.filter === 'function') {
+        filter = options.filter;
+        obj = filter('', obj);
+    } else if (Array.isArray(options.filter)) {
+        filter = options.filter;
+        objKeys = filter;
+    }
+
+    var keys = [];
+
+    if (typeof obj !== 'object' || obj === null) {
+        return '';
+    }
+
+    var arrayFormat;
+    if (options.arrayFormat in arrayPrefixGenerators) {
+        arrayFormat = options.arrayFormat;
+    } else if ('indices' in options) {
+        arrayFormat = options.indices ? 'indices' : 'repeat';
+    } else {
+        arrayFormat = 'indices';
+    }
+
+    var generateArrayPrefix = arrayPrefixGenerators[arrayFormat];
+
+    if (!objKeys) {
+        objKeys = Object.keys(obj);
+    }
+
+    if (sort) {
+        objKeys.sort(sort);
+    }
+
+    for (var i = 0; i < objKeys.length; ++i) {
+        var key = objKeys[i];
+
+        if (skipNulls && obj[key] === null) {
+            continue;
+        }
+
+        keys = keys.concat(stringify(
+            obj[key],
+            key,
+            generateArrayPrefix,
+            strictNullHandling,
+            skipNulls,
+            encode ? encoder : null,
+            filter,
+            sort,
+            allowDots,
+            serializeDate,
+            formatter,
+            encodeValuesOnly
+        ));
+    }
+
+    var joined = keys.join(delimiter);
+    var prefix = options.addQueryPrefix === true ? '?' : '';
+
+    return joined.length > 0 ? prefix + joined : '';
+};
+
+
+/***/ }),
+
+/***/ 440:
 /*!******************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/province.js ***!
   \******************************************************************/
@@ -19876,7 +20351,7 @@ provinceData;exports.default = _default;
 
 /***/ }),
 
-/***/ 434:
+/***/ 441:
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/city.js ***!
   \**************************************************************/
@@ -21390,7 +21865,7 @@ cityData;exports.default = _default;
 
 /***/ }),
 
-/***/ 435:
+/***/ 442:
 /*!**************************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/city-data/area.js ***!
   \**************************************************************/
@@ -33943,7 +34418,7 @@ areaData;exports.default = _default;
 
 /***/ }),
 
-/***/ 436:
+/***/ 443:
 /*!********************************************************!*\
   !*** E:/cl_vue/erpApp/components/w-picker/w-picker.js ***!
   \********************************************************/
@@ -34456,144 +34931,444 @@ initPicker;exports.default = _default;
 
 /***/ }),
 
-/***/ 49:
+/***/ 45:
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/utils.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var has = Object.prototype.hasOwnProperty;
+
+var hexTable = (function () {
+    var array = [];
+    for (var i = 0; i < 256; ++i) {
+        array.push('%' + ((i < 16 ? '0' : '') + i.toString(16)).toUpperCase());
+    }
+
+    return array;
+}());
+
+var compactQueue = function compactQueue(queue) {
+    var obj;
+
+    while (queue.length) {
+        var item = queue.pop();
+        obj = item.obj[item.prop];
+
+        if (Array.isArray(obj)) {
+            var compacted = [];
+
+            for (var j = 0; j < obj.length; ++j) {
+                if (typeof obj[j] !== 'undefined') {
+                    compacted.push(obj[j]);
+                }
+            }
+
+            item.obj[item.prop] = compacted;
+        }
+    }
+
+    return obj;
+};
+
+var arrayToObject = function arrayToObject(source, options) {
+    var obj = options && options.plainObjects ? Object.create(null) : {};
+    for (var i = 0; i < source.length; ++i) {
+        if (typeof source[i] !== 'undefined') {
+            obj[i] = source[i];
+        }
+    }
+
+    return obj;
+};
+
+var merge = function merge(target, source, options) {
+    if (!source) {
+        return target;
+    }
+
+    if (typeof source !== 'object') {
+        if (Array.isArray(target)) {
+            target.push(source);
+        } else if (typeof target === 'object') {
+            if (options.plainObjects || options.allowPrototypes || !has.call(Object.prototype, source)) {
+                target[source] = true;
+            }
+        } else {
+            return [target, source];
+        }
+
+        return target;
+    }
+
+    if (typeof target !== 'object') {
+        return [target].concat(source);
+    }
+
+    var mergeTarget = target;
+    if (Array.isArray(target) && !Array.isArray(source)) {
+        mergeTarget = arrayToObject(target, options);
+    }
+
+    if (Array.isArray(target) && Array.isArray(source)) {
+        source.forEach(function (item, i) {
+            if (has.call(target, i)) {
+                if (target[i] && typeof target[i] === 'object') {
+                    target[i] = merge(target[i], item, options);
+                } else {
+                    target.push(item);
+                }
+            } else {
+                target[i] = item;
+            }
+        });
+        return target;
+    }
+
+    return Object.keys(source).reduce(function (acc, key) {
+        var value = source[key];
+
+        if (has.call(acc, key)) {
+            acc[key] = merge(acc[key], value, options);
+        } else {
+            acc[key] = value;
+        }
+        return acc;
+    }, mergeTarget);
+};
+
+var assign = function assignSingleSource(target, source) {
+    return Object.keys(source).reduce(function (acc, key) {
+        acc[key] = source[key];
+        return acc;
+    }, target);
+};
+
+var decode = function (str) {
+    try {
+        return decodeURIComponent(str.replace(/\+/g, ' '));
+    } catch (e) {
+        return str;
+    }
+};
+
+var encode = function encode(str) {
+    // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
+    // It has been adapted here for stricter adherence to RFC 3986
+    if (str.length === 0) {
+        return str;
+    }
+
+    var string = typeof str === 'string' ? str : String(str);
+
+    var out = '';
+    for (var i = 0; i < string.length; ++i) {
+        var c = string.charCodeAt(i);
+
+        if (
+            c === 0x2D // -
+            || c === 0x2E // .
+            || c === 0x5F // _
+            || c === 0x7E // ~
+            || (c >= 0x30 && c <= 0x39) // 0-9
+            || (c >= 0x41 && c <= 0x5A) // a-z
+            || (c >= 0x61 && c <= 0x7A) // A-Z
+        ) {
+            out += string.charAt(i);
+            continue;
+        }
+
+        if (c < 0x80) {
+            out = out + hexTable[c];
+            continue;
+        }
+
+        if (c < 0x800) {
+            out = out + (hexTable[0xC0 | (c >> 6)] + hexTable[0x80 | (c & 0x3F)]);
+            continue;
+        }
+
+        if (c < 0xD800 || c >= 0xE000) {
+            out = out + (hexTable[0xE0 | (c >> 12)] + hexTable[0x80 | ((c >> 6) & 0x3F)] + hexTable[0x80 | (c & 0x3F)]);
+            continue;
+        }
+
+        i += 1;
+        c = 0x10000 + (((c & 0x3FF) << 10) | (string.charCodeAt(i) & 0x3FF));
+        out += hexTable[0xF0 | (c >> 18)]
+            + hexTable[0x80 | ((c >> 12) & 0x3F)]
+            + hexTable[0x80 | ((c >> 6) & 0x3F)]
+            + hexTable[0x80 | (c & 0x3F)];
+    }
+
+    return out;
+};
+
+var compact = function compact(value) {
+    var queue = [{ obj: { o: value }, prop: 'o' }];
+    var refs = [];
+
+    for (var i = 0; i < queue.length; ++i) {
+        var item = queue[i];
+        var obj = item.obj[item.prop];
+
+        var keys = Object.keys(obj);
+        for (var j = 0; j < keys.length; ++j) {
+            var key = keys[j];
+            var val = obj[key];
+            if (typeof val === 'object' && val !== null && refs.indexOf(val) === -1) {
+                queue.push({ obj: obj, prop: key });
+                refs.push(val);
+            }
+        }
+    }
+
+    return compactQueue(queue);
+};
+
+var isRegExp = function isRegExp(obj) {
+    return Object.prototype.toString.call(obj) === '[object RegExp]';
+};
+
+var isBuffer = function isBuffer(obj) {
+    if (obj === null || typeof obj === 'undefined') {
+        return false;
+    }
+
+    return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
+};
+
+module.exports = {
+    arrayToObject: arrayToObject,
+    assign: assign,
+    compact: compact,
+    decode: decode,
+    encode: encode,
+    isBuffer: isBuffer,
+    isRegExp: isRegExp,
+    merge: merge
+};
+
+
+/***/ }),
+
+/***/ 46:
 /*!****************************************!*\
-  !*** E:/cl_vue/erpApp/mixins/index.js ***!
+  !*** ./node_modules/qs/lib/formats.js ***!
   \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 
 
+var replace = String.prototype.replace;
+var percentTwenties = /%20/g;
 
-
-
-
-var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
-                                                                                                                                                         * @name mixin
-                                                                                                                                                         * @description 所有.vue 公共方法
-                                                                                                                                                         * @action .vue 中 添加mixin:[name]
-                                                                                                                                                         *
-                                                                                                                                                         */var _default = { name: 'mixin-base', data: function data() {return { //分页参数设置
-      pageSetting: {
-        current: 1,
-        pageSize: 15,
-        total: 0 },
-
-      pageTitle: '',
-      otherHeight: 0,
-      leftContentHeight: 0 };
-
-  },
-  computed: {
-    menuList: function menuList() {
-      var tempMenuList = this.$store.getters.menuList_getters;
-      return tempMenuList;
-    } },
-
-  methods: {
-    //获取指定内容占用高度,计算剩余高度 单位:PX
-    getOtherContentHeight: function getOtherContentHeight() {var _this = this;var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'bodyContentHeight';
-      return new Promise(function (resolve, reject) {
-        var eleHeight = 0;
-        var _self = _this;
-        var info = uni.createSelectorQuery().select("." + className);
-        info.boundingClientRect(function (data) {//data - 各种参数
-          console.log('other Height:' + data.height); // 获取元素宽度		
-          _self.otherHeight = data.height;
-          eleHeight = data.height;
-          resolve(data.height);
-        }).exec(function (res) {
-        });
-      });
+module.exports = {
+    'default': 'RFC3986',
+    formatters: {
+        RFC1738: function (value) {
+            return replace.call(value, percentTwenties, '+');
+        },
+        RFC3986: function (value) {
+            return value;
+        }
     },
-    //计算设置表格高度
-    setTableHeight: function setTableHeight() {var needOtherHeight = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+    RFC1738: 'RFC1738',
+    RFC3986: 'RFC3986'
+};
 
-      if (!needOtherHeight) {
-        this.otherHeight = 0;
-      }
-      try {
-        //debugger
-        var res = uni.getSystemInfoSync();
-        // console.log('windowHeight:'+res.windowHeight);
-        console.log('CustomBar:' + this.CustomBar);
-        // console.log('bodyContentHeight:'+this.otherHeight);
-        this.leftContentHeight = res.windowHeight - this.CustomBar - this.otherHeight - 10;
-        //console.log('tableHeight:'+this.leftContentHeight);
-        return this.leftContentHeight;
-      } catch (e) {
-        // error
-      }
 
-    },
-    //获取图表路径
-    getImgUrl: function getImgUrl(imgUrl) {
-      return _config.default.baseImgUrl + imgUrl;
-    },
-    // 格式化时间日期
-    formatData: function formatData(strDate) {
-      if (strDate == null) {
-        return '';
-      } else {
-        return this.stringToDate(strDate).format('yyyy-MM-dd');
-      }
-    },
-    // 字符串转日期
-    stringToDate: function stringToDate(dateStr, separator) {
-      if (!separator) {
-        separator = '-';
-      }
-      var dateArr = dateStr.split(separator);
-      var year = parseInt(dateArr[0]);
-      var month;
-      // 处理月份为04这样的情况
-      if (dateArr[1].indexOf('0') === 0) {
-        month = parseInt(dateArr[1].substring(1));
-      } else {
-        month = parseInt(dateArr[1]);
-      }
-      var day = parseInt(dateArr[2]);
-      var date = new Date(year, month - 1, day);
-      return date;
-    },
-    // 验证登陆是否仍旧有效
-    checkLogin: function checkLogin() {
-      // console.warn("menuList:"+this.menuList)
-      var currentLoginToken = uni.getStorageSync('TOKEN');
-      //console.warn('mixins=check==>Token：' + currentLoginToken)
-      if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0) {
-        // 关闭当前页面，跳转到应用内的某个页面。
-        //debugger
-        try {
-          uni.reLaunch({
-            url: '/pages/login/login'
-            //    url: './../login/login',
-            // fail:function(err){
-            //  uni.reLaunch({
-            //       url: './../../login/login'
-            //  })
-            // }
-          });
-        } catch (e) {
-          //TODO handle the exception
+/***/ }),
 
+/***/ 47:
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/parse.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./utils */ 45);
+
+var has = Object.prototype.hasOwnProperty;
+
+var defaults = {
+    allowDots: false,
+    allowPrototypes: false,
+    arrayLimit: 20,
+    decoder: utils.decode,
+    delimiter: '&',
+    depth: 5,
+    parameterLimit: 1000,
+    plainObjects: false,
+    strictNullHandling: false
+};
+
+var parseValues = function parseQueryStringValues(str, options) {
+    var obj = {};
+    var cleanStr = options.ignoreQueryPrefix ? str.replace(/^\?/, '') : str;
+    var limit = options.parameterLimit === Infinity ? undefined : options.parameterLimit;
+    var parts = cleanStr.split(options.delimiter, limit);
+
+    for (var i = 0; i < parts.length; ++i) {
+        var part = parts[i];
+
+        var bracketEqualsPos = part.indexOf(']=');
+        var pos = bracketEqualsPos === -1 ? part.indexOf('=') : bracketEqualsPos + 1;
+
+        var key, val;
+        if (pos === -1) {
+            key = options.decoder(part, defaults.decoder);
+            val = options.strictNullHandling ? null : '';
+        } else {
+            key = options.decoder(part.slice(0, pos), defaults.decoder);
+            val = options.decoder(part.slice(pos + 1), defaults.decoder);
+        }
+        if (has.call(obj, key)) {
+            obj[key] = [].concat(obj[key]).concat(val);
+        } else {
+            obj[key] = val;
+        }
+    }
+
+    return obj;
+};
+
+var parseObject = function (chain, val, options) {
+    var leaf = val;
+
+    for (var i = chain.length - 1; i >= 0; --i) {
+        var obj;
+        var root = chain[i];
+
+        if (root === '[]') {
+            obj = [];
+            obj = obj.concat(leaf);
+        } else {
+            obj = options.plainObjects ? Object.create(null) : {};
+            var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;
+            var index = parseInt(cleanRoot, 10);
+            if (
+                !isNaN(index)
+                && root !== cleanRoot
+                && String(index) === cleanRoot
+                && index >= 0
+                && (options.parseArrays && index <= options.arrayLimit)
+            ) {
+                obj = [];
+                obj[index] = leaf;
+            } else {
+                obj[cleanRoot] = leaf;
+            }
         }
 
-      }
-    } },
+        leaf = obj;
+    }
 
+    return leaf;
+};
 
-  onLoad: function onLoad() {
-    // console.warn('====onLoad mixins====')
-    this.checkLogin();
-  },
-  mounted: function mounted() {
-    //console.warn('.......mixins.......mounted')
-  } };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+var parseKeys = function parseQueryStringKeys(givenKey, val, options) {
+    if (!givenKey) {
+        return;
+    }
+
+    // Transform dot notation to bracket notation
+    var key = options.allowDots ? givenKey.replace(/\.([^.[]+)/g, '[$1]') : givenKey;
+
+    // The regex chunks
+
+    var brackets = /(\[[^[\]]*])/;
+    var child = /(\[[^[\]]*])/g;
+
+    // Get the parent
+
+    var segment = brackets.exec(key);
+    var parent = segment ? key.slice(0, segment.index) : key;
+
+    // Stash the parent if it exists
+
+    var keys = [];
+    if (parent) {
+        // If we aren't using plain objects, optionally prefix keys
+        // that would overwrite object prototype properties
+        if (!options.plainObjects && has.call(Object.prototype, parent)) {
+            if (!options.allowPrototypes) {
+                return;
+            }
+        }
+
+        keys.push(parent);
+    }
+
+    // Loop through children appending to the array until we hit depth
+
+    var i = 0;
+    while ((segment = child.exec(key)) !== null && i < options.depth) {
+        i += 1;
+        if (!options.plainObjects && has.call(Object.prototype, segment[1].slice(1, -1))) {
+            if (!options.allowPrototypes) {
+                return;
+            }
+        }
+        keys.push(segment[1]);
+    }
+
+    // If there's a remainder, just add whatever is left
+
+    if (segment) {
+        keys.push('[' + key.slice(segment.index) + ']');
+    }
+
+    return parseObject(keys, val, options);
+};
+
+module.exports = function (str, opts) {
+    var options = opts ? utils.assign({}, opts) : {};
+
+    if (options.decoder !== null && options.decoder !== undefined && typeof options.decoder !== 'function') {
+        throw new TypeError('Decoder has to be a function.');
+    }
+
+    options.ignoreQueryPrefix = options.ignoreQueryPrefix === true;
+    options.delimiter = typeof options.delimiter === 'string' || utils.isRegExp(options.delimiter) ? options.delimiter : defaults.delimiter;
+    options.depth = typeof options.depth === 'number' ? options.depth : defaults.depth;
+    options.arrayLimit = typeof options.arrayLimit === 'number' ? options.arrayLimit : defaults.arrayLimit;
+    options.parseArrays = options.parseArrays !== false;
+    options.decoder = typeof options.decoder === 'function' ? options.decoder : defaults.decoder;
+    options.allowDots = typeof options.allowDots === 'boolean' ? options.allowDots : defaults.allowDots;
+    options.plainObjects = typeof options.plainObjects === 'boolean' ? options.plainObjects : defaults.plainObjects;
+    options.allowPrototypes = typeof options.allowPrototypes === 'boolean' ? options.allowPrototypes : defaults.allowPrototypes;
+    options.parameterLimit = typeof options.parameterLimit === 'number' ? options.parameterLimit : defaults.parameterLimit;
+    options.strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
+
+    if (str === '' || str === null || typeof str === 'undefined') {
+        return options.plainObjects ? Object.create(null) : {};
+    }
+
+    var tempObj = typeof str === 'string' ? parseValues(str, options) : str;
+    var obj = options.plainObjects ? Object.create(null) : {};
+
+    // Iterate over the keys and setup the new object
+
+    var keys = Object.keys(tempObj);
+    for (var i = 0; i < keys.length; ++i) {
+        var key = keys[i];
+        var newObj = parseKeys(key, tempObj[key], options);
+        obj = utils.merge(obj, newObj, options);
+    }
+
+    return utils.compact(obj);
+};
+
 
 /***/ }),
 
@@ -35484,7 +36259,159 @@ main();
 
 /***/ }),
 
-/***/ 58:
+/***/ 54:
+/*!****************************************!*\
+  !*** E:/cl_vue/erpApp/mixins/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+
+
+
+
+
+
+var _config = _interopRequireDefault(__webpack_require__(/*! @/config */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} /**
+                                                                                                                                                         * @name mixin
+                                                                                                                                                         * @description 所有.vue 公共方法
+                                                                                                                                                         * @action .vue 中 添加mixin:[name]
+                                                                                                                                                         *
+                                                                                                                                                         */var _default = { name: 'mixin-base', data: function data() {return { //分页参数设置
+      pageSetting: {
+        current: 1,
+        pageSize: 15,
+        total: 0 },
+
+      pageTitle: '',
+      otherHeight: 0,
+      leftContentHeight: 0 };
+
+  },
+  computed: {
+    menuList: function menuList() {
+      var tempMenuList = this.$store.getters.menuList_getters;
+      return tempMenuList;
+    } },
+
+  methods: {
+    //获取指定内容占用高度,计算剩余高度 单位:PX
+    getOtherContentHeight: function getOtherContentHeight() {var _this = this;var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'bodyContentHeight';
+      return new Promise(function (resolve, reject) {
+        var eleHeight = 0;
+        var _self = _this;
+        var info = uni.createSelectorQuery().select("." + className);
+        info.boundingClientRect(function (data) {//data - 各种参数
+          console.log('other Height:' + data.height); // 获取元素宽度		
+          _self.otherHeight = data.height;
+          eleHeight = data.height;
+          resolve(data.height);
+        }).exec(function (res) {
+        });
+      });
+    },
+    //计算设置表格高度
+    setTableHeight: function setTableHeight() {var needOtherHeight = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (!needOtherHeight) {
+        this.otherHeight = 0;
+      }
+      try {
+        //debugger
+        var res = uni.getSystemInfoSync();
+        // console.log('windowHeight:'+res.windowHeight);
+        console.log('CustomBar:' + this.CustomBar);
+        // console.log('bodyContentHeight:'+this.otherHeight);
+        this.leftContentHeight = res.windowHeight - this.CustomBar - this.otherHeight - 10;
+        //console.log('tableHeight:'+this.leftContentHeight);
+        return this.leftContentHeight;
+      } catch (e) {
+        // error
+      }
+
+    },
+    //获取图表路径
+    getImgUrl: function getImgUrl(imgUrl) {
+      return _config.default.baseImgUrl + imgUrl;
+    },
+    // 格式化时间日期
+    formatData: function formatData(strDate) {
+      if (strDate == null) {
+        return '';
+      } else {
+        return this.stringToDate(strDate).format('yyyy-MM-dd');
+      }
+    },
+    // 字符串转日期
+    stringToDate: function stringToDate(dateStr, separator) {
+      if (!separator) {
+        separator = '-';
+      }
+      var dateArr = dateStr.split(separator);
+      var year = parseInt(dateArr[0]);
+      var month;
+      // 处理月份为04这样的情况
+      if (dateArr[1].indexOf('0') === 0) {
+        month = parseInt(dateArr[1].substring(1));
+      } else {
+        month = parseInt(dateArr[1]);
+      }
+      var day = parseInt(dateArr[2]);
+      var date = new Date(year, month - 1, day);
+      return date;
+    },
+    // 验证登陆是否仍旧有效
+    checkLogin: function checkLogin() {
+      // console.warn("menuList:"+this.menuList)
+      var currentLoginToken = uni.getStorageSync('TOKEN');
+      //console.warn('mixins=check==>Token：' + currentLoginToken)
+      if (currentLoginToken == null || currentLoginToken === '' || this.menuList == null || this.menuList.length === 0) {
+        // 关闭当前页面，跳转到应用内的某个页面。
+        //debugger
+        try {
+          uni.reLaunch({
+            url: '/pages/login/login'
+            //    url: './../login/login',
+            // fail:function(err){
+            //  uni.reLaunch({
+            //       url: './../../login/login'
+            //  })
+            // }
+          });
+        } catch (e) {
+          //TODO handle the exception
+
+        }
+
+      }
+    } },
+
+
+  onLoad: function onLoad() {
+    // console.warn('====onLoad mixins====')
+    this.checkLogin();
+  },
+  mounted: function mounted() {
+    //console.warn('.......mixins.......mounted')
+  } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 6:
+/*!******************************************************!*\
+  !*** ./node_modules/@dcloudio/uni-stat/package.json ***!
+  \******************************************************/
+/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
+/***/ (function(module) {
+
+module.exports = {"_from":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","_id":"@dcloudio/uni-stat@2.0.0-v3-24020191018001","_inBundle":false,"_integrity":"sha512-nYBm5pRrYzrj2dKMqucWSF2PwInUMnn3MLHM/ik3gnLUEKSW61rzcY1RPlUwaH7c+Snm6N+bAJzmj3GvlrlVXA==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"^2.0.0-alpha-24420191128001","saveSpec":null,"fetchSpec":"^2.0.0-alpha-24420191128001"},"_requiredBy":["/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-v3-24020191018001.tgz","_shasum":"6ef04326cc0b945726413eebe442ab8f47c7536c","_spec":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","_where":"/Users/guoshengqiang/Documents/dcloud-plugins/alpha/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"197e8df53cc9d4c3f6eb722b918ccf51672b5cfe","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-v3-24020191018001"};
+
+/***/ }),
+
+/***/ 63:
 /*!*******************************************************!*\
   !*** E:/cl_vue/erpApp/node_modules/js-md5/src/md5.js ***!
   \*******************************************************/
@@ -35518,7 +36445,7 @@ main();
     root = self;
   }
   var COMMON_JS = !root.JS_MD5_NO_COMMON_JS && typeof module === 'object' && module.exports;
-  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 61);
+  var AMD =  true && __webpack_require__(/*! !webpack amd options */ 66);
   var ARRAY_BUFFER = !root.JS_MD5_NO_ARRAY_BUFFER && typeof ArrayBuffer !== 'undefined';
   var HEX_CHARS = '0123456789abcdef'.split('');
   var EXTRA = [128, 32768, 8388608, -2147483648];
@@ -36176,11 +37103,11 @@ main();
     }
   }
 })();
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 59), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 64), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
 
 /***/ }),
 
-/***/ 59:
+/***/ 64:
 /*!********************************************************!*\
   !*** ./node_modules/node-libs-browser/mock/process.js ***!
   \********************************************************/
@@ -36207,7 +37134,7 @@ exports.binding = function (name) {
     var path;
     exports.cwd = function () { return cwd };
     exports.chdir = function (dir) {
-        if (!path) path = __webpack_require__(/*! path */ 60);
+        if (!path) path = __webpack_require__(/*! path */ 65);
         cwd = path.resolve(dir, cwd);
     };
 })();
@@ -36221,18 +37148,7 @@ exports.features = {};
 
 /***/ }),
 
-/***/ 6:
-/*!******************************************************!*\
-  !*** ./node_modules/@dcloudio/uni-stat/package.json ***!
-  \******************************************************/
-/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
-/***/ (function(module) {
-
-module.exports = {"_from":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","_id":"@dcloudio/uni-stat@2.0.0-v3-24020191018001","_inBundle":false,"_integrity":"sha512-nYBm5pRrYzrj2dKMqucWSF2PwInUMnn3MLHM/ik3gnLUEKSW61rzcY1RPlUwaH7c+Snm6N+bAJzmj3GvlrlVXA==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"^2.0.0-alpha-24420191128001","saveSpec":null,"fetchSpec":"^2.0.0-alpha-24420191128001"},"_requiredBy":["/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-v3-24020191018001.tgz","_shasum":"6ef04326cc0b945726413eebe442ab8f47c7536c","_spec":"@dcloudio/uni-stat@^2.0.0-alpha-24420191128001","_where":"/Users/guoshengqiang/Documents/dcloud-plugins/alpha/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"197e8df53cc9d4c3f6eb722b918ccf51672b5cfe","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-v3-24020191018001"};
-
-/***/ }),
-
-/***/ 60:
+/***/ 65:
 /*!***********************************************!*\
   !*** ./node_modules/path-browserify/index.js ***!
   \***********************************************/
@@ -36464,11 +37380,11 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 59)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 64)))
 
 /***/ }),
 
-/***/ 61:
+/***/ 66:
 /*!****************************************!*\
   !*** (webpack)/buildin/amd-options.js ***!
   \****************************************/
@@ -36490,11 +37406,11 @@ module.exports = __webpack_amd_options__;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "navigationStyle": "custom" }, "pages/login/login": { "navigationBarTitleText": "用户登陆", "navigationStyle": "custom" }, "pages/function/function": { "navigationBarTitleText": "功能", "navigationStyle": "custom" }, "pages/my/my": { "navigationBarTitleText": "关于我", "navigationStyle": "custom" }, "pages/report/report": { "navigationBarTitleText": "报表", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bargainPrice": { "navigationBarTitleText": "特价审批", "navigationStyle": "custom" }, "pages/verify/bargainPrice/bpDetail": { "navigationBarTitleText": "特价详细", "navigationStyle": "custom" }, "pages/verify/originalPaper/originalPaper": { "navigationBarTitleText": "原纸审批", "navigationStyle": "custom" }, "pages/verify/originalPaper/opDetail": { "navigationBarTitleText": "原纸详细", "navigationStyle": "custom" }, "pages/verify/material/material": { "navigationBarTitleText": "辅料审批", "navigationStyle": "custom" }, "pages/verify/material/mtDetail": { "navigationBarTitleText": "辅料详细", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxApproval": { "navigationBarTitleText": "纸箱审批", "navigationStyle": "custom" }, "pages/verify/boxApproval/boxDetail": { "navigationBarTitleText": "纸箱详细", "navigationStyle": "custom" }, "pages/report/deliveryquery/deliveryquery": { "navigationBarTitleText": "送货查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/compfactorykanban": { "navigationBarTitleText": "全厂综合查询", "navigationStyle": "custom" }, "pages/report/compfactorykanban/comFactoryCharts": { "navigationBarTitleText": "全厂综合-图表展示", "navigationStyle": "custom" }, "pages/report/paperorderquery/paperorderquery": { "navigationBarTitleText": "订单查询", "navigationStyle": "custom" }, "pages/report/sumofcustarrears/sumofcustarrears": { "navigationBarTitleText": "客户欠款", "navigationStyle": "custom" }, "pages/warehouse/boxIn/boxIn": { "navigationBarTitleText": "纸箱出入库", "navigationStyle": "custom" }, "pages/warehouse/paperIn/paperIn": { "navigationBarTitleText": "纸板出入口", "navigationStyle": "custom" }, "pages/warehouse/paperOB/paperOB": { "navigationBarTitleText": "原纸出退仓", "navigationStyle": "custom" }, "components/list-select/list-select": { "navigationBarTitleText": "数据列表选择", "navigationStyle": "custom" }, "pages/quotation/area": { "navigationBarTitleText": "纸箱纸质面积报价", "navigationStyle": "custom" }, "pages/quotation/boxProduct": { "navigationBarTitleText": "纸箱纸质产品报价", "navigationStyle": "custom" }, "pages/quotation/boxArea": { "navigationBarTitleText": "纸箱报价", "navigationStyle": "custom" }, "pages/paperboard/progress/progress": { "navigationBarTitleText": "纸板进度查询", "navigationStyle": "custom" }, "pages/paperboard/progress/progressDetail": { "navigationBarTitleText": "纸板进度详细", "navigationStyle": "custom" }, "pages/paperBox/progress/progress": { "navigationBarTitleText": "纸箱进度查询", "navigationStyle": "custom" }, "pages/paperBox/progress/progressDetail": { "navigationBarTitleText": "纸箱进度详细", "navigationStyle": "custom" }, "pages/paperBox/deliveryquery/deliveryquery": { "navigationBarTitleText": "纸箱送货汇总", "navigationStyle": "custom" }, "pages/paperBox/paperorderquery/paperorderquery": { "navigationBarTitleText": "纸箱订单汇总", "navigationStyle": "custom" }, "pages/cardBoard/inStorage/inStorage": { "navigationBarTitleText": "纸板入库卡板、工单扫描", "navigationStyle": "custom" }, "pages/cardBoard/inStorage/inStorageDetail": { "navigationBarTitleText": "卡板详细清单", "navigationStyle": "custom" }, "pages/cardBoard/bindStorage/bindStorage": { "navigationBarTitleText": "卡板指定库位扫描", "navigationStyle": "custom" }, "pages/cardBoard/moveStorage/moveStorage": { "navigationBarTitleText": "卡板挪库位扫描", "navigationStyle": "custom" }, "pages/cardBoard/outStorage/outStorage": { "navigationBarTitleText": "APP备货出仓", "navigationStyle": "custom" }, "pages/cardBoard/outStorage/outStorageDetail": { "navigationBarTitleText": "工单装车及库位详细", "navigationStyle": "custom" }, "pages/cardBoard/outStorage/outStorageEdit": { "navigationBarTitleText": "出仓界面", "navigationStyle": "custom" }, "pages/cardBoard/arrangeStorage/arrangeStorage": { "navigationBarTitleText": "仓库货物整理", "navigationStyle": "custom" } }, "globalStyle": { "navigationBarTextStyle": "white", "navigationBarTitleText": "晨龙ERP", "navigationBarBackgroundColor": "#0081ff", "backgroundColor": "#FFFFFF" } };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "navigationStyle": "custom", "usingComponents": {} }, "pages/login/login": { "navigationBarTitleText": "用户登陆", "navigationStyle": "custom", "usingComponents": {} }, "pages/function/function": { "navigationBarTitleText": "功能", "navigationStyle": "custom", "usingComponents": {} }, "pages/my/my": { "navigationBarTitleText": "关于我", "navigationStyle": "custom", "usingComponents": { "uni-icon": "/components/uni-icon/uni-icon" } }, "pages/report/report": { "navigationBarTitleText": "报表", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/bargainPrice/bargainPrice": { "navigationBarTitleText": "特价审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/bargainPrice/bpDetail": { "navigationBarTitleText": "特价详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/originalPaper/originalPaper": { "navigationBarTitleText": "原纸审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/originalPaper/opDetail": { "navigationBarTitleText": "原纸详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/material/material": { "navigationBarTitleText": "辅料审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/material/mtDetail": { "navigationBarTitleText": "辅料详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/boxApproval/boxApproval": { "navigationBarTitleText": "纸箱审批", "navigationStyle": "custom", "usingComponents": {} }, "pages/verify/boxApproval/boxDetail": { "navigationBarTitleText": "纸箱详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/report/deliveryquery/deliveryquery": { "navigationBarTitleText": "送货查询", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/report/compfactorykanban/compfactorykanban": { "navigationBarTitleText": "全厂综合查询", "navigationStyle": "custom", "usingComponents": { "uni-grid": "/components/uni-grid/uni-grid", "uni-grid-item": "/components/uni-grid-item/uni-grid-item", "uni-icon": "/components/uni-icon/uni-icon" } }, "pages/report/compfactorykanban/comFactoryCharts": { "navigationBarTitleText": "全厂综合-图表展示", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table" } }, "pages/report/paperorderquery/paperorderquery": { "navigationBarTitleText": "订单查询", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/report/sumofcustarrears/sumofcustarrears": { "navigationBarTitleText": "客户欠款", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/warehouse/boxIn/boxIn": { "navigationBarTitleText": "纸箱出入库", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "uni-popup": "/components/uni-popup/uni-popup" } }, "pages/warehouse/paperIn/paperIn": { "navigationBarTitleText": "纸板出入口", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table" } }, "pages/warehouse/paperOB/paperOB": { "navigationBarTitleText": "原纸出退仓", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table" } }, "components/list-select/list-select": { "navigationBarTitleText": "数据列表选择", "navigationStyle": "custom", "usingComponents": {} }, "pages/quotation/area": { "navigationBarTitleText": "纸箱纸质面积报价", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/quotationSF", "z-table": "/components/z-table/z-table" } }, "pages/quotation/boxProduct": { "navigationBarTitleText": "纸箱纸质产品报价", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/quotationSF", "z-table": "/components/z-table/z-table" } }, "pages/quotation/boxArea": { "navigationBarTitleText": "纸箱报价", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/quotationSF", "z-table": "/components/z-table/z-table" } }, "pages/paperboard/progress/progress": { "navigationBarTitleText": "纸板进度查询", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/paperboardSF", "z-table": "/components/z-table/z-table" } }, "pages/paperboard/progress/progressDetail": { "navigationBarTitleText": "纸板进度详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/paperBox/progress/progress": { "navigationBarTitleText": "纸箱进度查询", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/paperboardSF", "z-table": "/components/z-table/z-table" } }, "pages/paperBox/progress/progressDetail": { "navigationBarTitleText": "纸箱进度详细", "navigationStyle": "custom", "usingComponents": {} }, "pages/paperBox/deliveryquery/deliveryquery": { "navigationBarTitleText": "纸箱送货汇总", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/paperBox/paperorderquery/paperorderquery": { "navigationBarTitleText": "纸箱订单汇总", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchForm", "z-table": "/components/z-table/z-table" } }, "pages/cardBoard/inStorage/inStorage": { "navigationBarTitleText": "纸板入库卡板、工单扫描", "navigationStyle": "custom", "usingComponents": { "search-form": "/components/searchForm/searchDataList.vue", "uni-popup": "/components/uni-popup/uni-popup", "uni-icon": "/components/uni-icon/uni-icon", "alert-box": "/components/color-ui-dialog/color-ui-dialog" } }, "pages/cardBoard/inStorage/inStorageDetail": { "navigationBarTitleText": "卡板详细清单", "navigationStyle": "custom", "usingComponents": {} }, "pages/cardBoard/bindStorage/bindStorage": { "navigationBarTitleText": "卡板指定库位扫描", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "search-form": "/components/searchForm/searchDataList.vue", "uni-popup": "/components/uni-popup/uni-popup", "uni-icon": "/components/uni-icon/uni-icon", "alert-box": "/components/color-ui-dialog/color-ui-dialog" } }, "pages/cardBoard/moveStorage/moveStorage": { "navigationBarTitleText": "卡板挪库位扫描", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "search-form": "/components/searchForm/searchDataList.vue", "uni-popup": "/components/uni-popup/uni-popup", "uni-icon": "/components/uni-icon/uni-icon", "alert-box": "/components/color-ui-dialog/color-ui-dialog" } }, "pages/cardBoard/outStorage/outStorage": { "navigationBarTitleText": "APP备货出仓", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "search-form": "/components/searchForm/searchDataList.vue", "uni-popup": "/components/uni-popup/uni-popup", "uni-icon": "/components/uni-icon/uni-icon", "alert-box": "/components/color-ui-dialog/color-ui-dialog" } }, "pages/cardBoard/outStorage/outStorageDetail": { "navigationBarTitleText": "工单装车及库位详细", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "search-form": "/components/searchForm/searchDataList.vue", "uni-popup": "/components/uni-popup/uni-popup", "uni-icon": "/components/uni-icon/uni-icon" } }, "pages/cardBoard/outStorage/outStorageEdit": { "navigationBarTitleText": "出仓界面", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "search-form": "/components/searchForm/searchDataList.vue", "uni-popup": "/components/uni-popup/uni-popup", "uni-icon": "/components/uni-icon/uni-icon", "alert-box": "/components/color-ui-dialog/color-ui-dialog" } }, "pages/cardBoard/arrangeStorage/arrangeStorage": { "navigationBarTitleText": "仓库货物整理", "navigationStyle": "custom", "usingComponents": { "z-table": "/components/z-table/z-table", "search-form": "/components/searchForm/searchDataList.vue", "uni-popup": "/components/uni-popup/uni-popup", "uni-icon": "/components/uni-icon/uni-icon", "alert-box": "/components/color-ui-dialog/color-ui-dialog" } } }, "globalStyle": { "navigationBarTextStyle": "white", "navigationBarTitleText": "晨龙ERP", "navigationBarBackgroundColor": "#0081ff", "backgroundColor": "#FFFFFF" } };exports.default = _default;
 
 /***/ }),
 
-/***/ 70:
+/***/ 75:
 /*!*********************************************!*\
   !*** E:/cl_vue/erpApp/libs/eventBusType.js ***!
   \*********************************************/

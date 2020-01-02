@@ -1,0 +1,245 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">工单装车及库位详细</block>
+		</cu-custom>
+		<!-- ===卡板指定库位扫描=== -->
+		<form>
+		    <view ref="elForm" class="elForm" >
+		   
+		   </view>
+		</form>
+		<view class="bingStorage-zTable">
+			<zTable :stickSide="true" @onClick='onClickRowEvent' :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="cardBoardNoInfoData" :columns="cardBoardNoInfoColumns"></zTable>
+		</view>
+		<!--  // 数据修改界面 -->
+		 <view>
+		  	<uni-popup ref="popup" type="bottom">
+		  		<form>
+		  			<view>
+		  				
+		  				<view class="cu-form-group border-top">
+		  					<view class="title">工单号:</view>
+		  					<input disabled v-model="currentSelectItem.ap_OrderNo"  placeholder="工单号" name="input"></input>
+		  				</view>
+							<view class="cu-form-group border-top">
+								<view class="title">客ㅤ户:</view>
+								<input disabled @click="setSearchDataListSource('guest')" v-model="currentSelectItem.ap_CustName" placeholder="客户" name="input"></input>
+								<text @click="setSearchDataListSource('guest')" class='cuIcon-rounddown text-green'></text>
+							</view>
+		  				<view class="flex border-top">
+		  			<view class="flex-sub">
+		  				<view class="cu-form-group">
+		  					<view class="title">线ㅤ别:</view>
+		  					<input disabled @click="setSearchDataListSource('Nline')" v-model="currentSelectItem.ap_Line" placeholder="线别" name="input"></input>
+		  					<text @click="setSearchDataListSource('Nline')" class='cuIcon-rounddown text-green'></text>
+		  				</view>
+		  			</view>
+		  			<view class="flex-sub">
+		  				<view class="cu-form-group">
+		  					<view class="title">班ㅤ别:</view>
+		  					<input disabled @click="setSearchDataListSource('Nclass')" v-model="currentSelectItem.ap_ClassNo" placeholder="班别" name="input"></input>
+		  					<text @click="setSearchDataListSource('Nclass')" class='cuIcon-rounddown text-green'></text>
+		  				</view>
+		  			</view>
+						</view>
+						       
+								<view class="flex border-top">
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">纸ㅤ质:</view>
+											<input v-model="currentSelectItem.ap_ArtID"  :disabled="true" placeholder="纸质" name="input"></input>
+										</view>
+									</view>
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">规ㅤ格:</view>
+											<input v-model="currentSelectItem.ap_Size" :disabled="true" placeholder="规ㅤ格" name="input"></input>
+										</view>
+									</view>
+								
+								</view>
+						
+								<view class="flex border-top">
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">状ㅤ态:</view>
+											<input :value="currentSelectItem.ap_Status" :disabled="true" placeholder="状ㅤ态" name="input"></input>
+										</view>
+									</view>
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">本板数:</view>
+											<input class="cl-modifyInput" v-model="currentSelectItem.ap_Qty"   placeholder="本板数" name="input"></input>
+										</view>
+									</view>
+								</view>
+								<view ref="elBtn"  class="elBtn margin-text-center margin-top-sm">
+											<view  class="flex  p-xs margin-bottom-sm mb-sm">
+												
+												<view  class="flex-twice  radius">
+													<button @click="closePopup()" class="cu-btn block round line-blue margin-tb-sm lg" > 取消</button>
+												</view> 
+												
+														<view  class="flex-twice  margin-left  radius"> 
+														<button @click="updateInfo()" :loading="false" :disabled="false" type="" class="cu-btn block bg-green margin-tb-sm lg" > 确认</button>
+														</view>
+												
+											</view>
+								</view>
+		  			</view>
+		  		</form>
+		  	</uni-popup>
+		</view>
+	</view>
+</template>
+
+<script>
+	import zTable from "@/components/z-table/z-table.vue"
+	import uniIcon from "@/components/uni-icon/uni-icon.vue"
+	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
+	//纸板入库卡板、工单扫描
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	export default {
+		name:'inStorage',//纸板入库卡板、工单扫描
+		mixins:[baseMixin],
+		components:{zTable,searchForm,uniPopup,uniIcon},
+		data() {
+			return {
+				currentSelectItem:{},// 当前选择对象
+				tableHeight:400,//表格高度
+				errorContent:'暂无数据',//数据加载中...
+				cardBoardNoInfoData:[{"ap_CardNo":"6","ap_CustID":"用户编号","ap_StationNo":"0","ap_ClassNo":"班别","ap_OrderNo":"1","ap_Size":"0","ap_StaScanTime":"2019-12-19 19:32:19","CreaterDate":"2019-12-19 19:32:19","mendDate":"2019-12-19 19:32:19","Creater":"22","ap_ZoneName":"","ap_CustName":"","ap_MinSize":"1","ap_Status":"0","ID1":2240080,"ap_CarScanTime":"2019-12-19 19:32:19","ap_Qty":1,"mend":"0","ap_Line":"线别","ap_ArtID":"15"},{"ap_CardNo":"6","ap_CustID":"用户编号","ap_StationNo":"0","ap_ClassNo":"班别232","ap_OrderNo":"1","ap_Size":"0","ap_StaScanTime":"2019-12-20 14:42:06","CreaterDate":"2019-12-20 14:42:06","mendDate":"2019-12-20 14:42:06","Creater":"22","ap_ZoneName":"","ap_CustName":"null","ap_MinSize":"1","ap_Status":"0","ID1":2240100,"ap_CarScanTime":"2019-12-20 14:42:06","ap_Qty":1,"mend":"0","ap_Line":"线别222","ap_ArtID":"15"},{"ap_CardNo":"6","ap_CustID":"用户编号","ap_StationNo":"0","ap_ClassNo":"班别232","ap_OrderNo":"1","ap_Size":"0","ap_StaScanTime":"2019-12-20 14:42:21","CreaterDate":"2019-12-20 14:42:21","mendDate":"2019-12-20 14:42:21","Creater":"22","ap_ZoneName":"","ap_CustName":"null","ap_MinSize":"1","ap_Status":"0","ID1":2240102,"ap_CarScanTime":"2019-12-20 14:42:21","ap_Qty":1,"mend":"0","ap_Line":"线别222","ap_ArtID":"15"},{"ap_CardNo":"6","ap_CustID":"用户编号","ap_StationNo":"0","ap_ClassNo":"班别","ap_OrderNo":"1","ap_Size":"0","ap_StaScanTime":"2019-12-21 08:40:01","CreaterDate":"2019-12-21 08:40:01","mendDate":"2019-12-21 08:40:01","Creater":"22","ap_ZoneName":"","ap_CustName":"null","ap_MinSize":"1","ap_Status":"0","ID1":2240124,"ap_CarScanTime":"2019-12-21 08:40:01","ap_Qty":1,"mend":"0","ap_Line":"线别","ap_ArtID":"15"},{"ap_CardNo":"6","ap_CustID":"用户编号","ap_StationNo":"0","ap_ClassNo":"B","ap_OrderNo":"1","ap_Size":"0","ap_StaScanTime":"2019-12-21 08:41:07","CreaterDate":"2019-12-21 08:41:07","mendDate":"2019-12-21 08:41:07","Creater":"22","ap_ZoneName":"","ap_CustName":"null","ap_MinSize":"1","ap_Status":"0","ID1":2240125,"ap_CarScanTime":"2019-12-21 08:41:07","ap_Qty":1000,"mend":"0","ap_Line":"2500富力线","ap_ArtID":"15"}],
+				cardBoardNoInfoColumns: [
+				{
+					key: 'ap_OrderNo',
+					title: '状态',
+					width: 200
+				}, 
+				{
+					key: 'ap_ArtID',
+					title: '库位',
+					width: 200
+				}, 
+				{
+					key: 'ap_OrderNo',
+					title: '客户',
+					width: 200
+				}, 
+				{
+					key: 'ap_OrderNo',
+					title: '工单号',
+					width: 200
+				}, 
+				
+				{
+					key: 'ap_Size',
+					title: '需装数',
+					width: 200
+				}, 
+				{
+					key: 'ap_Qty',
+					title: '扫描数',
+					width: 145
+				},
+				{
+					key: 'ap_CustName',
+					title: '纸质',
+					width: 145
+				},
+				{
+					key: 'ap_CustName',
+					title: '规格',
+					width: 145
+				},
+				{
+					key: 'ap_CustName',
+					title: '小尺寸',
+					width: 145
+				},
+				{
+					key: 'ap_CustName',
+					title: '地区',
+					width: 145
+				},
+				{
+					key: 'ap_CustName',
+					title: '卡板号',
+					width: 145
+				},
+				{title:'操作',listenerClick:true, width: 130,titleAlign:'center',columnAlign:'center',
+				format: {
+					template: "<button class='cu-btn round line-green sm'>编辑</button>",
+					names: []
+				}},
+				
+				],
+			}
+		},
+		// #ifdef H5
+		mounted () {
+			//this.cardBoardNoInfoData = this.$store.getters.executeDropDownDetailsList_getters;
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		// #endif
+		methods: {
+			// 更新选择的工单装车明细数量
+			updateInfo(){
+				this.closePopup()
+			},
+			//查看详细 获取对应行的数据
+			onClickRowEvent(rowItem){
+				this.openPopup()
+			},
+			// 打开修改弹框
+			openPopup(){
+				this.$refs.popup.open()
+			},
+			// 关闭修改弹框
+			closePopup(){
+				this.$refs.popup.close()
+			},
+			 async getTableHeight(){
+			 			  let _self=this
+			 			  let tempHeight =  _self.setTableHeight()
+			 			  let otherHeight= await _self.getOtherContentHeight("elForm") 
+			 			 
+			 			  if(otherHeight!=null){
+			 			  	
+			 			  	_self.tableHeight =tempHeight-otherHeight
+			 			  }
+			 		
+			 			},
+			
+				//页面通讯,事件注册
+				messageRegister(){
+				  // 初始化数据
+				},
+
+			
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

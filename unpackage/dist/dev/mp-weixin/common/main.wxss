@@ -6182,4 +6182,7 @@ radio-group label, checkbox-group label{
 .cl-tableDesc{
 	color: #007AFF;
 }
+.cl-modifyInput{
+	border-bottom: 1px #09BB07 solid;
+}
 

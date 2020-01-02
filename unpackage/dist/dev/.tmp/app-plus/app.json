@@ -33,7 +33,12 @@
     "pages/paperBox/paperorderquery/paperorderquery",
     "pages/cardBoard/inStorage/inStorage",
     "pages/cardBoard/inStorage/inStorageDetail",
-    "pages/cardBoard/bindStorage/bindStorage"
+    "pages/cardBoard/bindStorage/bindStorage",
+    "pages/cardBoard/moveStorage/moveStorage",
+    "pages/cardBoard/outStorage/outStorage",
+    "pages/cardBoard/outStorage/outStorageDetail",
+    "pages/cardBoard/outStorage/outStorageEdit",
+    "pages/cardBoard/arrangeStorage/arrangeStorage"
   ],
   "window": {
     "navigationBarTextStyle": "white",
@@ -58,18 +63,6 @@
         "selectedIconPath": "static/index-checked.png"
       },
       {
-        "pagePath": "pages/function/function",
-        "text": "功能",
-        "iconPath": "static/function-unChecked.png",
-        "selectedIconPath": "static/funtion-checked.png"
-      },
-      {
-        "pagePath": "pages/report/report",
-        "text": "报表",
-        "iconPath": "static/count-unChecked.png",
-        "selectedIconPath": "static/count-checked.png"
-      },
-      {
         "pagePath": "pages/my/my",
         "text": "我的",
         "iconPath": "static/my-unChecked.png",
@@ -83,7 +76,7 @@
     "alwaysShowBeforeRender": true,
     "autoclose": false
   },
-  "appname": "erpApp",
+  "appname": "仓库扫码",
   "compilerVersion": "2.4.6",
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"

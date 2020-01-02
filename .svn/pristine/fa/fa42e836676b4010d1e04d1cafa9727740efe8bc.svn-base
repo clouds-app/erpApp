@@ -1,0 +1,166 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">保存出仓</block>
+		</cu-custom>
+		<!-- ===卡板指定库位扫描=== -->
+		<form>
+		    <view ref="elForm" class="elForm" >
+		  <view  class="cu-form-group border-top">
+		  	<view class="title">车牌:</view>
+		  	<input @click="getCarGoodsNo()" disabled v-model="formItem.carGoodsNo"  placeholder="请选择车牌" name="input"></input>
+		  	<text @click="getCarGoodsNo()" class='cuIcon-rounddown text-green'></text>
+		  </view>
+		 <view  class="cu-form-group border-top">
+		 	<view class="title">司机:</view>
+		 	<input @click="getCarGoodsNo()" disabled v-model="formItem.carGoodsNo"  placeholder="请选择司机" name="input"></input>
+		 	<text @click="getCarGoodsNo()" class='cuIcon-rounddown text-green'></text>
+		 </view>
+			<view  class="cu-form-group border-top">
+				<view class="title">装车:</view>
+				<input @click="getCarGoodsNo()" disabled v-model="formItem.carGoodsNo"  placeholder="请选择装车" name="input"></input>
+				<text @click="getCarGoodsNo()" class='cuIcon-rounddown text-green'></text>
+			</view>
+			<view  class="cu-form-group border-top">
+				<view class="title">发货:</view>
+				<input @click="getCarGoodsNo()" disabled v-model="formItem.carGoodsNo"  placeholder="请选择发货" name="input"></input>
+				<text @click="getCarGoodsNo()" class='cuIcon-rounddown text-green'></text>
+			</view>
+			<view  class="cu-form-group border-top">
+				<view class="title">送货日期:</view>
+				<input @click="getCarGoodsNo()" disabled v-model="formItem.carGoodsNo"  placeholder="请选择送货日期" name="input"></input>
+				<text @click="getCarGoodsNo()" class='cuIcon-rounddown text-green'></text>
+			</view>
+		   </view>
+		</form>
+		<view :style="[{height: tableHeight-10 + 'px' }]">
+			
+		</view>
+		<!-- 操作 按钮 -->
+				<view ref="elBtn"  class="elBtn margin-text-center">
+					  <view class="text-red">
+						 
+					  	 <text>
+							 保存出仓自动生成送货单，
+							 不能再进行修改，
+							 如需修改明细请于ERP送货单中进行修改
+							 <p style="margin-top: 20rpx;"></p>
+						 </text>
+						 
+					  </view>
+					   <view  class="flex  p-xs ">
+						
+					   <view  class="flex-twice  radius">
+						<button :loading="false" :disabled="false" @click="preChangeCardNo()" class="cu-btn block round line-blue  lg" > 取消返回</button>
+					</view> 
+						<view  class="flex-sub radius">
+								
+								</view>
+								<view  class="flex-twice  radius"> 
+								<button @click="goToOtherPage()" :loading="false" :disabled="false" type="" class="cu-btn block bg-green  lg" > 保存出仓</button>
+								</view>
+						
+					</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	import zTable from "@/components/z-table/z-table.vue"
+	import uniIcon from "@/components/uni-icon/uni-icon.vue"
+	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
+	//纸板入库卡板、工单扫描
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	export default {
+		name:'inStorage',//纸板入库卡板、工单扫描
+		mixins:[baseMixin],
+		components:{zTable,searchForm,uniPopup,uniIcon},
+		data() {
+			return {
+				tableHeight:400,//表格高度
+				formItem:{
+					cardBoardNo:'',//卡板号
+					kuNo:''//库位号
+				}
+			}
+		},
+		// #ifdef H5
+		mounted () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		// #endif
+		methods: {
+			 // 动态获取设置滚动条高度,适配整屏
+			 async getTableHeight(){
+			 			 // debugger
+			 			  let _self=this
+			 			  let tempHeight =  _self.setTableHeight()
+			 			  let otherHeight= await _self.getOtherContentHeight("elForm") 
+			 			  let otherHeight2 = await _self.getOtherContentHeight("elBtn")
+			 			  if(otherHeight!=null && otherHeight2!=null){
+			 			  	
+			 			  	_self.tableHeight =tempHeight-otherHeight-otherHeight2-20
+			 			  }
+			 		
+			 			},
+				//映射方法
+			...mapActions(['getClassBanListAction']),
+				//页面通讯,事件注册
+				messageRegister(){
+				  // 初始化数据
+				},
+
+			   //===打开扫描===
+				turnOnScanCode(type){
+					this.scanType =type
+					let _self =this
+					// 调起条码扫描
+					uni.scanCode({
+					    scanType: 'barCode', // 固定条形码
+					    success: function (res) {
+					        console.log('条码内容：' + res.result);
+							switch (type){
+								case 'cardBoardNo': 
+								    //卡板号
+								    this.formItem.cardBoardNo = res.result
+									//_self.getCardBoardNoInfo() //工单号验证查询
+									break;
+								case 'kuNo': 
+									    //库位号
+									    this.formItem.kuNo = res.result
+										//_self.getWorkNoInfo() //工单号验证查询
+										break;
+								default:
+									break;
+							}
+						
+					    }
+					});
+				},
+			
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

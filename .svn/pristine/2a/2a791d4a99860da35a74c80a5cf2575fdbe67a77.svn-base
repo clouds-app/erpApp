@@ -1,0 +1,297 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">工单装车及库位详细</block>
+		</cu-custom>
+		<!-- ===卡板指定库位扫描=== -->
+		<form>
+		    <view ref="elForm" class="elForm" >
+		   
+		   </view>
+		</form>
+		<view class="bingStorage-zTable">
+			<zTable :stickSide="true" @onClick='onClickRowEvent' :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="cardBoardNoInfoData" :columns="cardBoardNoInfoColumns"></zTable>
+		</view>
+		<!--  // 数据修改界面 -->
+		 <view>
+		  	<uni-popup ref="popup" type="bottom">
+		  		<form>
+		  			<view>
+		  				
+		  				<!-- <view class="cu-form-group border-top">
+		  					<view class="title">工单号:</view>
+		  					<input disabled v-model="currentSelectItem.OrderNo"  placeholder="工单号" name="input"></input>
+		  				</view>
+							<view class="cu-form-group border-top">
+								<view class="title">客ㅤ户:</view>
+								<input disabled v-model="currentSelectItem.CustName" placeholder="客户" name="input"></input>
+								
+							</view> -->
+							<view class="flex border-top">
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">客ㅤ户:</view>
+									<input disabled v-model="currentSelectItem.CustName" placeholder="客ㅤ户" name="input"></input>
+								</view>
+							</view>
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">工单号:</view>
+									<input disabled  v-model="currentSelectItem.OrderNo" placeholder="工单号" name="input"></input>
+								</view>
+							</view>
+								</view>
+								<!-- <view class="cu-form-group border-top">
+									<view class="title">库ㅤ位:</view>
+									<input disabled v-model="currentSelectItem.StationNo" placeholder="库ㅤ位" name="input"></input>
+									
+								</view> -->
+								<view class="flex border-top">
+								<view class="flex-sub">
+									<view class="cu-form-group">
+										<view class="title">库ㅤ位:</view>
+										<input disabled v-model="currentSelectItem.StationNo" placeholder="库ㅤ位" name="input"></input>
+									</view>
+								</view>
+								<view class="flex-sub">
+									<view class="cu-form-group">
+										<view class="title">状ㅤ态:</view>
+										<input disabled  v-model="currentSelectItem.Status" placeholder="状ㅤ态" name="input"></input>
+									</view>
+								</view>
+									</view>
+		  				<view class="flex border-top">
+		  			<view class="flex-sub">
+		  				<view class="cu-form-group">
+		  					<view class="title">需装数:</view>
+		  					<input disabled v-model="currentSelectItem.Qty" placeholder="库位" name="input"></input>
+		  				</view>
+		  			</view>
+		  			<view class="flex-sub">
+		  				<view class="cu-form-group">
+		  					<view class="title">扫描数:</view>
+		  					<input  class="cl-modifyInput" v-model="currentSelectItem.ScanQty" placeholder="需装数" name="input"></input>
+		  				</view>
+		  			</view>
+						</view>
+						       
+								<view class="flex border-top">
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">纸ㅤ质:</view>
+											<input v-model="currentSelectItem.ArtID"  :disabled="true" placeholder="纸质" name="input"></input>
+										</view>
+									</view>
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">规ㅤ格:</view>
+											<input v-model="currentSelectItem.Size" :disabled="true" placeholder="规ㅤ格" name="input"></input>
+										</view>
+									</view>
+								
+								</view>
+						
+								<view class="flex border-top">
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">小尺寸:</view>
+											<input :value="currentSelectItem.MinSize" :disabled="true" placeholder="小尺寸" name="input"></input>
+										</view>
+									</view>
+									<view class="flex-sub">
+										<view class="cu-form-group">
+											<view class="title">地区:</view>
+											<input disabled  v-model="currentSelectItem.ZoneName"   placeholder="地区" name="input"></input>
+										</view>
+									</view>
+								</view>
+								<view ref="elBtn"  class="elBtn margin-text-center margin-top-sm">
+											<view  class="flex  p-xs margin-bottom-sm mb-sm">
+												
+												<view  class="flex-twice  radius">
+													<button @click="closePopup()" class="cu-btn block round line-blue margin-tb-sm lg" > 取消</button>
+												</view> 
+												
+														<view  class="flex-twice  margin-left  radius"> 
+														<button @click="updateInfo()" :loading="false" :disabled="false" type="" class="cu-btn block bg-green margin-tb-sm lg" > 确认</button>
+														</view>
+												
+											</view>
+								</view>
+		  			</view>
+		  		</form>
+		  	</uni-popup>
+		</view>
+	</view>
+</template>
+
+<script>
+	import zTable from "@/components/z-table/z-table.vue"
+	import uniIcon from "@/components/uni-icon/uni-icon.vue"
+	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
+	//纸板入库卡板、工单扫描
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	export default {
+		name:'inStorage',//纸板入库卡板、工单扫描
+		mixins:[baseMixin],
+		components:{zTable,searchForm,uniPopup,uniIcon},
+		data() {
+			return {
+				currentSelectItem:{},// 当前选择对象
+				tableHeight:400,//表格高度
+				errorContent:'暂无数据',//数据加载中...
+				cardBoardNoInfoData:[{"CarListNo":"Z19101594","CustName":"中嘉","OrderNo":"P191025215","StationNo":"1666","Qty":"22","ScanQty":"0","Size":"1350X1000","MinSize":"444X1000","Status":"0:未扫描","ID1":2240027,"ArtID":"A4A","ZoneName":"南屿"}],
+				cardBoardNoInfoColumns: [
+				{
+					key: 'Status',
+					title: '状态',
+					width: 200
+				}, 
+				{
+					key: 'StationNo',
+					title: '库位',
+					width: 200
+				}, 
+				{
+					key: 'CustName',
+					title: '客户',
+					width: 200
+				}, 
+				{
+					key: 'OrderNo',
+					title: '工单号',
+					width: 200
+				}, 
+				
+				{
+					key: 'Qty',
+					title: '需装数',
+					width: 200
+				}, 
+				{
+					key: 'ScanQty',
+					title: '扫描数',
+					width: 145
+				},
+				{
+					key: 'ArtID',
+					title: '纸质',
+					width: 145
+				},
+				{
+					key: 'Size',
+					title: '规格',
+					width: 145
+				},
+				{
+					key: 'MinSize',
+					title: '小尺寸',
+					width: 145
+				},
+				{
+					key: 'ZoneName',
+					title: '地区',
+					width: 145
+				},
+				{title:'操作',listenerClick:true, width: 130,titleAlign:'center',columnAlign:'center',
+				format: {
+					template: "<button class='cu-btn round line-green sm'>编辑</button>",
+					names: []
+				}},
+				
+				],
+			}
+		},
+		// #ifdef H5
+		mounted () {
+			//this.cardBoardNoInfoData = this.$store.getters.executeDropDownDetailsList_getters;
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		// #endif
+		methods: {
+			// 更新选择的工单装车明细数量
+			updateInfo(){
+				this.closePopup()
+				this.modifyData()
+			},
+			// 提交更新数据
+			submitUpdataInfo(){
+				let params = this.currentSelectItem
+				this.$store.dispatch('updateStockUpDetailedOutStorageAction',params).then(res=>{
+					uni.showToast({
+						title:'更新成功',
+						icon:'none',
+						duration:2000
+					})
+				}).catch(err=>{
+					uni.showToast({
+						title:'更新失败 err:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			// 修改本地数据
+			modifyData(){
+				let needToModifyIndex = this.cardBoardNoInfoData.findIndex((item)=>item.ID1==this.currentSelectItem.ID1)
+				if(needToModifyIndex!=-1){
+					this.cardBoardNoInfoList = Object.assign([], this.cardBoardNoInfoList, this.cardBoardNoInfoList[needToModifyIndex] = this.currentSelectItem)
+				}
+			},
+			//查看详细 获取对应行的数据
+			onClickRowEvent(rowItem){
+				this.currentSelectItem = rowItem
+				this.openPopup()
+			},
+			// 打开修改弹框
+			openPopup(){
+				this.$refs.popup.open()
+			},
+			// 关闭修改弹框
+			closePopup(){
+				this.$refs.popup.close()
+			},
+			 async getTableHeight(){
+			 			  let _self=this
+			 			  let tempHeight =  _self.setTableHeight()
+			 			  let otherHeight= await _self.getOtherContentHeight("elForm") 
+			 			 
+			 			  if(otherHeight!=null){
+			 			  	
+			 			  	_self.tableHeight =tempHeight-otherHeight
+			 			  }
+			 		
+			 			},
+			
+				//页面通讯,事件注册
+				messageRegister(){
+				  // 初始化数据
+				},
+
+			
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

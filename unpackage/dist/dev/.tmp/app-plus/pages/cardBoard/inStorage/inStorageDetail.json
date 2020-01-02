@@ -2,7 +2,6 @@
   "navigationBarTitleText": "卡板详细清单",
   "navigationStyle": "custom",
   "usingComponents": {
-    "cu-custom": "/colorui/components/cu-custom",
-    "z-table": "/components/z-table/z-table"
+    "cu-custom": "/colorui/components/cu-custom"
   }
 }

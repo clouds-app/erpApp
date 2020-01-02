@@ -1,0 +1,420 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">备货出仓</block>
+		</cu-custom>
+		<!-- ===卡板指定库位扫描=== -->
+		<form>
+		    <view ref="elForm" class="elForm" >
+		   	<view  class="cu-form-group border-top">
+		   		<view class="title">装车单号:</view>
+		   		<input @click="getCarGoodsNo()" disabled v-model="formItem.carGoodsNo"  placeholder="请选择装车单号" name="input"></input>
+		   		<text @click="getCarGoodsNo()" class='cuIcon-rounddown text-green'></text>
+		   	</view>
+		   	<view class="cu-form-group border-top">
+		   		<view class="title">卡板号:</view>
+		   		<input ref="kuWeiInput" v-model="formItem.cardBoardNo" @blur="getWorkNoInfo" placeholder="请输入或扫描卡板号" name="input"></input>
+		   		<button :loading="false" :disabled="cardBoardNoInfoData.length==0 || formItem.carGoodsNo==''" type="" @click="turnOnScanCode('cardBoardNo')" class='cu-btn bg-green shadow'>扫描</button>
+		   	</view>
+			<view class="cu-form-group border-top">
+				<view class="cl-tableDesc">纸板明细清单</view>
+				<!-- <text @click="moreDetail()" class='text-green'>详细>></text> -->
+			</view>
+		   </view>
+		</form>
+		<view class="bingStorage-zTable">
+			<!-- -->
+			<zTable :showSelect="true" :singleSelect="true" onClickCheck='onClickCheck'  :stickSide="true"  @onClick="onClickRowEvent"    :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="cardBoardNoInfoData" :columns="cardBoardNoInfoColumns"></zTable>
+		</view>
+		<!--  侧边搜索列表 -->
+		<searchForm @getSelectDataInfo="getSelectDataInfo" :dataSource="dataSource" ref='searchForm'></searchForm>
+		<alertBox ref='alertBox' :msgContent="msgContent" :toShowModal="toShowModal" @cancelModal="cancelModal" @comfirmModal="comfirmModal"></alertBox>
+		<!-- 操作 按钮 -->
+				<view ref="elBtn"  class="elBtn margin-text-center">
+					<view  class="flex  p-xs ">
+						
+						<view  class="flex-twice radius">
+							
+						</view> 
+						<view  class="flex-sub radius">
+								
+								</view>
+								<view  class="flex-twice  radius"> 
+								<button @click="goToOtherPage()" :loading="false" :disabled="formItem.carGoodsNo==''" type="" class="cu-btn block bg-green  lg" > 出仓界面</button>
+								</view>
+						
+					</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	import alertBox from '@/components/color-ui-dialog/color-ui-dialog.vue'
+	import zTable from "@/components/z-table/z-table.vue"
+	import uniIcon from "@/components/uni-icon/uni-icon.vue"
+	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
+	//纸板入库卡板、工单扫描
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	const defaultformItem={
+					cardBoardNo:'',//卡板号
+					carGoodsNo:'',//装车单号
+				}
+	export default {
+		name:'inStorage',//纸板入库卡板、工单扫描
+		mixins:[baseMixin],
+		components:{zTable,searchForm,uniPopup,uniIcon,alertBox},
+		data() {
+			return {
+				currentAction:'',
+				currentSelectId:'',// 当前选择勾选单据
+				currentSelectItem:{},
+				currentSelect:'carNoList',// 当前选择线别/班别
+				dataSource:[],//搜索数据原
+				toShowModal:false,// 是否显示确认弹框
+				msgContent:'',//弹框内容信息
+				scanType:'',//当前扫描类型
+				tableHeight:400,//表格高度
+				carNoList:[],// 装车单好列表,
+				errorContent:'暂无数据',//数据加载中...
+				cardBoardNoInfoData:[{"CarListNo":"Z19101594","CustName":"中嘉","OrderNo":"P191025215","StationNo":"1666","Qty":"22","ScanQty":"0","Size":"1350X1000","MinSize":"444X1000","Status":"0:未扫描","ID1":2240027,"ArtID":"A4A","ZoneName":"南屿"},{"CarListNo":"Z19101594","CustName":"中嘉2","OrderNo":"P191025215","StationNo":"2666","Qty":"212","ScanQty":"0","Size":"1350X1000","MinSize":"444X1000","Status":"0:未扫描","ID1":2240028,"ArtID":"A4A","ZoneName":"南屿2"}],
+				cardBoardNoInfoColumns: [
+				{
+						key: '',
+						title: '',
+						listenerCheckBox:true,
+						width: 100
+				}, 
+				{
+					key: 'CustName',
+					title: '客户',
+					width: 200
+				}, 
+				{
+					key: 'OrderNo',
+					title: '工单号',
+					width: 200
+				}, 
+				{
+					key: 'StationNo',
+					title: '库位',
+					width: 200
+				}, 
+				{
+					key: 'Qty',
+					title: '需装数',
+					width: 200
+				}, 
+				{
+					key: 'ScanQty',
+					title: '扫描数',
+					width: 200
+				}, 
+				{title:'操作',listenerClick:true, width: 130,titleAlign:'center',columnAlign:'center',
+				format: {
+					template: "详细",
+					names: []
+				}}
+				],
+				formItem:Object.assign({},defaultformItem)
+			}
+		},
+		// #ifdef H5
+		mounted () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		// #endif
+		methods: {
+			// 跳转到保存出仓界面
+			goToOtherPage(){
+				if(this.formItem.carGoodsNo==''){
+					uni.showToast({
+						title:'请先选择需要操作的装车单号',
+						icon:'none',
+						duration:2000
+					})
+				}else{
+					uni.navigateTo({
+						url: './outStorageEdit?carListNo=' + this.formItem.carGoodsNo
+					});
+				}
+				
+			},
+			// 查看更多详细
+			moreDetail(){
+				uni.navigateTo({
+					url: './outStorageDetail?carListNo='+this.formItem.carGoodsNo
+				});
+			},
+			// 单钩单选框 触发事件
+			onClickCheck(rowItem){
+				//  debugger
+							
+			},
+			//确定删除当前数据吗获取对应行的数据
+			onClickRowEvent(rowItem){
+				//debugger
+				this.currentSelectItem = rowItem
+				// this.currentAction='deleteDetailItem'
+				// this.msgContent ='确定删除当前数据吗?'
+				// this.toShowModal =true
+				
+			},
+			// 删除备货出仓 明细
+			deleteDetailItem(_id){
+				let params ={
+					id :_id
+				}
+				this.$store.dispatch('delateStockUpDetailedAction',params).then(res=>{
+					uni.showToast({
+						title:'删除成功!',
+						icon:'none',
+						duration:2000
+					})
+				}).catch(err=>{
+					uni.showToast({
+						title:'删除失败:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			//查询卡板信息列表BY 卡板号
+			getCardBoardNoInfo() {
+				this.cardBoardNoInfoData= []
+				if (this.formItem.carGoodsNo == '') {
+					uni.showToast({
+						title:'请选择装车单号',
+						icon:'none',
+						duration:2000
+					})
+					return;
+				}
+				let data = {
+					procName:'spGetPaperCarListInfoForAPP',
+					params:{
+						UserID:this.$store.getters.userInfo_getters, // 当前登陆用户名称
+						CarListNo:this.formItem.carGoodsNo
+					}
+				}
+				this.dataIsLoadding = true;
+				this.getExecuteDropDownDetailsAction(data).then(res => {
+					//debugger
+					if (res && res.length > 0) {
+						this.cardBoardNoInfoData = res
+						this.formItem.originalKuNo=this.cardBoardNoInfoData[0].ap_StationNo
+					}else{
+						uni.showToast({
+							title:'没有该卡板对应的数据',
+							icon:'none',
+							duration:2000
+						})
+					}
+					this.dataIsLoadding = false;
+					
+				}).catch(err => {
+					uni.showToast({
+						title:'获取清单数据失败:' + err,
+						icon:'none',
+						duration:2000
+					})
+					this.dataIsLoadding = false;
+				})
+			},
+			// 选择  装车单号  数据回调事件
+			getSelectDataInfo(item){
+				//debugger
+				switch (this.currentSelect){
+					case 'carNoList':
+						this.formItem.carGoodsNo=item.ct_Desc
+						this.getCardBoardNoInfo()
+						break;
+					default:
+						break;
+				}
+			},
+			// 选择装车单号
+			getCarGoodsNo(){
+				//debugger
+					this.$refs['searchForm'].isShowSearchList=true
+					this.$refs['searchForm'].dataSourceList =this.carNoList
+					this.dataSource =this.carNoList
+			},
+			// 加载装车单好列表
+			loadCarGoodsNoList(){
+				this.carNoList=[]
+				let params ={
+					procName:'spGetLoadCarNoListForAPP',
+					params:{
+						UserID:this.$store.getters.userInfo_getters, // 当前登陆用户名称
+					}
+				}
+				let _self =this
+				this.$store.dispatch('getExecuteDropDownAction',params).then(res=>{
+					if(res && res.list && res.list.length>0){
+						//debugger
+						let resData=res.list.map(item=>{
+							let formatData = {
+								type:item.LoadNo,
+								ct_Desc:item.LoadNo
+							}
+							return formatData
+						})
+						_self.carNoList =resData
+					}
+				}).catch(err=>{
+					uni.showToast({
+						title:'加载装车单号列表失败:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			//确认弹框-提交工单列表信息
+			comfirmModal(val){
+				this.toShowModal =false
+				switch (this.currentAction){
+					case 'preSubmitDataList':
+					     this.submitAddList()
+						break;	
+					case 'deleteDetailItem':
+						this.deleteDetailItem(this.currentSelectItem.ap_OrderNo)
+						break;				
+					default:
+						break;
+				}
+			},
+			// 取消弹框
+			cancelModal(val){
+				this.toShowModal =false
+				// switch (this.currentAction){
+				// 	case 'cardBoardNotNull':
+				// 	    this.formItem.cardBoardNo =this.tempScanCode
+				// 	    this.getCardBoardNoInfo()
+				// 		break;			
+				// 	default:
+				// 		break;
+				// }
+			},
+			// 准备--提交提交工单列表信息
+			preSubmitDataList(){
+				this.currentAction='preSubmitDataList'
+				this.msgContent ='确定提交数据吗?'
+				this.toShowModal =true
+			},
+			// 提交添加卡板工单信息列表
+			submitAddList(){
+			  let params = {
+				   newStationNo:this.formItem.kuNo,
+				   StationNo:this.cardBoardNoInfoData[0].ap_StationNo
+			  }
+			  this.$store.dispatch('setStationNoAction',params).then(res=>{
+				  // 清空数据
+				  this.formItem = Object.assign({},defalutformItem)
+				  this.cardBoardNoInfoData =[]
+				  uni.showToast({
+				  	title:'操作成功',
+				  	icon:'none',
+				  	duration:2000
+				  })
+			  }).catch(err=>{
+					uni.showToast({
+						title:'操作失败:'+err,
+						icon:'none',
+						duration:2000
+					})
+			  })
+			},
+			async getTableHeight(){
+						 // debugger
+						  let _self=this
+						  let tempHeight =  _self.setTableHeight()
+						  let otherHeight= await _self.getOtherContentHeight("elForm") 
+						  let otherHeight2 = await _self.getOtherContentHeight("elBtn")
+						  if(otherHeight!=null && otherHeight2!=null){
+						  	
+						  	_self.tableHeight =tempHeight-otherHeight-otherHeight2-20
+						  }
+					
+						},
+				//映射方法
+			...mapActions(['getExecuteDropDownDetailsAction']),
+				//页面通讯,事件注册
+				messageRegister(){
+				  // 初始化数据
+				  this.loadCarGoodsNoList()
+				},
+				// 获取纸板明细数量
+				getcardBoarDetailList(){
+					let params ={
+						procName:'spFreshCarListForAPP',
+						params:{
+							CardNo:this.formItem.cardBoardNo,
+							UserID:this.$store.getters.userInfo_getters, // 当前登陆用户名称
+							CarListNo:this.formItem.carGoodsNo
+						}
+					}
+					this.$store.dispatch('getExecuteDropDownAction',params).then(res=>{
+						this.getCardBoardNoInfo()
+						uni.showToast({
+							title:'更新明细成功,请稍后...',
+							icon:'none',
+							duration:2000
+						})
+					}).catch(err=>{
+						uni.showToast({
+							title:'抱歉,更新明细失败:'+err,
+							icon:'none',
+							duration:2000
+						})
+					})
+				},
+			   //===打开扫描===
+				turnOnScanCode(type){
+					this.scanType =type
+					let _self =this
+					// 调起条码扫描
+					uni.scanCode({
+					    scanType: 'barCode', // 固定条形码
+					    success: function (res) {
+					        console.log('条码内容：' + res.result);
+							switch (type){
+								case 'cardBoardNo': 
+								    //卡板号
+								    _self.formItem.cardBoardNo = res.result
+									_self.getcardBoarDetailList() //工单号验证查询
+									break;
+							
+								default:
+									break;
+							}
+						
+					    }
+					});
+				},
+			
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

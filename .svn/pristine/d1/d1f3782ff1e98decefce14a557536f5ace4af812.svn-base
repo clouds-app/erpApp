@@ -1,0 +1,229 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="false">
+				<block slot="content">功能</block>
+		</cu-custom>
+		
+		<block v-for="(item,index) in allMenuList.function" :key="index">
+			<view class="grid-warp">
+				<view class="grid-title">{{item.title}}</view>
+				<view class="grid-body">
+					<view class="cu-list grid col-3 no-border">
+					<!-- 	<block v-for="(subItem,index) in item.children" :key="index"> -->
+							<block v-for="(subItem,subIndex) in item.children" :key="subIndex">
+							<view class="cu-item" @tap="turnToPage(subItem.data.resLink,subIndex)">
+								<image class="image" :src="getImgUrl(subItem.data.resIcon)" mode="aspectFill" />
+								<view v-if="subItem.data.resNotice.length>0" class="cu-tag badge" style="padding-top: 2px;">         <block v-show="false">{{getNotice(subIndex,subItem.data.resNotice)}}</block> 
+									<block >{{Number(subItem.data.resAuthMark)}}</block>
+								</view>
+								<text class="text">{{subItem.title}}</text>
+							</view>
+						</block>
+					</view>
+				</view>
+			</view>
+		</block>
+		<view class="grid-warp">
+			<view class="grid-title">卡板</view>
+			<view class="grid-body">
+				<view class="cu-list grid col-3 no-border">
+					
+					<view @click="navigateTo('/pages/cardBoard/inStorage/inStorage')" class="cu-item">
+						<text class="text">卡板入库</text>
+					</view>
+					<view @click="navigateTo('/pages/cardBoard/bindStorage/bindStorage')" class="cu-item">
+						<text class="text">卡板指定库位</text>
+					</view>
+					<view @click="navigateTo('/pages/cardBoard/moveStorage/moveStorage')" class="cu-item">
+						<text class="text">卡板挪库位</text>
+					</view>
+					<view @click="navigateTo('/pages/cardBoard/outStorage/outStorage')" class="cu-item">
+						<text class="text">APP备货出仓</text>
+					</view>
+					<view @click="navigateTo('/pages/cardBoard/outStorage/outStorageDetail')" class="cu-item">
+						<text class="text">工单装车及库位详细</text>
+					</view>
+					
+					<view @click="navigateTo('/pages/cardBoard/arrangeStorage/arrangeStorage')" class="cu-item">
+						<text class="text">仓库货物整理</text>
+					</view>
+				</view>
+			</view>
+		</view>
+			<!-- <view class="grid-warp">
+				<view class="grid-title">其它</view>
+				<view class="grid-body">
+					<view class="cu-list grid col-3 no-border">
+						
+						<view @click="navigateTo('/pages/quotation/boxArea')" class="cu-item">
+							<text class="text">纸箱面积报价</text>
+						</view>
+						<view @click="navigateTo('/pages/quotation/boxProduct')" class="cu-item">
+							<text class="text">纸箱产品报价</text>
+						</view>
+						<view @click="navigateTo('/pages/paperboard/progress/progress')" class="cu-item">
+							<text class="text">纸板进度查询</text>
+						</view>
+						<view @click="navigateTo('/pages/paperBox/progress/progress')" class="cu-item">
+							<text class="text">纸箱进度查询</text>
+						</view>
+						<view @click="navigateTo('/pages/paperBox/paperorderquery/paperorderquery')" class="cu-item">
+							<text class="text">纸箱订单汇总</text>
+						</view>
+						<view @click="navigateTo('/pages/paperBox/deliveryquery/deliveryquery')" class="cu-item">
+							<text class="text">纸箱送货汇总</text>
+						</view>
+					</view>
+				</view>
+			</view> -->
+	</view>
+</template>
+
+<script>
+	import * as eventType from '@/libs/eventBusType'
+	import { mapActions } from 'vuex';
+	import baseMixin from '@/mixins'
+	export default {
+		name:'functionMenu',
+		mixins:[baseMixin],
+		data() {
+			return {
+				 hasUpdate:false,//是否已經更新字段，
+				 notify_num :88,
+			     allMenuList:[],//功能菜单列表
+			}
+		},
+		// #ifdef H5
+		mounted () {
+			this.allMenuList = Object.assign({},this.menuList) 	
+			let _self = this
+			uni.$on(eventType.ReLoadData,(data)=>{
+				      if(data.needToUpdate){
+						   _self.updateNotifyNum()	
+					  }
+					
+			    })
+		},
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.allMenuList = this.menuList
+			let _self = this
+			uni.$on(eventType.ReLoadData,(data)=>{
+					if(data.needToUpdate){
+						 _self.updateNotifyNum()	
+					}
+			    })
+		},
+		// #endif
+		methods: {
+			navigateTo(_url){
+				uni.navigateTo({url: _url})
+			},
+			//獲取通知信息
+			getNotice(index,_url){
+			       if(_url.length<10 || this.hasUpdate){
+			          return
+			       }
+				   //console.log('==getNotice==:'+_url)
+			       let params ={
+			           url:_url
+			       }
+			       let _self=this
+			       this.$store.dispatch('getNoticeInfoAction',params).then(res=>{
+					      console.log('getNoticeInfoAction:'+res.data)
+			             _self.hasUpdate =true //已經更新
+			             if(Number(res.data)>0){
+			                let updateParams ={
+			                    resAuthMark:res.data
+			                }
+			            _self.allMenuList.function[0].children[index].data = Object.assign({}, _self.allMenuList.function[0].children[index].data, updateParams)
+					// console.log('==getNotice==json:'+JSON.stringify(_self.allMenuList))
+			           // _self.allMenuList.function= _self.allMenuList.function.sort() //觸發更新
+			          
+			             }
+			       }).catch(err=>{
+			            _self.hasUpdate =true
+			            uni.showToast({
+			            	title:'获取NoticeInfo失败:'+err,
+							icon:'none',
+							duration:2000
+			            })
+			       })
+			      // return '1'
+			   },
+			
+			//跳转到指定页面
+			turnToPage(_url,subIndex){
+				//console.log('currentUrl:'+_url)
+				this.remarkIndex(subIndex)
+				switch (_url){
+					case 'zx':
+						uni.navigateTo({
+							url: '/pages/verify/boxApproval/boxApproval'
+						});
+						break;
+					case 'tax':
+						uni.navigateTo({
+							url: '/pages/verify/bargainPrice/bargainPrice'
+						});
+						break;
+					case 'material':
+					uni.navigateTo({
+						url: '../verify/material/material'
+					});
+						break;
+					case 'purchases':
+					uni.navigateTo({
+						url: '../verify/originalPaper/originalPaper'
+					});
+						break;
+					case 'paperIn':
+					uni.navigateTo({
+						url: '../warehouse/paperIn/paperIn'
+					});
+					break;
+					case 'boxIn':
+					uni.navigateTo({
+						url: '../warehouse/boxIn/boxIn'
+					});
+					break;
+					case 'paperOB':
+					uni.navigateTo({
+						url: '../warehouse/paperOB/paperOB'
+					});
+						break;
+					default:
+					    uni.showToast({
+					    	title:'找不到指定路径，请确认！'+_url,
+							icon:'none',
+							duration:2000
+					    })
+						break;
+				}
+			},
+			//存储选择功能下表
+			remarkIndex(subIndex){
+				//debugger
+				this.$store.commit('setSubIndex',subIndex)
+			},
+			//更新通知个数
+			updateNotifyNum(){
+				
+			   this.allMenuList.function.forEach((item)=>{
+				   item.children.forEach((subItem,subIndex)=>{
+					  // debugger
+					  this.hasUpdate=false
+					   console.log('==='+subItem.data.resNotice)
+					   this.getNotice(subIndex,subItem.data.resNotice)
+				   })
+			   })			 
+			}
+			
+		}
+	}
+</script>
+
+<style>
+
+</style>
