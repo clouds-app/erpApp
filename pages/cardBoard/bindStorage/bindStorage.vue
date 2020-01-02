@@ -36,7 +36,7 @@
 								
 								</view>
 								<view  class="flex-twice  radius"> 
-								<button @click="preSubmitDataList()" :loading="false" :disabled="cardBoardNoInfoData.length==0 || !kuNoExists" type="" class="cu-btn block bg-green  lg" > 提交</button>
+								<button @click="preSubmitDataList()" :loading="false" :disabled="formItem.kuNo==''" type="" class="cu-btn block bg-green  lg" > 提交</button>
 								</view>
 						
 					</view>

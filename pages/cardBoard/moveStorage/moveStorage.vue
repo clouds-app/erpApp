@@ -41,7 +41,7 @@
 								
 								</view>
 								<view  class="flex-twice  radius"> 
-								<button @click="preSubmitDataList()" :loading="false" :disabled="cardBoardNoInfoData.length==0 || !kuNoExists" type="" class="cu-btn block bg-green  lg" > 提交</button>
+								<button @click="preSubmitDataList()" :loading="false" :disabled=" formItem.cardBoardNo=='' || formItem.kuNo=='' || !kuNoExists" type="" class="cu-btn block bg-green  lg" > 提交</button>
 								</view>
 						
 					</view>
@@ -190,7 +190,7 @@
 				this.msgContent ='确定提交数据吗?'
 				this.toShowModal =true
 			},
-			// 提交 卡板挪库位 工单信息列表
+			// 提交 卡板挪库位 工单信息列表 
 			submitAddList(){
 			  let params = [];
 			  this.cardBoardNoInfoData.forEach((item,index)=>{

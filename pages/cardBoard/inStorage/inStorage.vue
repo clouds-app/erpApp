@@ -462,7 +462,7 @@
 			},
 			// 动态获取设置滚动条高度,适配整屏
 		    async getTableHeight(){
-			 // debugger
+			  //debugger
 			  let _self=this
 			  let tempHeight =  _self.setTableHeight()
 			  let otherHeight= await _self.getOtherContentHeight("elForm") 
@@ -485,11 +485,18 @@
 			},
 			// 获取上次选择的线/班 别
 			getDefaultLineClassItem(){
-				//debugger
-				this.formItem.line =this.$store.getters.currentLineItem_getter.ct_Desc
-			    this.formItem.lineID =this.$store.getters.currentLineItem_getter.type	
-			   this.formItem.class =this.$store.getters.currentClassItem_getter.ct_Desc
-			   this.formItem.classID =this.$store.getters.currentClassItem_getter.type		
+				// 修复为空, 高度获取异常
+				if(this.$store.getters.currentLineItem_getter!=null){
+				 this.formItem.line =this.$store.getters.currentLineItem_getter.ct_Desc
+					 this.formItem.lineID =this.$store.getters.currentLineItem_getter.type	
+				}
+			
+				if(this.$store.getters.currentClassItem_getter!=null){
+					 this.formItem.class =this.$store.getters.currentClassItem_getter.ct_Desc
+					 this.formItem.classID =this.$store.getters.currentClassItem_getter.type		
+				}
+			   
+			
 			},
 			// 选择  线别/班别/客户  数据回调事件
 			getSelectDataInfo(item){

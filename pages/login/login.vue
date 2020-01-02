@@ -9,6 +9,15 @@
 			</view>
 		</view>
 		<view class="login-btn"><button class="landing" @click="getUUID()" type="primary">登陆</button></view>
+	<view  class="cu-bar foot input" :style="[{bottom:0+'px'}]">
+		<view class="action">
+			<text class=" text-grey ">深圳市晨龙包装自动化有限公司</text>
+		</view>
+		<view class="action">
+			<text class=" text-grey ">当前版本:{{currentVersion}}</text>
+		</view>
+		
+	</view>
 	</view>
 </template>
 
@@ -18,6 +27,7 @@ import { mapActions } from 'vuex';
 export default {
 	data() {
 		return {
+			currentVersion:'1.0',
 			isLoading: false,
 			disabledLoginBtn: false,
 			loginForm: {
@@ -32,15 +42,30 @@ export default {
 	onLoad() {},
 	// #ifdef H5
 	mounted () {
+		this.getCurrentVersion()
 		this.loginForm.username = this.$store.getters.userInfo_getters
 	},
 	// #endif
 	// #ifndef H5
 	onReady () {
+		this.getCurrentVersion()
 		this.loginForm.username = this.$store.getters.userInfo_getters
 	},
 	// #endif
 	methods: {
+		getCurrentVersion(){
+			// uni.$on('systemUpdate',function(data){
+			//      console.log('监听到事件来自 systemUpdate ，携带参数 update 为：' + data.update);
+			// })
+			let _self=this
+			// #ifdef APP-PLUS
+			plus.runtime.getProperty( plus.runtime.appid, function ( wgtinfo ) {
+			  
+			  _self.currentVersion = wgtinfo.version
+			
+			} );
+			// #endif
+		},
 		//导入合并方法，然后可以直接使用，和methods中方法类似，但参数需要查看原始定义方法 = this.$store.dispatch('handleLogin',params)
 		...mapActions(['getValidatorToken_action', 'Login_action', 'getMenuByToken_action']),
 		//获取用户随机码

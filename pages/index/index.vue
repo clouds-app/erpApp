@@ -83,7 +83,8 @@
  				</view>
 			</view>
 		</view> -->
-		
+	
+	
 	</view>
 </template>
 
@@ -95,12 +96,15 @@
 		mixins:[baseMixin],
 		data() {
 			return {
+				 idShowModal:false,
+				 loading:80,
 			     allMenuList:[],//功能菜单列表
 			}
 		},
 		// #ifdef H5
 		mounted () {
 			this.allMenuList = this.menuList
+			  
 			//console.warn('allMenuList.function:'+JSON.stringify(this.allMenuList.function))
 		},
 		// #endif

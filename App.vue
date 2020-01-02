@@ -1,3 +1,5 @@
+
+
 <script>
 	import axios from '@/libs/api.request'
 	import Vue from 'vue'
@@ -5,10 +7,13 @@
 		data(){
 			return {
 				currentVersion:'1.0',
+				downloadProgress:0,// 下载进度
 			}
 		},
 		// 当uni-app 初始化完成时触发（全局只触发一次）
 		onLaunch: function() {
+			//this.compareVersion('1.3','1.2')
+			 //uni.$emit('systemUpdate',{update:true})
 			 this.getCurrentVersion()
 			// this.checkVersionUpdate()
 			//plus.screen.lockOrientation('portrait-primary'); //锁定
@@ -56,24 +61,25 @@
 		},
 		methods:{
 				getCurrentVersion(){
+					
 					let _self=this
 					// #ifdef APP-PLUS
 					plus.runtime.getProperty( plus.runtime.appid, function ( wgtinfo ) {
 					  //appid属性
-					  var wgtStr = "appid:"+wgtinfo.appid;
+					 // var wgtStr = "appid:"+wgtinfo.appid;
 					  //version属性
-					  wgtStr += "<br/>version:"+wgtinfo.version;
+					 // wgtStr += "<br/>version:"+wgtinfo.version;
 					  _self.currentVersion = wgtinfo.version
 					  //name属性
-					  wgtStr += "<br/>name:"+wgtinfo.name;
-					  //description属性
-					  wgtStr += "<br/>description:"+wgtinfo.description;
-					  //author属性
-					  wgtStr += "<br/>author:"+wgtinfo.author;
-					  //email属性
-					  wgtStr += "<br/>email:"+wgtinfo.email;
-					  //features 属性
-					  wgtStr += "<br/>features:"+wgtinfo.features;
+					  // wgtStr += "<br/>name:"+wgtinfo.name;
+					  // //description属性
+					  // wgtStr += "<br/>description:"+wgtinfo.description;
+					  // //author属性
+					  // wgtStr += "<br/>author:"+wgtinfo.author;
+					  // //email属性
+					  // wgtStr += "<br/>email:"+wgtinfo.email;
+					  // //features 属性
+					  // wgtStr += "<br/>features:"+wgtinfo.features;
 					  //console.log( wgtStr );
 					  _self.checkVersionUpdate()
 					} );
@@ -85,7 +91,7 @@
 				 * 调用方法举例：compare("1.1","1.2")，将返回false
 				 */
 			     compareVersion(curV, reqV) {
-				 console.log('==curV=reqV='+reqV,curV, reqV)
+				 /* console.log('==curV=reqV='+reqV,curV, reqV)
 				  if (curV && reqV) {
 				    //将两个版本号拆成数字
 				    var arr1 = curV.split('.'),
@@ -104,9 +110,72 @@
 				    //输入为空
 				    console.log("版本号不能为空");
 				    return false;
+				  } */
+				  try{
+					  let flag = Number(curV) < Number(reqV)
+					  console.log('=======Number(curV) < Number(reqV)========'+flag)
+				  	return flag;
+				
+				  }catch(e){
+				  	//TODO handle the exception
+					
 				  }
+				  return false;
 				},
+			//进度提示进度
+			showDownloadTips(downloadProgress){
+				// uni.showLoading({
+				//     title: '下载中...请稍等!:'
+				// });
+				
+				// setTimeout(function () {
+				//     uni.hideLoading();
+				// }, 2000);
+
+			},
+			// 下载更新的文件安装包	
+		    downLoadUpdateFile(data){
+			uni.showLoading({
+			    title: '下载中...请稍等'
+			});
+			
+			var downloadTask = uni.downloadFile({
+				url: data.path,
+				success: (downloadResult) => {
+					if (downloadResult.statusCode === 200) {  
+						 uni.hideLoading();
+						plus.runtime.install(downloadResult.tempFilePath, {  
+							force: false  
+						}, function() {  
+							console.log('install success...');  
+							plus.runtime.restart();  
+						}, function(e) {
+						  // 这里的错误很重要，最好能记录的服务器日志中，方便调试或以后维护了解更新错误情况，及时解决
+						  // 如何更新到服务器？
+						  // 调用一个接口，将e返回咯
+						  console.error('install fail...');  
+						});  
+					}  
+				}, 
+				complete: ()=> {}
+			});
+			let _self=this
+			downloadTask.onProgressUpdate((res)=>{
+				//plus.nativeUI.toast("下载进度:"+res.progress);
+
+			  //console.log('下载进度' + res.progress);
+			   if (res.progress >= 100) {
+			         // downloadTask.abort();
+					 uni.showToast({
+					     title: '下载进度:'+res.progress,
+					     mask: false,
+					     duration: 500
+					 });
+			      }
+			})
 		
+			
+			},
 			 // 如果客户端的版本不是最新的,提示更新且自动下载最新的app
 			async checkVersionUpdate () {
 				
@@ -127,7 +196,7 @@
 				 })
 				 // 提醒用户更新
 				 let currentVersion = this.currentVersion
-			   
+			     let _self=this
 				 if (resData && resData.data) {
 					 console.log(JSON.stringify(resData))
 					  console.log('==plus.os.name=='+plus.os.name)
@@ -135,7 +204,7 @@
 					let openUrl =  resData.data.path;
 				 		//let currentVersion = plus.runtime.version
 			  console.log('==currentVersion=='+currentVersion)
-			   let needUpdate =!this.compareVersion(currentVersion+'',resData.data.version+'')
+			   let needUpdate =this.compareVersion(currentVersion+'',resData.data.version+'')
 					 console.log('==needUpdate=='+needUpdate)
 				 		if(needUpdate){
 				 			// 提醒用户更新
@@ -146,9 +215,11 @@
 				 			    success: function (res) {
 				 			        if (res.confirm) {
 				 			            console.log('确定更新');
+										_self.downLoadUpdateFile(resData.data)
 				 						// 最核心的地方,自动打开下载安装【且覆盖之前的安装】
-				 						plus.runtime.openURL(openUrl);
+				 						//plus.runtime.openURL(openUrl);
 				 			        } else if (res.cancel) {
+										//Vue.prototype.$toUpdate =false
 				 			            console.log('取消更新');
 				 			        }
 				 			    }

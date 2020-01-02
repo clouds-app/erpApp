@@ -77,7 +77,7 @@
 								
 								</view>
 								<view  class="flex-twice  radius"> 
-								<button @tap="goToOtherPage()" :loading="false" :disabled="cardBoardNoInfoData.length == 0" type="" class="cu-btn block bg-green  lg" > 出仓界面</button>
+								<button @tap="goToOtherPage()" :loading="false" :disabled="formItem.carGoodsNo == ''" type="" class="cu-btn block bg-green  lg" > 出仓界面</button>
 								</view>
 						
 					</view>
@@ -386,7 +386,7 @@
 				this.missingInsertList=[]
 
 			},
-			// 选择装车单号
+			// 添加数据源 到 选择装车单号
 			getCarGoodsNo(){
 				//debugger
 					this.$refs['searchForm'].isShowSearchList=true
@@ -603,7 +603,9 @@
 						});
 					}else{
 						this.bindingMissingDataToAppendList()
-						this.cardBoardNoInfoData.push(this.appendRow);
+						//FIX 修复单据先追加后 扫描卡板号 导致追加扫描数为 空
+						this.cardBoardNoInfoClone[this.appendRow.OrderNo] = this.appendRow
+						this.cardBoardNoInfoData.push(this.appendRow)
 					}
 					this.closeAppendModal();
 				},

@@ -48,7 +48,7 @@
 								
 								</view>
 								<view  class="flex-twice  radius"> 
-								<button @click="preSubmitDataList()" :loading="false" :disabled="false" type="" class="cu-btn block bg-green  lg" > 更改库位</button>
+								<button @click="preSubmitDataList()" :loading="false" :disabled="formItem.kuNo=='' || formItem.cardBoardNo==''" type="" class="cu-btn block bg-green  lg" > 更改库位</button>
 								</view>
 						
 					</view>
