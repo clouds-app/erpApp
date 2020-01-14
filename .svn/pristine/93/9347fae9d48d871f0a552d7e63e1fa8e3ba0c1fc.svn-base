@@ -1,0 +1,383 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">卡板合并</block>
+		</cu-custom>
+		<!-- ===卡板指定库位扫描=== -->
+		<form>
+		    <view ref="elForm" class="elForm" >
+		 <view class="cu-form-group border-top">
+		 	<view class="title">工ㅤ单ㅤ号:</view>
+		 	<input v-model="formItem.workNo" @blur="checkWorkNoInfo" placeholder="请扫描工单号" name="input"></input>
+		 	<button :loading="false" :disabled="false" type="" @click="turnOnScanCode('workNo')" class='cu-btn bg-green shadow'>扫描</button>
+		 </view>
+		 <view  class="cu-form-group border-top">
+		 	<view class="title">原ㅤ卡ㅤ板:</view>
+		 	<input @blur="getCardBoardNoInfo" :disabled="false" v-model="formItem.cardBoardNo"  placeholder="请选择原卡板" name="input"></input>
+		<button :loading="false" :disabled="canScanCardBoard" type="" @click="turnOnScanCode('cardBoardNo')" class='cu-btn bg-green shadow'>扫描</button>
+		 </view>
+			<view  class="cu-form-group border-top">
+				<view class="title">原卡板数量:</view>
+				<input disabled v-model="formItem.cardBoardNum"  placeholder="暂无数量" name="input"></input>
+				
+			</view>
+			<view class="cu-form-group border-top margin-top">
+				<view class="title">新 卡 板 号:</view>
+				<input v-model="formItem.newcardBoardNo" @blur="getNewCardBoardNoInfo" placeholder="请扫新卡板号" name="input"></input>
+				<button :loading="false" :disabled="canScanCardBoard" type="" @click="turnOnScanCode('newcardBoardNo')" class='cu-btn bg-green shadow'>扫描</button>
+			</view>
+			<view  class="cu-form-group border-top">
+				<view class="title">新卡板数量:</view>
+				<input  disabled v-model="formItem.newcardBoardNum"  placeholder="暂无数量" name="input"></input>
+			</view>
+			<view class="cu-form-group margin-top">
+				<view class="title">整理后数量:</view>
+				<input  disabled :value="totalMergingNum"  placeholder="暂无数量" name="input"></input>
+			</view>
+			
+		   </view>
+		</form>
+		<view :style="[{height: tableHeight-10 + 'px' }]">
+			
+		</view>
+		<!-- 操作 按钮 -->
+				<view ref="elBtn"  class="elBtn margin-text-center">
+					  
+					   <view  class="flex  p-xs ">
+						
+					   <view  class="flex-twice  radius">
+					
+					</view> 
+						<view  class="flex-sub radius">
+								
+								</view>
+								<view  class="flex-twice  radius"> 
+								<button @tap="preSubmitData()" :loading="false" :disabled="canSubmitData" type="" class="cu-btn block bg-green  lg" > 确定合并</button>
+								</view>
+						
+					</view>
+		</view>
+		 <!--  确认弹框 -->
+		<alertBox ref='alertBox' :msgContent="msgContent" :toShowModal="toShowModal" @cancelModal="cancelModal" @comfirmModal="comfirmModal"></alertBox>
+		 <!--  侧边搜索列表 -->
+		 <searchForm @getSelectDataInfo="getSelectDataInfo" :dataSource="dataSource" ref='searchForm'></searchForm>
+	</view>
+</template>
+
+<script>
+	import axios from '@/libs/api.request'
+	import dayjs from 'dayjs'
+	import alertBox from '@/components/color-ui-dialog/color-ui-dialog.vue'
+	import zTable from "@/components/z-table/z-table.vue"
+	import uniIcon from "@/components/uni-icon/uni-icon.vue"
+	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
+	//纸板入库卡板、工单扫描
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	const defaultformItem={
+				workNo:'',// 工单号
+				cardBoardNo:'',// 原卡板	
+				cardBoardID:'',// 原卡板	ID
+				cardBoardNum:0,// 原卡板数量	
+				newcardBoardNo:'' ,// 新卡板
+				newcardBoardID:'' ,// 新卡板 ID
+				newcardBoardNum:0 ,// 新卡板数量
+				//cardBoardMergingNum:'',// 合并卡板后数量
+				}
+	export default {
+		name:'cardBoardMerging',//卡板合并
+		mixins:[baseMixin],
+		components:{zTable,searchForm,uniPopup,uniIcon,alertBox},
+		data() {
+			return {
+				cardBoardList:[],// 卡板列表
+				toShowModal:false,// 是否显示确认弹框
+				currentAction:'', // 当前弹框操作
+				msgContent:'',//弹框内容信息
+				dataSource:[],//数据源
+				currentSelect:'driver',// 当前选择
+				tableHeight:400,//表格高度
+				formItem:Object.assign({},defaultformItem)
+			}
+		},
+		computed:{
+			// 是否可以扫描卡板
+			canScanCardBoard(){
+				return !(this.formItem.workNo!='')
+			},
+			// 是否可以提交数据
+			canSubmitData(){
+				return !(this.formItem.workNo!='' && this.formItem.cardBoardNo!='' && this.formItem.newcardBoardNo!='' && this.totalMergingNum!=0 && this.formItem.cardBoardNum>0 && this.formItem.newcardBoardNum>0)
+			},
+			//  合并卡板后数量
+			totalMergingNum(){
+				return Number(this.formItem.cardBoardNum)+Number(this.formItem.newcardBoardNum)
+			}
+			
+		},
+		// #ifdef H5
+		mounted () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		// #endif
+		methods: {
+			//页面通讯,事件注册
+			messageRegister(){
+			},
+			// 准备--提交提交工单列表信息
+			preSubmitData(){
+				this.currentAction='preSubmitData'
+				this.msgContent ='确定提交数据吗?'
+				this.toShowModal =true
+			},
+			// 提交卡板合并数据
+			SubmitData(){
+				let params ={
+				 procName:'spPaperScanMergeChanged',
+				 params:{
+					OldID:this.formItem.cardBoardID,// 原卡板	
+					NewID:this.formItem.newcardBoardID ,// 新卡板
+					OrderNo:this.formItem.workNo,
+					Num:this.formItem.cardBoardNum,
+					// 当前登陆用户名称,
+					UserID:this.$store.getters.userInfo_getters, 
+				 }
+				}
+				this.$store.dispatch('getExecuteDropDownAction',params).then(res=>{
+					//debugger
+				 // 提交成功
+				 uni.showToast({
+					title:'合并卡板成功',
+					icon:'none',
+					duration:2000
+				 })
+				 this.formItem = Object.assign({},defaultformItem)
+				 
+}).catch(err=>{
+				 uni.showToast({
+					title:'合并卡板失败:'+err,
+					icon:'none',
+					duration:2000
+				 })
+				})
+			},
+			//确认弹框-提交工单列表信息
+			comfirmModal(val){
+				this.toShowModal =false
+				switch (this.currentAction){
+					case 'preSubmitData':
+					     this.SubmitData()
+						break;			
+					default:
+						break;
+				}
+			},
+			// 取消弹框
+			cancelModal(val){
+				this.toShowModal =false
+			},
+			// 选择  线别/班别/客户  数据回调事件
+			getSelectDataInfo(item){
+				//debugger
+				switch (this.currentSelect){
+					case 'LicensePlate':
+					this.formItem.LicensePlate=item.ct_Desc
+						break;
+					default:
+						break;
+				}
+			},
+			 // 动态获取设置滚动条高度,适配整屏
+			 async getTableHeight(){
+			 			 // debugger
+			 			  let _self=this
+			 			  let tempHeight =  _self.setTableHeight()
+			 			  let otherHeight= await _self.getOtherContentHeight("elForm") 
+			 			  let otherHeight2 = await _self.getOtherContentHeight("elBtn")
+			 			  if(otherHeight!=null && otherHeight2!=null){
+			 			  	
+			 			  	_self.tableHeight =tempHeight-otherHeight-otherHeight2-20
+			 			  }
+			 		
+			 			},
+				// 根据工单号=>校验信息是否正确	
+				checkWorkNoInfo(){
+					if(this.formItem.workNo==''){
+						uni.showToast({
+							title:'请扫描工单号',
+							icon:'none',
+							duration:2000
+						})
+						return
+					}
+					let params={
+					ap_OrderNo:this.formItem.workNo 
+					}
+					this.$store.dispatch('orderNoCheckAction',params).then(res=>{
+						//debugger
+						//{"data":"1","msg":"执行成功","status":0,"success":true}
+						if(res==null){
+							uni.showToast({
+							title:`此工单号未入库,不能进行合并!`,
+							icon:'none',
+							duration:2000
+							})
+							this.formItem.workNo=""
+						}
+						
+					}).catch(err=>{
+						 uni.showToast({
+							title:'获取工单数据失败:'+err,
+							icon:'none',
+							duration:2000
+						 })
+					})
+				},
+				// 根据原卡板号+工单号=>卡板数量等信息		
+				getCardBoardNoInfo(){
+					if(this.formItem.workNo==''){
+						uni.showToast({
+							title:'请先扫描工单号',
+							icon:'none',
+							duration:2000
+						})
+						return
+					}
+					if(this.formItem.cardBoardNo==''){
+						uni.showToast({
+							title:'请扫描原卡板',
+							icon:'none',
+							duration:2000
+						})
+						return
+					}
+					let params={
+						ap_OrderNo:this.formItem.workNo,
+						ap_CardNo:this.formItem.cardBoardNo,
+					}
+					this.$store.dispatch('getCardBoardNumbeByAction',params).then(res=>{
+						// {"data":{"ID1":2241584,"ap_Qty":20},"msg":"执行成功","status":0,"success":true}
+						if(res!=null){
+							this.formItem.cardBoardID =res.ID1
+							this.formItem.cardBoardNum=res.ap_Qty
+						}else{
+							uni.showToast({
+							title:'不是在库的卡板,请检查!',
+							icon:'none',
+							duration:2000
+							})
+							this.formItem.cardBoardNum=0
+						}
+						
+					}).catch(err=>{
+						 uni.showToast({
+							title:'获取新卡板数据失败:'+err,
+							icon:'none',
+							duration:2000
+						 })
+					})
+				},	
+				// 根据新卡板号+工单号=>新卡板数量等信息
+				getNewCardBoardNoInfo(){
+					if(this.formItem.workNo==''){
+						uni.showToast({
+							title:'请先扫描工单号',
+							icon:'none',
+							duration:2000
+						})
+						return
+					}
+					if(this.formItem.newcardBoardNo==''){
+						uni.showToast({
+							title:'请扫描新卡板',
+							icon:'none',
+							duration:2000
+						})
+						return
+					}
+					let params={
+						ap_OrderNo:this.formItem.workNo,
+						ap_CardNo:this.formItem.newcardBoardNo,
+					}
+					this.$store.dispatch('getCardBoardNumbeByAction',params).then(res=>{
+						if(res!=null){
+							this.formItem.newcardBoardID =res.ID1
+							this.formItem.newcardBoardNum=res.ap_Qty
+						}else{
+							uni.showToast({
+							title:'不是在库的卡板,请检查!',
+							icon:'none',
+							duration:2000
+							})
+							this.formItem.newcardBoardNum=0
+						}
+						
+					}).catch(err=>{
+						 uni.showToast({
+							title:'获取新卡板数据失败:'+err,
+							icon:'none',
+							duration:2000
+						 })
+					})
+				},		
+			   //===打开扫描===
+				turnOnScanCode(type){
+					this.scanType =type
+					let _self =this
+					// 调起条码扫描
+					uni.scanCode({
+					    scanType: 'barCode', // 固定条形码
+					    success: function (res) {
+					       // console.log('条码内容：' + res.result);
+							switch (type){
+								case 'workNo': 
+								    //工单号 
+							_self.formItem.workNo = res.result
+								_self.checkWorkNoInfo()
+								//工单号验证查询
+									break;
+								case 'cardBoardNo':
+									    //工单号 
+								_self.formItem.cardBoardNo = res.result
+									_self.getCardBoardNoInfo()
+									//工单号验证查询
+										break;	
+								case 'newcardBoardNo': 
+									    //新卡板
+								_self.formItem.newcardBoardNo = res.result
+								_self.getNewCardBoardNoInfo() 
+								//工单号验证查询
+										break;
+								default:
+									break;
+							}
+						
+					    }
+					});
+				},
+			
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

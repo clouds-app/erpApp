@@ -1,0 +1,565 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+				<block slot="content">保存出仓</block>
+		</cu-custom>
+		<!-- ===卡板指定库位扫描=== -->
+		<form>
+		    <view ref="elForm" class="elForm" >
+		  <view  class="cu-form-group border-top">
+		  	<view class="title">车牌:</view>
+		  	<input @click="setSearchDataListSource('LicensePlate')" disabled v-model="formItem.LicensePlate"  placeholder="请选择车牌" name="input"></input>
+		  	<text @click="setSearchDataListSource('LicensePlate')" class='cuIcon-rounddown text-green'></text>
+		  </view>
+		 <view  class="cu-form-group border-top">
+		 	<view class="title">司机:</view>
+		 	<input @click="setSearchDataListSource('driver')" disabled v-model="formItem.driver"  placeholder="请选择司机" name="input"></input>
+		 	<text @click="setSearchDataListSource('driver')" class='cuIcon-rounddown text-green'></text>
+		 </view>
+			<view  class="cu-form-group border-top">
+				<view class="title">装车:</view>
+				<input @click="setSearchDataListSource('entrucking')" disabled v-model="formItem.entrucking"  placeholder="请选择装车" name="input"></input>
+				<text @click="setSearchDataListSource('entrucking')" class='cuIcon-rounddown text-green'></text>
+			</view>
+			<view  class="cu-form-group border-top">
+				<view class="title">发货:</view>
+				<input @click="setSearchDataListSource('sendGoods')" disabled v-model="formItem.sendGoods"  placeholder="请选择发货" name="input"></input>
+				<text @click="setSearchDataListSource('sendGoods')" class='cuIcon-rounddown text-green'></text>
+			</view>
+			<view class="cu-form-group margin-top">
+				<view class="title">自提</view>
+				<switch @change="isSelfTakeChange" :class="formItem.isSelfTake?'checked':''" :checked="formItem.isSelfTake?true:false"></switch>
+			</view>
+			<view class="cu-form-group margin-top">
+				<view class="title">送货日期</view>
+				<picker mode="date" :value="formItem.deliverDate" start="2015-09-01" end="2020-09-01" @change="DateChange">
+					<view class="picker">
+						{{formItem.deliverDate}}
+					</view>
+				</picker>
+			</view>
+			<!-- <view  class="cu-form-group border-top">
+				<view class="title">送货日期:</view>
+				<input @click="getCarGoodsNo()" disabled v-model="formItem.carGoodsNo"  placeholder="请选择送货日期" name="input"></input>
+				<text @click="getCarGoodsNo()" class='cuIcon-rounddown text-green'></text>
+			</view> -->
+		   </view>
+		</form>
+		<view :style="[{height: tableHeight-10 + 'px' }]">
+			
+		</view>
+		<!-- 操作 按钮 -->
+				<view ref="elBtn"  class="elBtn margin-text-center">
+					  <view class="text-red">
+						 
+					  	 <text>
+							 保存出仓自动生成送货单，
+							 不能再进行修改，
+							 如需修改明细请于ERP送货单中进行修改
+							 <p style="margin-top: 20rpx;"></p>
+						 </text>
+						 
+					  </view>
+					   <view  class="flex  p-xs ">
+						
+					   <view  class="flex-twice  radius">
+						<!-- <button :loading="false" :disabled="false" @click="preChangeCardNo()" class="cu-btn block round line-blue  lg" > 取消返回</button> -->
+					</view> 
+						<view  class="flex-sub radius">
+								
+								</view>
+								<view  class="flex-twice  radius"> 
+								<button @tap="saveWarehouses()" :loading="false" :disabled="!canSubmit || CarListNo==''|| formItem.LicensePlate==''|| formItem.entrucking==''|| formItem.driver==''|| formItem.sendGoods==''" type="" class="cu-btn block bg-green  lg" > 保存出仓</button>
+								</view>
+						
+					</view>
+		</view>
+		 <!--  确认弹框 -->
+		<alertBox ref='alertBox' :msgContent="msgContent" :toShowModal="toShowModal" @cancelModal="cancelModal" @comfirmModal="comfirmModal"></alertBox>
+		 <!--  侧边搜索列表 -->
+		 <searchForm @getSelectDataInfo="getSelectDataInfo" :dataSource="dataSource" ref='searchForm'></searchForm>
+	</view>
+</template>
+
+<script>
+	import axios from '@/libs/api.request'
+	import dayjs from 'dayjs'
+	import alertBox from '@/components/color-ui-dialog/color-ui-dialog.vue'
+	import zTable from "@/components/z-table/z-table.vue"
+	import uniIcon from "@/components/uni-icon/uni-icon.vue"
+	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
+	//纸板入库卡板、工单扫描
+	import baseMixin from '@/mixins'
+	import {mapActions} from 'vuex'
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	const defaultformItem={
+					entrucking:'',//装车人
+					entruckingID:'',
+					sendGoods:'',//发货人
+					SenderID:'',
+					deliverDate: dayjs(Date.now()).format('YYYY-MM-DD'),// 送货日期
+					isSelfTake:false, // 是否自提
+					LicensePlate:'',//车牌
+					driver:'',//司机
+					driverID:'',
+				}
+	export default {
+		name:'inStorage',//纸板入库卡板、工单扫描
+		mixins:[baseMixin],
+		components:{zTable,searchForm,uniPopup,uniIcon,alertBox},
+		data() {
+			return {
+				canSubmit:true,// 是否可以提交
+				currentAction:'',
+				CarListNo:'',// 装车单号
+				cardNo:'',// 车牌
+				toShowModal:false,// 是否显示确认弹框
+				msgContent:'',//弹框内容信息
+				dataSource:[],//数据源
+				currentSelect:'driver',// 当前选择
+				tableHeight:400,//表格高度
+				licensePlateList:[],// 车牌 列表
+				driverList:[],// 司机 列表
+				entruckingList:[],// 装车 列表
+				sendGoodsList:[],// 发货 列表
+				formItem:Object.assign({},defaultformItem)
+			}
+		},
+		onLoad(option) {
+			//uni-app内置：option为object类型，会序列化上个页面传递的参数
+			this.cardNo=option.cardNo; // 车牌
+			this.CarListNo = option.carListNo; // 装车单号
+		},
+		// #ifdef H5
+		mounted () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		  
+		// #endif
+		// #ifndef H5
+		onReady () {
+			this.messageRegister()
+			this.getTableHeight()
+		},
+		// #endif
+		methods: {
+			//确认弹框-提交工单列表信息
+			comfirmModal(val){
+				this.toShowModal =false
+				switch (this.currentAction){
+					case 'sendPrintActionToERP':
+					     this.sendPrintActionToERP()
+						break;			
+					default:
+						break;
+				}
+			},
+			// 取消弹框
+			cancelModal(val){
+				this.toShowModal =false
+			},
+			// 发送打印命令到ERP
+			sendPrintActionToERP(){
+			   let currentUserInfo =this.$store.getters.userObjInfo_getters
+			   let ip=currentUserInfo.ip
+			   let port=currentUserInfo.port
+			   let userID=currentUserInfo.UserID
+			   let pinterURL=`http://${ip}:${port}/indexhtml?userID=${userID},LoadCarNo=${this.CarListNo}`
+			 let data = {}
+			 return new Promise((resolve, reject) => {
+				 axios.request({
+				  'Content-Type': 'application/json;charset=UTF-8',
+				   url: pinterURL,
+				   data,
+				   method: 'POST',
+				 }).then(res=>{
+					  if (res) { 
+						  //返回数据成功
+						   resolve(res);
+				        }
+				 }).catch(err=>{
+					 if (err) {
+					       reject(err)
+					    }
+				 })
+			 })
+			
+			},
+			...mapActions(['spCreatePaperCarListAppAction','getAspCarListAppAppendAction']),
+			// 保存出仓
+			saveWarehouses(){
+				//debugger
+				 let params ={
+					 procName:'spSaveCarListToDeliForAPP',
+					 params:{
+						UserID:this.$store.getters.userInfo_getters, // 当前登陆用户名称,
+						CarListNo:this.CarListNo,
+						CarNo:this.formItem.LicensePlate,
+						Chauffeur:this.formItem.driverID,
+						Loador:this.formItem.entruckingID,
+						SenderID:this.formItem.SenderID,
+						IsZT:(this.formItem.isSelfTake==true ? 1 : 0),
+						ADate:this.formItem.deliverDate+' '+dayjs(Date.now()).format('HH:mm:ss') 
+					 }
+				 }
+				 this.$store.dispatch('setWarehousesAction',params).then(res=>{
+					 // 提交成功后 不可以再次提交
+					
+					 // [{Error: 1, Result: "当前装车扫描数与需装数不一致，需要主管审核通过。"}]
+					 if(res && res.list && res.list.length>0){
+						 if(res.list[0].Error===1){
+							uni.showToast({
+								title:''+res.list[0].Result,
+								icon:'none',
+								duration:2000
+							})
+						 }else{
+							 this.canSubmit =false 
+							 // uni.showToast({
+							 // 	title:'保存出仓成功',
+							 // 	icon:'none',
+							 // 	duration:2000
+							 // })
+							
+					 uni.showModal({
+						 title: '提示',
+						 content: '保存出仓成功',
+						 showCancel:false,
+						 success: function (res) {
+							 if (res.confirm) {
+									// uni.navigateBack({
+									// 	delta: 1
+									// });
+									uni.navigateTo({
+									 url: `./loadGoodsDown`
+									});
+							 } 
+						 }
+					 });
+						 }
+					 }
+					 
+					 
+					 uni.removeStorage({
+					     key: 'outInCarList',
+					     success: function (res) {
+					         console.log('success');
+					     }
+					 });
+					 // 发送打印命令
+					 // this.sendPrintActionToERP().then(res=>{
+						//  uni.showToast({
+						//  	title:'打印命令成功发送',
+						//  	icon:'none',
+						//  	duration:2000
+						//  })
+					 // }).catch(err=>{
+						//  this.currentAction='sendPrintActionToERP'
+						//  this.msgContent =`打印失败,是否再次发送打印命令?`
+						//  this.toShowModal =true
+					 // })
+					 
+				 }).catch(err=>{
+					 uni.showToast({
+					 	title:'保存出仓失败:'+err,
+					 	icon:'none',
+					 	duration:2000
+					 })
+				 })
+			},
+			aspCarListAppAppend(callback){
+				//从缓存中读取数据
+				let value;
+				try {
+					 let key = 'outInCarList';
+				     value = uni.getStorageSync(key);
+				    if (value) {
+				        console.log(value);
+				    }
+				} catch (e) {
+				    // error
+				}
+				let params={
+					// 当前登陆用户名称
+					UserID:this.$store.getters.userInfo_getters, 
+					list:value
+				}
+				this.$store.dispatch('spCreatePaperCarListAppAction',params).then(res=>{
+					//继续
+					if(callback){
+						callback();
+					}
+				}).catch(err=>{
+					 uni.showToast({
+						title:'保存出仓失败:'+err,
+						icon:'none',
+						duration:2000
+					 })
+				})
+				
+				
+			},
+			
+			isSelfTakeChange(item){
+				//debugger
+				this.formItem.isSelfTake= item.detail.value
+			},
+			// 合并多选值
+			formatMultipleVal(valList,type='desc'){
+				let multipleValList=''
+				let tempVal=valList.map(item=>{
+					 if(multipleValList==''){
+						 if(type=='desc'){
+							  multipleValList=item.ct_Desc
+						 }else{
+							 multipleValList=item.type
+						 }
+					 }else{
+						 if(type=='desc'){
+						 	 multipleValList+=';'+item.ct_Desc
+						 }else{
+							  multipleValList+=';'+item.type
+						 }
+					 }
+				})
+				return multipleValList
+			},
+			// 选择  线别/班别/客户  数据回调事件
+			getSelectDataInfo(item){
+				//debugger
+				switch (this.currentSelect){
+					case 'LicensePlate':
+					this.formItem.LicensePlate=item.ct_Desc
+						break;
+					case 'driver':
+						this.formItem.driverID=item.type
+						this.formItem.driver=item.ct_Desc
+						break;	
+					case 'entrucking':
+						this.formItem.entruckingID=this.formatMultipleVal(item,'type')
+						this.formItem.entrucking=this.formatMultipleVal(item,'desc')
+
+						break;
+					case 'sendGoods':
+						this.formItem.SenderID=item.type
+						this.formItem.sendGoods=item.ct_Desc
+					default:
+						break;
+				}
+			},
+			//选择班别
+			setSearchDataListSource(type){
+				//debugger
+				this.currentSelect = type
+				 this.$refs['searchForm'].isMultipel=false
+				this.$refs['searchForm'].isShowSearchList=true
+			   if(type==='LicensePlate'){
+				  
+					 this.dataSource = this.licensePlateList
+					 this.$refs['searchForm'].dataSourceList =this.licensePlateList
+			   }else if(type==='driver'){
+				   
+				    this.dataSource =this.driverList
+				    this.$refs['searchForm'].dataSourceList =this.driverList
+			   }
+			   else if(type==='entrucking'){
+				   // 设置为多选
+				     this.$refs['searchForm'].isMultipel=true
+				     this.dataSource =this.entruckingList
+			   		 this.$refs['searchForm'].dataSourceList =this.entruckingList
+			   }
+			   else if(type==='sendGoods'){
+			   		 this.dataSource =this.sendGoodsList
+			   		 this.$refs['searchForm'].dataSourceList =this.sendGoodsList
+			   }
+			},
+			// 加载车牌列表
+			loadLicensePlateList(){
+				//debugger
+				this.licensePlateList =[]
+				let params ={
+					// null
+				}
+				this.$store.dispatch('getLicensePlateListAction',params).then(res=>{
+					if(res){
+						let resData=res.map(item=>{
+							let formatData = {
+								type:item.CarNo,
+								ct_Desc:item.CarNo
+							}
+							return formatData
+						})
+						this.licensePlateList = resData // // 车牌
+						this.setDefaultLicensePlate() // 设置车牌默认值
+					}
+				
+				}).catch(err=>{
+					uni.showToast({
+						title:'加载车牌列表失败:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			//设置默认车牌
+			setDefaultLicensePlate(){
+				if(this.licensePlateList.length>0 && this.cardNo!=''){
+				
+					let isExistIndex = this.licensePlateList.findIndex((item)=>item.ct_Desc == this.cardNo);
+					if(isExistIndex !=-1){
+						// 不存在
+					}else{
+						this.formItem.LicensePlate= this.cardNo
+					}
+				}
+			},
+			// 加载司机列表
+			loadDriverList(){
+				this.driverList=[]
+				let params ={
+					// null
+				}
+				this.$store.dispatch('getDriverListAction',params).then(res=>{
+					//debugger
+					if(res){
+					let resData=res.map(item=>{
+						let formatData = {
+							type:item.ID,
+							ct_Desc:item.Name
+						}
+						return formatData
+					})
+					this.driverList =resData // 司机 列表
+					}
+				}).catch(err=>{
+					uni.showToast({
+						title:'加载司机列表失败:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			// 加载装货人员列表
+			loadEntruckingList(){
+				this.entruckingList=[]
+				let params ={
+					// null
+				}
+				this.$store.dispatch('getEntruckingListAction',params).then(res=>{
+					if(res){
+					let resData=res.map(item=>{
+						let formatData = {
+							type:item.ID,
+							ct_Desc:item.Name
+						}
+						return formatData
+					})
+					this.entruckingList =resData // 装车 列表
+					}
+				}).catch(err=>{
+					uni.showToast({
+						title:'加载装货列表失败:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			//加载发货列表
+			loadsendGoodsList(){
+				this.sendGoodsList =[]
+				let params ={
+					// null
+				}
+				this.$store.dispatch('getSendGoodsListAction',params).then(res=>{
+					if(res){
+					let resData=res.map(item=>{
+						let formatData = {
+							type:item.ID,
+							ct_Desc:item.Name
+						}
+						return formatData
+					})
+					this.sendGoodsList =resData // 发货 列表
+					}
+				}).catch(err=>{
+					uni.showToast({
+						title:'加载发货列表失败:'+err,
+						icon:'none',
+						duration:2000
+					})
+				})
+			},
+			// 送货日期变更
+			DateChange(e) {
+				this.formItem.deliverDate = e.detail.value
+			},
+			 // 动态获取设置滚动条高度,适配整屏
+			 async getTableHeight(){
+			 			 // debugger
+			 			  let _self=this
+			 			  let tempHeight =  _self.setTableHeight()
+			 			  let otherHeight= await _self.getOtherContentHeight("elForm") 
+			 			  let otherHeight2 = await _self.getOtherContentHeight("elBtn")
+			 			  if(otherHeight!=null && otherHeight2!=null){
+			 			  	
+			 			  	_self.tableHeight =tempHeight-otherHeight-otherHeight2-20
+			 			  }
+			 		
+			 			},
+				//映射方法
+			...mapActions(['getClassBanListAction']),
+				//页面通讯,事件注册
+				messageRegister(){
+				  // 初始化数据
+				  this.canSubmit =true
+				  this.loadLicensePlateList()
+				  this.loadDriverList()
+				  this.loadEntruckingList()
+				  this.loadsendGoodsList()
+				},
+
+			   //===打开扫描===
+				turnOnScanCode(type){
+					this.scanType =type
+					let _self =this
+					// 调起条码扫描
+					uni.scanCode({
+					    scanType: 'barCode', // 固定条形码
+					    success: function (res) {
+					        console.log('条码内容：' + res.result);
+							switch (type){
+								case 'cardBoardNo': 
+								    //卡板号
+								    _self.formItem.cardBoardNo = res.result
+									//_self.getCardBoardNoInfo() //工单号验证查询
+									break;
+								case 'kuNo': 
+									    //库位号
+									    _self.formItem.kuNo = res.result
+										//_self.getWorkNoInfo() //工单号验证查询
+										break;
+								default:
+									break;
+							}
+						
+					    }
+					});
+				},
+			
+		}
+	}
+</script>
+
+<style>
+	.margin-text-center{
+		text-align: center;
+		margin: 20rpx;
+	}
+	.border-top{
+		  border-top: 1px solid #eee;
+	}
+.cu-form-group .title {
+		min-width: calc(4em + 15px);
+	}
+</style>

@@ -1,0 +1,935 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true"><block slot="content">卡板入库</block></cu-custom>
+		<form>
+			<view ref="elForm" class="elForm">
+				<view class="flex border-top">
+					<view class="flex-sub">
+						<view class="cu-form-group">
+							<view class="title">线ㅤ别:</view>
+							<input disabled @click="setSearchDataListSource('line')" v-model="formItem.line" placeholder="请选择线别" name="input" />
+							<text @click="setSearchDataListSource('line')" class="cuIcon-rounddown text-green"></text>
+						</view>
+					</view>
+					<view class="flex-sub">
+						<view class="cu-form-group">
+							<view class="title">班ㅤ别:</view>
+							<input disabled @click="setSearchDataListSource('class')" v-model="formItem.class" placeholder="请选择班别" name="input" />
+							<text @click="setSearchDataListSource('class')" class="cuIcon-rounddown text-green"></text>
+						</view>
+					</view>
+				</view>
+				<view class="cu-form-group border-top">
+					<view class="title">卡板号:</view>
+					<input v-model="formItem.cardBoardNo" @blur="cardBoardNotNull" placeholder="请扫描卡板号" name="input" />
+					<button @click="turnOnScanCode('cardBoardNo')" class="cu-btn bg-green shadow">扫描</button>
+				</view>
+				<view class="cu-form-group border-top">
+					<view class="title">工单号:</view>
+					<input v-model="formItem.workNo" @blur="getWorkNoInfo" placeholder="请扫描工单号" name="input" />
+					<button
+						:loading="false"
+						:disabled="formItem.cardBoardNo == '' || formItem.line == '' || formItem.class == ''"
+						type=""
+						@click="turnOnScanCode('workNo')"
+						class="cu-btn bg-green shadow"
+					>
+						扫描
+					</button>
+				</view>
+			</view>
+		</form>
+
+		<scroll-view ref="elScrollView" :style="[{ height: tableHeight - 10 + 'px' }]" :scroll-y="true" class="page show ">
+			<block v-for="(item, index) in cardBoardNoInfoList" :key="index">
+				<view class="grid-warp">
+					<view class="grid-title">
+						{{ item.ap_CustName == '' ? '--' : item.ap_CustName }} ㅤ
+
+						<view>
+							<button @click="editWorkNoInfo(index)" class="cu-tag round line-green">修改</button>
+							<button @click="preDeleteWorkNoInfo(index, item)" class="cu-tag round line-red">删除</button>
+						</view>
+					</view>
+					<view class="grid-body">
+						<view class="grid-flex padding-10">
+							<view>
+								<text class="orderText">工单号:{{ item.ap_OrderNo == null ? '--' : item.ap_OrderNo }}</text>
+							</view>
+							<view>
+								<text class="orderText">纸质:{{ item.ap_ArtID }}</text>
+							</view>
+						</view>
+						<view class="grid-flex padding-10">
+							<view>
+								<text class="orderText">线别:{{ item.ap_LineName }}</text>
+								<text class="orderText">ㅤ班别:{{ item.ap_ClassNoName }}</text>
+							</view>
+							<view>
+								<text class="orderText">状态:{{ statusToString(item.ap_Status) }}</text>
+							</view>
+						</view>
+						<view class="grid-flex padding-10">
+							<view>
+								<text class="orderText">规格:{{ item.ap_Size }}</text>
+							</view>
+							<view>
+								<text class="orderText">本板数:{{ item.ap_Qty }}</text>
+							</view>
+						</view>
+					</view>
+				</view>
+			</block>
+		</scroll-view>
+		<!-- 操作 按钮 -->
+		<view ref="elBtn" class="elBtn margin-text-center margin-top-sm">
+			<view class="flex  p-xs margin-bottom-sm mb-sm">
+				<view class="flex-sub  radius">
+					<button :loading="false" :disabled="formItem.cardBoardNo == ''" @click="preChangeCardNo()" class="cu-btn block round line-blue margin-tb-sm lg">改卡板</button>
+				</view>
+				<view class="flex-sub  radius">
+					<text class="cu-btn margin-tb-sm round line-red">{{ cardBoardNoInfoList.length }} / {{formItem.benBanTotalQty}}</text>
+					
+				</view>
+				<view class="flex-sub  radius">
+					<button @click="preSubmitWorkNoList()" :loading="false" :disabled="formItem.cardBoardNo == ''" type="" class="cu-btn block bg-green margin-tb-sm lg">
+						提交
+					</button>
+				</view>
+			</view>
+		</view>
+		<!--  // 数据修改界面 -->
+		<view>
+			<uni-popup ref="popup" type="bottom">
+				<form>
+					<view>
+						<view class="cu-form-group border-top">
+							<view class="title">工单号:</view>
+							<input disabled v-model="currentWorkNoItem.ap_OrderNo" placeholder="工单号" name="input" />
+						</view>
+						<view class="cu-form-group border-top">
+							<view class="title">客ㅤ户:</view>
+							<input disabled v-model="currentWorkNoItem.ap_CustName" placeholder="客户" name="input" />
+							<!-- <text @click="setSearchDataListSource('guest')" class='cuIcon-rounddown text-green'></text> -->
+						</view>
+						<view class="flex border-top">
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">线ㅤ别:</view>
+									<input disabled @click="setSearchDataListSource('Nline')" v-model="currentWorkNoItem.ap_LineName" placeholder="线别" name="input" />
+									<text @click="setSearchDataListSource('Nline')" class="cuIcon-rounddown text-green"></text>
+								</view>
+							</view>
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">班ㅤ别:</view>
+									<input disabled @click="setSearchDataListSource('Nclass')" v-model="currentWorkNoItem.ap_ClassNoName" placeholder="班别" name="input" />
+									<text @click="setSearchDataListSource('Nclass')" class="cuIcon-rounddown text-green"></text>
+								</view>
+							</view>
+						</view>
+
+						<view class="flex border-top">
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">纸ㅤ质:</view>
+									<input v-model="currentWorkNoItem.ap_ArtID" :disabled="true" placeholder="纸质" name="input" />
+								</view>
+							</view>
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">规ㅤ格:</view>
+									<input v-model="currentWorkNoItem.ap_Size" :disabled="true" placeholder="规ㅤ格" name="input" />
+								</view>
+							</view>
+						</view>
+
+						<view class="flex border-top">
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">状ㅤ态:</view>
+									<input :value="statusToString(currentWorkNoItem.ap_Status)" :disabled="true" placeholder="状ㅤ态" name="input" />
+								</view>
+							</view>
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">本板数:</view>
+									<input class="cl-modifyInput" v-model="currentWorkNoItem.ap_Qty" type="number" placeholder="本板数" name="input" />
+								</view>
+							</view>
+						</view>
+						<view ref="elBtn" class="elBtn margin-text-center margin-top-sm">
+							<view class="flex  p-xs margin-bottom-sm mb-sm">
+								<view class="flex-twice  radius"><button @click="closePopup()" class="cu-btn block round line-blue margin-tb-sm lg">取消</button></view>
+
+								<view class="flex-twice  margin-left  radius">
+									<button @click="updateWorkNoInfo()" :loading="false" :disabled="false" type="" class="cu-btn block bg-green margin-tb-sm lg">确认</button>
+								</view>
+							</view>
+						</view>
+					</view>
+				</form>
+			</uni-popup>
+		</view>
+		<alertBox ref="alertBox" :msgContent="msgContent" :toShowModal="toShowModal" @cancelModal="cancelModal" @comfirmModal="comfirmModal"></alertBox>
+		<!--  侧边搜索列表 -->
+		<searchForm @getSelectDataInfo="getSelectDataInfo" :dataSource="dataSource" ref="searchForm"></searchForm>
+	</view>
+</template>
+
+<script>
+import alertBox from '@/components/color-ui-dialog/color-ui-dialog.vue';
+import uniIcon from '@/components/uni-icon/uni-icon.vue';
+import searchForm from '@/components/searchForm/searchDataList.vue.vue';
+//纸板入库卡板、工单扫描
+import baseMixin from '@/mixins';
+import { mapActions } from 'vuex';
+import uniPopup from '@/components/uni-popup/uni-popup.vue';
+const defalutformItem = {
+	oldCardBoardNo: '', //旧卡板号
+	cardBoardNo: '', //卡板号 6
+	workNo: '', //工单号6P191028253
+	line: '', //线ㅤ别
+	lineID: '', //
+	class: '', //班ㅤ别
+	classID: '', //班ㅤ别
+	guest: '', //客ㅤ户
+	paperQuality: '', //纸质
+	leng: '', //楞ㅤ别
+	specs: '', //规ㅤ格
+	orderNum: '', //订单数
+	banNum: '' ,//卡板数
+	benBanTotalQty:0,// 本板总数
+};
+export default {
+	name: 'inStorage', //纸板入库卡板、工单扫描
+	mixins: [baseMixin],
+	components: { searchForm, uniPopup, uniIcon, alertBox },
+	data() {
+		return {
+			tempcardBoardNo: '',
+			oldTempcardBoardNo: '',
+			tempcardBoardNoList: [],
+			tempBanNum: -1, //临时工单号
+			currentDeleteIndex: -1, // 当前需要删除的下标
+			currentDeleteItem: {}, // 当前需要删除的项
+			tempScanCode: '', //临时扫描的卡板号
+			currentAction: 'submitWorkNoList', //当前提示框 操作
+			isChangeCardNo: false, // 是否更改卡板号,
+			currentEditIndex: -1, // 当前编辑实体下标
+			toShowModal: false, // 是否显示确认弹框
+			msgContent: '', //弹框内容信息
+			dataSource: [], //搜索数据原
+			currentSelect: 'line', // 当前选择线别/班别
+			classBanList: [], // 当前班别数据列表,
+			lineSeparationList: [], // 当前线别数据列表
+			customerList: [], // 客户搜索列表
+			cardBoardNoInfoList: [], //本板清单列表信息
+			workNoInfoList: [], //工单详情信息,
+			modifyWorkNoItemList: [], // 当前编辑内容项副本列表,比较本板数不能小于之前的
+			currentWorkNoItem: {
+				line: '', //线ㅤ别
+				class: '', //班ㅤ别
+				guest: '', //客ㅤ户
+				isNew: false // 是否编辑更新过
+			}, // 当前编辑工单信息
+			scanType: '', //当前扫描类型
+			tableHeight: 825, //表格高度
+			// 显示页面信息 实体
+			formItem: Object.assign({}, defalutformItem)
+		};
+	},
+	watch: {
+		cardBoardNoInfoList: {
+			handler(newVal, oldVal) {
+				this.countBenBanTotalQty()
+			},
+			immediate: true, //刷新加载 立马触发一次handler
+			deep: true // 可以深度检测到 person 对象的属性值的变化
+		},
+	},
+	// #ifdef H5
+	mounted() {
+		this.messageRegister();
+		this.getTableHeight();
+	},
+
+	// #endif
+	// #ifndef H5
+	onReady() {
+		this.messageRegister();
+		this.getTableHeight();
+	},
+	// #endif
+	methods: {
+		// 合计本板总数
+		countBenBanTotalQty(){
+			this.formItem.benBanTotalQty=0
+			//debugger
+			let countNum = this.cardBoardNoInfoList.map(item=>{
+				this.formItem.benBanTotalQty+=Number(item.ap_Qty)
+			})
+		},
+		//准备-- 更换卡板号,
+		preChangeCardNo() {
+			this.currentAction = 'changeCardNo';
+			this.msgContent = '确定修改卡板吗?';
+			this.toShowModal = true;
+		},
+		// 确认更改卡板号
+		ChangeCardNo() {
+			this.isChangeCardNo = true;
+			this.formItem.cardBoardNo = ''; // 清空卡板号
+			uni.showToast({
+				title: '请扫描新的卡板号',
+				icon: 'none',
+				duration: 2000
+			});
+		},
+		// 状态描述文字 状态 0:未入库 1:已入库 2:已发送
+		statusToString(num) {
+			let statusDesc = '未入库';
+			switch (num) {
+				case 1:
+					statusDesc = '已入库';
+					break;
+				case 2:
+					statusDesc = '已发送';
+					break;
+				default:
+					statusDesc = '未入库';
+					break;
+			}
+			return statusDesc;
+		},
+		// 准备--提交提交工单列表信息
+		preSubmitWorkNoList() {
+			this.currentAction = 'submitWorkNoList';
+			this.msgContent = '确定提交数据吗?';
+			this.toShowModal = true;
+		},
+		// 确认提交工单列表信息
+		SubmitWorkNoList() {
+			if (this.isChangeCardNo) {
+				this.submitUpdateList();
+			} else {
+				this.submitAddList();
+			}
+			this.modifyWorkNoItemList = []; //重置
+			this.isChangeCardNo = false; //  提交完 重置 更换卡板状态
+		},
+		// 提交添加卡板工单信息列表
+		submitAddList() {
+			let params = {
+				//map:this.cardBoardNoInfoList,
+				map: {
+					// 相对于旧版本标识:oldversion,注:备货/装货分离
+					version: 'newversion',
+					UserID: this.$store.getters.userInfo_getters,
+					// 当前登陆用户名称
+					cardBoardNo: this.formItem.cardBoardNo,
+					// 卡板号
+					addList: this.cardBoardNoInfoList
+				}
+			};
+			this.$store
+				.dispatch('setWorkOrderDetailsAction', params)
+				.then(res => {
+					// 清空数据,班别,线别保留
+					//this.formItem = Object.assign({},defalutformItem)
+					this.formItem.cardBoardNo = '';
+					this.formItem.workNo = '';
+					this.cardBoardNoInfoList = [];
+					this.workNoInfoList = [];
+					uni.showToast({
+						title: '操作成功',
+						icon: 'none',
+						duration: 2000
+					});
+				})
+				.catch(err => {
+					uni.showToast({
+						title: '操作失败:' + err,
+						icon: 'none',
+						duration: 2000
+					});
+				});
+		},
+		// 提交修改卡板工单信息列表
+		submitUpdateList() {
+			let params = {
+				map: {
+					// 相对于旧版本标识:oldversion,注:备货/装货分离
+					version: 'newversion',
+					UserID: this.$store.getters.userInfo_getters, // 当前登陆用户名称
+					oldCardNo: this.cardBoardNoInfoList[0].ap_CardNo,
+					cardNo: this.formItem.cardBoardNo,
+					updateList: this.cardBoardNoInfoList
+				}
+			};
+			this.$store
+				.dispatch('setBoardNumberAction', params)
+				.then(res => {
+					// 清空数据
+					//this.formItem = Object.assign({},defalutformItem)
+					this.formItem.cardBoardNo = '';
+					this.formItem.workNo = '';
+					this.cardBoardNoInfoList = [];
+					this.workNoInfoList = [];
+					uni.showToast({
+						title: '操作成功',
+						icon: 'none',
+						duration: 2000
+					});
+				})
+				.catch(err => {
+					uni.showToast({
+						title: '操作失败:' + err,
+						icon: 'none',
+						duration: 2000
+					});
+				});
+		},
+		//确认弹框-提交工单列表信息
+		comfirmModal(val) {
+			this.toShowModal = false;
+			switch (this.currentAction) {
+				case 'deleteWorkNoInfo':
+					this.deleteWorkNoInfo(this.currentDeleteIndex, this.currentDeleteItem);
+					break;
+				case 'changeCardNo':
+					this.ChangeCardNo();
+					break;
+				case 'submitWorkNoList':
+					this.SubmitWorkNoList();
+					break;
+				case 'cardBoardNotNull':
+					this.SubmitWorkNoList();
+
+					break;
+				default:
+					break;
+			}
+		},
+		// 取消弹框
+		cancelModal(val) {
+			this.toShowModal = false;
+			switch (this.currentAction) {
+				case 'cardBoardNotNull':
+					this.formItem.cardBoardNo = this.tempScanCode;
+					this.getCardBoardNoInfo();
+					break;
+				default:
+					break;
+			}
+		},
+		// 打开编辑工单信息,获取当前选择实体
+		editWorkNoInfo(_index) {
+			this.currentEditIndex = _index;
+			//debugger
+			this.openPopup();
+			//vue不能检测对象属性的添加和删除 推荐使用vm.set方法
+			//也可以使用Object.assign() 或 _.extend()来添加新的属性，但是要创建一个新的对象
+			this.currentWorkNoItem = Object.assign({}, this.currentWorkNoItem, this.cardBoardNoInfoList[_index]); //这里{} 就是创建的新的对象
+			this.copyAndCheckIsExist();
+		},
+		// 拷贝副本 并检查是否存在
+		copyAndCheckIsExist() {
+			// debugger
+			let oldWorkNoItem = this.cardBoardNoInfoList[this.currentEditIndex];
+			let isExist = false;
+			if (this.modifyWorkNoItemList.length > 0) {
+				this.modifyWorkNoItemList.map(item => {
+					if (item.ap_OrderNo == oldWorkNoItem.ap_OrderNo) {
+						isExist = true;
+					}
+				});
+			}
+			if (!isExist) {
+				this.modifyWorkNoItemList.push(oldWorkNoItem);
+			}
+		},
+		// 比较修改前后本板数大小
+		compareSizes() {
+			//debugger
+			let currentSize = Number(this.currentWorkNoItem.ap_Qty);
+			let oldItem = this.modifyWorkNoItemList.find(item => {
+				if (item.ap_OrderNo == this.currentWorkNoItem.ap_OrderNo) {
+					return item;
+				}
+			});
+			// 新增 初始化大小 每次都要和这个初始值比较大小
+			let oldSize = Number(oldItem.ap_Qty);
+			// 修复先存后比较的情况
+			if (this.currentWorkNoItem.ap_InitNum != null && this.currentWorkNoItem.ap_InitNum != '') {
+				oldSize = Number(this.currentWorkNoItem.ap_InitNum);
+			}
+			if (currentSize > oldSize) {
+				uni.showToast({
+					title: '本板数不能大于: ' + oldSize,
+					icon: 'none',
+					duration: 2000
+				});
+				return false;
+			} else {
+				return true;
+			}
+		},
+		// 更新当前的工单信息
+		updateWorkNoInfo() {
+			// 比较修改前后本板数大小
+			if (!this.compareSizes()) {
+				return;
+			}
+			//Vue不能检测到通过索引和改变长度修改值的数组
+			this.cardBoardNoInfoList = Object.assign([], this.cardBoardNoInfoList, (this.cardBoardNoInfoList[this.currentEditIndex] = this.currentWorkNoItem));
+			this.closePopup();
+		},
+		// 是否确认删除
+		preDeleteWorkNoInfo(_index, item) {
+			this.currentDeleteIndex = _index;
+			this.currentDeleteItem = item;
+			this.currentAction = 'deleteWorkNoInfo';
+			this.msgContent = `确定删除[${item.ap_OrderNo}]吗?`;
+			this.toShowModal = true;
+		},
+		// 删除工单信息
+		deleteWorkNoInfo(_index, item) {
+			// splice(index,howmany) 从数组中添加/删除项目，然后返回被删除的项目。
+			let deleteItem = this.cardBoardNoInfoList.splice(_index, 1);
+		},
+		// 打开修改弹框
+		openPopup() {
+			this.$refs.popup.open();
+		},
+		// 关闭修改弹框
+		closePopup() {
+			this.$refs.popup.close();
+		},
+		// 动态获取设置滚动条高度,适配整屏
+		async getTableHeight() {
+			//debugger
+			let _self = this;
+			let tempHeight = _self.setTableHeight();
+			let otherHeight = await _self.getOtherContentHeight('elForm');
+			let otherHeight2 = await _self.getOtherContentHeight('elBtn');
+			if (otherHeight != null && otherHeight2 != null) {
+				_self.tableHeight = tempHeight - otherHeight - otherHeight2;
+			}
+		},
+		//映射方法
+		...mapActions([
+			'getCardNumbeInfoListAction',
+			'getClassBanListAction',
+			'getLineSeparationListAction',
+			'getQutationCustomerList_action',
+			'getBoardDetailsAction',
+			'getWorkOrderDetailsAction'
+		]),
+		//页面通讯,事件注册
+		messageRegister() {
+			//console.log('======messageRegister========')
+			//debugger
+			this.getClassBanList();
+			this.getLineSeparationList();
+			this.getDefaultLineClassItem();
+		},
+		// 获取上次选择的线/班 别
+		getDefaultLineClassItem() {
+			// 修复为空, 高度获取异常
+			if (this.$store.getters.currentLineItem_getter != null) {
+				this.formItem.line = this.$store.getters.currentLineItem_getter.ct_Desc;
+				this.formItem.lineID = this.$store.getters.currentLineItem_getter.type;
+			}
+
+			if (this.$store.getters.currentClassItem_getter != null) {
+				this.formItem.class = this.$store.getters.currentClassItem_getter.ct_Desc;
+				this.formItem.classID = this.$store.getters.currentClassItem_getter.type;
+			}
+		},
+		// 选择  线别/班别/客户  数据回调事件
+		getSelectDataInfo(item) {
+			//debugger
+			switch (this.currentSelect) {
+				case 'line':
+					this.formItem.line = item.ct_Desc;
+					this.formItem.lineID = item.type;
+					this.$store.commit('setCurrentLineItem', item);
+					break;
+				case 'Nline':
+					this.currentWorkNoItem.ap_Line = item.type;
+					this.currentWorkNoItem.ap_LineName = item.ct_Desc;
+					break;
+				case 'class':
+					this.formItem.class = item.ct_Desc;
+					this.formItem.classID = item.type;
+					this.$store.commit('setCurrentClassItem', item);
+					break;
+				case 'Nclass':
+					this.currentWorkNoItem.ap_ClassNo = item.type;
+					this.currentWorkNoItem.ap_ClassNoName = item.ct_Desc;
+					break;
+				case 'guest':
+					this.formItem.guest = item.ct_Desc;
+					//this.postData.ap_CustID =item.type
+					break;
+				case 'Nguest':
+					this.currentWorkNoItem.ap_CustName = item.ct_Desc;
+					this.currentWorkNoItem.ap_CustID = item.type;
+					break;
+				default:
+					break;
+			}
+		},
+		//选择班别
+		setSearchDataListSource(type) {
+			//debugger
+			this.currentSelect = type;
+			this.$refs['searchForm'].isShowSearchList = true;
+			if (type === 'line' || type === 'Nline') {
+				this.dataSource = this.lineSeparationList;
+				this.$refs['searchForm'].dataSourceList = this.lineSeparationList;
+			} else if (type === 'class' || type === 'Nclass') {
+				this.dataSource = this.classBanList;
+				this.$refs['searchForm'].dataSourceList = this.classBanList;
+			} else if (type === 'guest' || type === 'Nguest') {
+				this.dataSource = this.customerList;
+				this.$refs['searchForm'].dataSourceList = this.customerList;
+			}
+		},
+		// 加载客户信息列表
+		loadCustomerList() {
+			if (this.customerList.length > 0) {
+				return;
+			}
+			//搜索条件：
+			//ct_Type(客户类型)0:全部,1:纸箱,2:纸板,3:蜂窝 多个逗号分开
+			let params = {
+				ct_Type: 0 // this.customerType
+			};
+			this.getQutationCustomerList_action(params)
+				.then(res => {
+					this.customerList = res.records;
+				})
+				.catch(err => {
+					uni.showToast({
+						title: '获取客户列表失败 err:' + err,
+						icon: 'none',
+						duration: 2000
+					});
+				});
+		},
+		// 获取班别数据
+		getClassBanList() {
+			let params = {};
+			let resData = this.getClassBanListAction(params)
+				.then(res => {
+					if (res) {
+						let resData = res.map(item => {
+							let formatData = {
+								type: item.tt_Code,
+								ct_Desc: item.tt_Name
+							};
+							return formatData;
+						});
+						this.classBanList = resData;
+						//console.log('===getClassBanListAction====:'+JSON.stringify((resData)))
+					}
+				})
+				.catch(err => {
+					this.classBanList = [];
+					uni.showToast({
+						title: '获取线别失败:' + err,
+						icon: 'none',
+						duration: 2000
+					});
+				});
+		},
+		// 获取线别数据
+		getLineSeparationList() {
+			let params = {};
+			let resData = this.getLineSeparationListAction(params)
+				.then(res => {
+					if (res) {
+						let resData = res.map(item => {
+							let formatData = {
+								type: item.pl_Code,
+								ct_Desc: item.pl_Name
+							};
+							return formatData;
+						});
+						this.lineSeparationList = resData;
+						//console.log('===getClassBanListAction====:'+JSON.stringify((resData)))
+					}
+				})
+				.catch(err => {
+					this.lineSeparationList = [];
+					uni.showToast({
+						title: '获取班别失败:' + err,
+						icon: 'none',
+						duration: 2000
+					});
+				});
+		},
+		//查询卡板信息列表BY 卡板号
+		getCardBoardNoInfo() {
+			//debugger
+			// if(this.isChangeCardNo){
+			// 	return
+			// }
+			if (this.formItem.cardBoardNo == '') {
+				uni.showToast({
+					title: '请扫描卡板号',
+					icon: 'none',
+					duration: 2000
+				});
+				return;
+			}
+			// let data = {
+			// 	ap_CardNo: this.formItem.cardBoardNo
+			// }
+			let data = {
+				procName: 'spGetCardInfoForAPP',
+				params: {
+					//OrderNo: this.formItem.workNo
+					CardNo: this.formItem.cardBoardNo
+				}
+			};
+			this.cardBoardNoInfoList = [];
+			this.dataIsLoadding = true;
+			this.getBoardDetailsAction(data)
+				.then(res => {
+					//debugger
+					if (res && res.list && res.list.length > 0) {
+						this.cardBoardNoInfoList = res.list;
+						this.countBenBanTotalQty()
+					}
+					// else{
+					// 	uni.showToast({
+					// 		title:'该卡板没有数据！',
+					// 		icon:'none',
+					// 		duration:2000
+					// 	})
+					// }
+					this.dataIsLoadding = false;
+				})
+				.catch(err => {
+					uni.showToast({
+						title: '获取数据失败:' + err,
+						icon: 'none',
+						duration: 2000
+					});
+					this.dataIsLoadding = false;
+				});
+		},
+		//工单号信息查询  P191221010 BY 工单号 getBoardDetailsAction
+		getWorkNoInfo() {
+			//debugger
+			if (this.formItem.workNo == '') {
+				uni.showToast({
+					title: '请扫描工单号',
+					icon: 'none',
+					duration: 2000
+				});
+				return;
+			}
+			// 解析 (工单号 逗号 本板数)
+			if (this.formItem.workNo.indexOf(',') != -1) {
+				let tempWorkNo = this.formItem.workNo.split(',');
+				this.tempBanNum = tempWorkNo[1];
+				this.formItem.workNo = tempWorkNo[0];
+			}
+			if (this.checkWorkNoIsExistOrNot()) {
+				//工单号验证查询
+				return;
+			}
+
+			let data = {
+				procName: 'spGetPaperCOInfoForAPP',
+				params: {
+					OrderNo: this.formItem.workNo
+				}
+			};
+			this.dataIsLoadding = true;
+			let _self = this;
+			this.getBoardDetailsAction(data)
+				.then(res => {
+					//debugger
+					if (res && res.list && res.list.length > 0) {
+						_self.workNoInfoList = res.list;
+						_self.countBenBanTotalQty()
+						_self.pushDataIntoCardBoardList(_self.workNoInfoList[0]);
+					} else {
+						uni.showToast({
+							title: '没有该工单对应的数据',
+							icon: 'none',
+							duration: 2000
+						});
+					}
+					this.dataIsLoadding = false;
+				})
+				.catch(err => {
+					uni.showToast({
+						title: '获取数据失败:' + err,
+						icon: 'none',
+						duration: 2000
+					});
+					this.dataIsLoadding = false;
+				});
+		},
+		//===打开扫描===
+		turnOnScanCode(type) {
+			this.scanType = type;
+			let _self = this;
+			// 调起条码扫描
+			uni.scanCode({
+				scanType: 'barCode', // 固定条形码
+				success: function(res) {
+					//console.log('条码内容：' + res.result);
+					switch (type) {
+						case 'cardBoardNo':
+							//console.log('=====卡板号====='+res.result)
+							//卡板号
+							_self.tempScanCode = res.result;
+							_self.cardBoardNotNull();
+
+							break;
+						case 'workNo':
+							//工单号
+							_self.formItem.workNo = res.result;
+							//
+							_self.getWorkNoInfo();
+							// if(res.result.indexOf(',')!=-1){
+							// 	_self.teampWorkNo =res.result.split(',')[1]
+
+							// }
+
+							break;
+						default:
+							break;
+					}
+				}
+			});
+		},
+		// 检验当前工单号是否已经存在
+		checkWorkNoIsExistOrNot() {
+			//debugger
+			if (this.formItem.cardBoardNo == '') {
+				uni.showToast({
+					title: '请先扫描卡板号',
+					icon: 'none',
+					duration: 2000
+				});
+				this.formItem.workNo = '';
+				return true;
+			}
+			if (this.formItem.line == '') {
+				uni.showToast({
+					title: '请先选择线别',
+					icon: 'none',
+					duration: 2000
+				});
+				return true;
+			}
+			if (this.formItem.class == '') {
+				uni.showToast({
+					title: '请先选择班别',
+					icon: 'none',
+					duration: 2000
+				});
+				return true;
+			}
+			if (this.cardBoardNoInfoList.length > 0) {
+				let isExist = this.cardBoardNoInfoList.findIndex(item => item.ap_OrderNo == this.formItem.workNo);
+				if (isExist != -1) {
+					uni.showToast({
+						title: '此工单号已经存在',
+						icon: 'none',
+						duration: 2000
+					});
+					this.formItem.workNo = '';
+					return true;
+				}
+			} else {
+				return false;
+			}
+		},
+		// 添加数据到当前卡板清单列表
+		pushDataIntoCardBoardList(res) {
+			//debugger
+			let params = {
+				ap_CardNo: this.formItem.cardBoardNo, // 卡板号
+				ap_OrderNo: this.formItem.workNo, // 工单号
+				ap_Line: this.formItem.lineID, //线别
+				ap_LineName: this.formItem.line, //线别
+				ap_ClassNo: this.formItem.classID, // 班别
+				ap_ClassNoName: this.formItem.class,
+				ap_Size: res.Size, // 规格
+				ap_InitNum: res.co_Qty, // 本板数初始值 NEW
+				ap_PCNo: res.PCNo, // 排程号 NEW
+				ap_CustID: res.CustID, // 客户编号
+				ap_CustName: res.CustName, // 客户名称
+				ap_Qty: this.tempBanNum == -1 ? res.co_Qty : this.tempBanNum, // 本板数量
+				ap_ArtID: res.ArtID //纸质
+			};
+			this.cardBoardNoInfoList.push(params);
+			this.formItem.workNo = '';
+			this.tempBanNum = -1;
+		},
+		// 验证卡板号信息,当前不为空时
+		cardBoardNotNull() {
+			if (!this.isChangeCardNo) {
+				this.checkCardBoardNo(this.formItem.cardBoardNo, 'A')
+					.then(res => {
+						this.formItem.cardBoardNo = '';
+						return;
+					})
+					.catch(err => {
+						this.doAction();
+					});
+			} else {
+				this.checkCardBoardNo(this.formItem.cardBoardNo, 'B')
+					.then(res => {
+						this.formItem.cardBoardNo = '';
+						return;
+					})
+					.catch(err => {
+						this.doAction();
+					});
+			}
+		},
+		doAction() {
+			if (this.isChangeCardNo) {
+				return;
+			}
+			if (this.cardBoardNoInfoList && this.cardBoardNoInfoList.length > 0) {
+				this.currentAction = 'cardBoardNotNull';
+				this.msgContent = '存在已扫描未保存数据,是否先提交保存?';
+				this.toShowModal = true;
+			} else {
+				if (this.tempScanCode != '') {
+					this.formItem.cardBoardNo = this.tempScanCode;
+				}
+				this.getCardBoardNoInfo();
+				this.tempScanCode = '';
+			}
+		}
+	}
+};
+</script>
+<style>
+.orderText {
+	font-size: 12px;
+}
+
+.margin-text-center {
+	text-align: center;
+	margin: 20rpx;
+}
+.border-top {
+	border-top: 1px solid #eee;
+}
+.cu-form-group .title {
+	min-width: calc(4em + 15px);
+}
+</style>

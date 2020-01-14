@@ -16,7 +16,7 @@ export default {
      * @description api请求基础路径 http://120.78.91.203:8082/clerp-app-api/swagger-ui.html
      */
     baseUrl: {
-	  //dev: 'http://192.168.168.156:8086',  // 手机测试服务
+	 // dev: 'http://192.168.1.180:8080',  // 手机测试服务
       dev: 'http://192.168.168.152:8080', // PC 测试服务http://192.168.0.38:8086
       pro: 'http://192.168.1.180:8080',
 	  //pro: 'http://120.78.91.203:8083',

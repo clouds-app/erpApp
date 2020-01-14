@@ -1,0 +1,2 @@
+setCssToHead([".",[1],"margin-text-center{ text-align: center; margin: ",[0,20],"; }\n.",[1],"border-top{ border-top: 1px solid #eee; }\n.",[1],"border-bottom-line{ border-bottom: 1px solid #eee; }\n.",[1],"cu-form-group .",[1],"title { min-width: calc(4em + 15px); }\n",],undefined,{path:"./pages/cardBoard/loadGoodsUp/loadGoodsUp.wxss"})();
+document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./pages/cardBoard/loadGoodsUp/loadGoodsUp.wxml') } }));
