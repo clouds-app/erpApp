@@ -7,8 +7,8 @@
   "id": "__UNI__E28211E",
   "name": "仓库扫码",
   "version": {
-    "name": "1.5",
-    "code": 100
+    "name": "1.6",
+    "code": 160
   },
   "description": "仓库扫码app",
   "launch_path": "__uniappview.html",
