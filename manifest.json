@@ -2,8 +2,8 @@
     "name" : "仓库扫码",
     "appid" : "__UNI__E28211E",
     "description" : "仓库扫码app",
-    "versionName" : "1.6",
-    "versionCode" : 160,
+    "versionName" : "1.9",
+    "versionCode" : 190,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
