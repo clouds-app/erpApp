@@ -69,7 +69,7 @@
 								
 								</view>
 								<view  class="flex-twice  radius"> 
-								<button @tap="preSubmitData()" :loading="false" :disabled="!canSubmit || CarListNo==''|| formItem.LicensePlate==''|| formItem.entrucking==''|| formItem.driver==''|| formItem.sendGoods==''" type="" class="cu-btn block bg-green  lg" > 保存出仓</button>
+								<button @tap="saveWarehouses()" :loading="false" :disabled="!canSubmit || CarListNo==''|| formItem.LicensePlate==''|| formItem.entrucking==''|| formItem.driver==''|| formItem.sendGoods==''" type="" class="cu-btn block bg-green  lg" > 保存出仓</button>
 								</view>
 						
 					</view>
@@ -128,8 +128,6 @@
 		onLoad(option) {
 			//uni-app内置：option为object类型，会序列化上个页面传递的参数
 			//debugger
-			this.formItem.sendGoods =  option.LeaderName; // 发货人
-			this.formItem.SenderID =  option.LeaderID; // 发货人ID
 			this.cardNo=option.cardNo; // 车牌
 			this.CarListNo = option.carListNo; // 装车单号
 		},
@@ -190,15 +188,6 @@
 			
 			},
 			...mapActions(['spCreatePaperCarListAppAction','getAspCarListAppAppendAction']),
-			// 预提交数据
-			preSubmitData(){
-				this.canSubmit =false
-				let _self = this
-				 clearTimeout(this.timeoutId)
-				 this.timeoutId = setTimeout(()=> {
-					_self.saveWarehouses()
-				}, 2000)
-			},
 			// 保存出仓
 			saveWarehouses(){
 				this.canSubmit =false

@@ -128,8 +128,6 @@
 		onLoad(option) {
 			//uni-app内置：option为object类型，会序列化上个页面传递的参数
 			//debugger
-			this.formItem.sendGoods =  option.LeaderName; // 发货人
-			this.formItem.SenderID =  option.LeaderID; // 发货人ID
 			this.cardNo=option.cardNo; // 车牌
 			this.CarListNo = option.carListNo; // 装车单号
 		},
@@ -197,10 +195,13 @@
 				 clearTimeout(this.timeoutId)
 				 this.timeoutId = setTimeout(()=> {
 					_self.saveWarehouses()
-				}, 2000)
+				}, 5000)
 			},
 			// 保存出仓
 			saveWarehouses(){
+				// alert(1)
+				// return
+				
 				this.canSubmit =false
 				 let params ={
 					 procName:'spSaveCarListToDeliForAPP',

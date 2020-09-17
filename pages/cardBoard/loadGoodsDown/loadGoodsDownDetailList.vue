@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+		<cu-custom @BackPageEvent="BackPageEvent()" bgColor="bg-gradual-blue" :isBack="true">
 				<block slot="content">工单装车及库位详细</block>
 		</cu-custom>
 		<!-- ===卡板指定库位扫描=== -->
@@ -10,12 +10,14 @@
 		   </view>
 		</form>
 		<view class="bingStorage-zTable">
-			<zTable :stickSide="false" :singleSelect="true" @onClick='onClickRowEvent' :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="cardBoardNoInfoData" :columns="cardBoardNoInfoColumns"></zTable>
+			<zTable :stickSide="true" :singleSelect="true" @onClick='onClickRowEvent' :tableHeight="tableHeight"  :showLoading="false" :emptyText="errorContent" :tableData="cardBoardNoInfoData" :columns="cardBoardNoInfoColumns"></zTable>
 		</view>
+		<alertBox ref="alertBox" :msgContent="msgContent" :toShowModal="toShowModal" @cancelModal="cancelModal" @comfirmModal="comfirmModal"></alertBox>
 	</view>
 </template>
 
 <script>
+	import alertBox from '@/components/color-ui-dialog/color-ui-dialog.vue'
 	import zTable from "@/components/z-table/z-table.vue"
 	import uniIcon from "@/components/uni-icon/uni-icon.vue"
 	import searchForm from '@/components/searchForm/searchDataList.vue.vue'
@@ -26,9 +28,14 @@
 	export default {
 		name:'inStorage',//纸板入库卡板、工单扫描
 		mixins:[baseMixin],
-		components:{zTable,searchForm,uniPopup,uniIcon},
+		components:{zTable,searchForm,uniPopup,uniIcon,alertBox},
 		data() {
 			return {
+				msgContent:'',
+				hasDeletedData:false,// 是否删除过数据
+				currentRowItem:{},// 当前选择项目
+				currentAction:'',//当前确认弹框类型
+				toShowModal:false,// 是否显示确认弹出框
 				sourceType:'prepare',//数据来源,区分 备货/装车 prepare/load
 				dataIsLoadding:false,
 				CarListNo:'',//装车单号,
@@ -58,6 +65,11 @@
 						key: 'CardNo',
 						title: '卡板号'
 					},
+					{title:'操作',listenerClick:true, width: 80,titleAlign:'center',columnAlign:'center',
+					format: {
+						template: "删除",
+						names: []
+					}}
 				],
 				itemDetailID:'',//详细内容的ID
 				orderNo:'',//工单号
@@ -82,6 +94,7 @@
 		},
 		// #endif
 		onLoad(option) {
+			//debugger
 			this.CarListNo = option.carListNo;
 			this.orderNo = option.orderNo; // 工单号
 			this.detailId = option.detailId
@@ -89,19 +102,77 @@
 			
 		},
 		methods: {
+			// 删除数据后,返回上一页时,需要重新加载数据
+			BackPageEvent(){
+				//uni.$emit('refreshPage_loadGoodsDown','刷新页面数据');
+				if(this.hasDeletedData){
+					this.hasDeletedData = false
+					// 登陆页面  
+					uni.$emit('refreshPage_loadGoodsDown','刷新页面数据');
+				}
+			},
+			//确认弹框-提交工单列表信息
+			comfirmModal(val){
+				this.toShowModal =false
+				switch (this.currentAction){
+					case 'deleteDetailItem':
+					     this.delCardOrderNo(this.currentRowItem)
+						break;		
+					default:
+						break;
+				}
+			},
+			// 取消弹框
+			cancelModal(val){
+				this.toShowModal =false
+			},
 			//删除数据
 			onClickRowEvent(rowItem){
-				
-				// this.currentSelectItem = JSON.parse(JSON.stringify(rowItem));
-				// this.openPopup()
+				this.currentRowItem = rowItem
+				this.currentAction='deleteDetailItem'
+				this.msgContent =`确定删除当前项【库位:${rowItem.StationNo}】?`
+				this.toShowModal =true
 			},
-			// 打开修改弹框
-			openPopup(){
-				this.$refs.popup.open()
-			},
-			// 关闭修改弹框
-			closePopup(){
-				this.$refs.popup.close()
+			delCardOrderNo(rowItem){
+				//debugger
+				if(!!!this.CarListNo){
+					uni.showToast({
+						title:'装车清单号不可为空!',
+						icon:'none',
+						duration:2000
+					})
+					return
+				}
+				let params = {
+					UserID:this.$store.getters.userInfo_getters, 
+					CarListNo:this.CarListNo, //-- 装车清单号
+					CardNo:rowItem.CardNo, //-- 卡板号
+					OrderNo:rowItem.OrderNo //-- 工单号
+				}
+				let _self = this
+				this.$store.dispatch('delCardOrderNoAction',params).then(res=>{
+					this.hasDeletedData = true
+					if(res && res.list && res.list.length>0){
+						let resData = res.list[0]
+						if(resData.Error==0){
+							uni.showToast({
+								title:'删除成功',
+								icon:'none',
+								duration:2000
+							})
+							setTimeout(()=>{
+								_self.spGetPaperCarListAppInfo()
+							},300)
+						}else{
+							uni.showToast({
+								title:'删除失败err',
+								icon:'none',
+								duration:2000
+							})
+						}
+						
+					}
+				})
 			},
 			 async getTableHeight(){
 			 			  let _self=this
@@ -121,16 +192,12 @@
 			},
 			spGetPaperCarListAppInfo(){
 				//加载工单列表
-				let data = {
-					procName:'spGetPaperScanInfo',
-					params:{
-						//UserID:this.$store.getters.userInfo_getters, // 当前登陆用户名称
-						ID1:this.detailId
-					}
+				let params = {
+					ID1:this.detailId
 				}
 				this.dataIsLoadding = true;
 				let _self = this;
-				this.$store.dispatch('getExecuteDropDownDetailsAction',data).then(res => {
+				this.$store.dispatch('getPaperZCScanInfoAction',params).then(res => {
 					//debugger
 					if (res.list && res.list.length > 0) {
 						this.cardBoardNoInfoData = res.list;
